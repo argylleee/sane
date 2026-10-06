@@ -1,0 +1,4 @@
+#!/bin/sh
+# Optional: enabled alongside pre-push with npm run setup -- --hooks.
+set -eu
+node "$(git rev-parse --show-toplevel)/scripts/check-git.mjs" commit-file "$1"

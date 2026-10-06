@@ -1,0 +1,18 @@
+{
+  "description": "Restore a chat-local role after compaction; reset on fresh/cleared chats.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume|clear|compact)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --input-type=module -e \"import {execFileSync} from 'node:child_process'; import {pathToFileURL} from 'node:url'; await import(pathToFileURL(execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8'}).trim()+'/scripts/session-start.mjs'));\"",
+            "timeout": 5,
+            "additionalContextLimit": 1000
+          }
+        ]
+      }
+    ]
+  }
+}

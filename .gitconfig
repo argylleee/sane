@@ -1,0 +1,10 @@
+# Opt-in repository-local defaults, applied by npm run setup.
+# Git does not automatically load this file. No identity or credentials here.
+[pull]
+  ff = only
+[fetch]
+  prune = true
+[push]
+  default = simple
+[core]
+  autocrlf = false

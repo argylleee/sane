@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume|clear|compact|fork)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node --input-type=module -e \"import {execFileSync} from 'node:child_process'; import {pathToFileURL} from 'node:url'; await import(pathToFileURL(execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8'}).trim()+'/scripts/session-start.mjs'));\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

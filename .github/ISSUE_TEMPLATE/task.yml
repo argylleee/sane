@@ -1,0 +1,30 @@
+name: Development task
+description: A bounded slice with ownership and acceptance evidence
+title: '[Task] '
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome and acceptance
+      description: One observable outcome, evidence, and out-of-scope work.
+    validations:
+      required: true
+  - type: textarea
+    id: ownership
+    attributes:
+      label: Ownership and dependencies
+      description: Owner/role/platform, allocation authority/number, branch/worktree, base revision, allowed paths, interface/external-resource keys, blockers.
+    validations:
+      required: true
+  - type: textarea
+    id: budget
+    attributes:
+      label: Timebox and validation
+      description: Budget, exact checks, risks, and mock/live integration boundaries.
+    validations:
+      required: true
+  - type: textarea
+    id: handoff
+    attributes:
+      label: Handoff
+      description: Changed paths, revision, evidence, next action. Update on completion.

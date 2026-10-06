@@ -1,0 +1,159 @@
+# Role dispatch and conflict handling
+
+Roles are reusable workflows, not assignments to named people or security identities.
+No tasks, worktrees, subagents, or MCP connections have been activated by this scaffold.
+
+## Manual role selection
+
+In Codex chat:
+
+```text
+$role-integration Coordinate these tasks; allocate independent writing scopes before dispatch.
+$role-frontend Implement TASK-001 using its approved allocation and interface contract.
+$role-backend Implement TASK-002 using its approved allocation and isolated fixtures.
+$resolve-conflict Reconcile TASK-001 and TASK-002 without discarding either branch's work.
+$mcp-workflow Evaluate whether this named MCP server adds value to TASK-002; do not connect yet.
+```
+
+In Claude Code use `/role-integration`, `/role-frontend`, `/role-backend`, `/resolve-conflict`,
+or `/mcp-workflow` after exporting the needed bundles. OpenCode can load each by name using its
+native skill tool, or the provided `/role-*` project commands. Portable fallback: read the
+selected canonical SKILL.md directly. Activate once per chat using [role sessions](role-sessions.md);
+compaction keeps the role, while new/cleared chats and different worktrees require fresh activation.
+Neither skill selection nor a role label expands the user's permissions.
+
+## Automatic routing
+
+AGENTS.md routes role/parallel tasks through `role-dispatch`. Explicit activation wins; otherwise
+the current chat's active role remains selected. A disagreeing task receipt needs reconciliation.
+With no active role, the authoritative task entry selects the role. If no entry exists, the router proposes a role
+from the work: shared contracts/refactors/scope go to integration, UI to frontend, core behavior
+to backend. Cross-role features are split at stable interfaces rather than assigned to every role.
+Only the selected role's instructions and phase-specific references are loaded.
+
+The agent can orchestrate this when its host supports skills, worktrees, and delegation. It
+cannot create capabilities or bypass a host's restrictions. A small serial maintenance task can
+use the user's narrow scope without parallel allocation paperwork. Parallel writers require
+the allocation protocol below; read-only reviewers return text rather than sharing writable reports.
+
+## One allocation authority
+
+Choose one integration coordinator and one authoritative `coordination.json`. The registry is
+currently empty. It contains allocation metadata only; acceptance criteria and implementation
+details live in task files. Workers do not independently edit or claim tasks in copied registries.
+
+The coordinator checks current writers, allocates non-overlapping scopes, and sends a receipt
+containing task ID, allocation number, role, owner, actual worktree path, branch/base revision,
+allowed paths/resources, contract reference, acceptance evidence, and time/token budget.
+Before dispatch, run `npm run check:repo`. The coordinator/agent runs this; the user need not
+manually supervise the command.
+
+Example registry entry, to be added only for a real task with a real committed base:
+
+```json
+{
+  "id": "TASK-001",
+  "allocation": 1,
+  "role": "frontend",
+  "owner": "assigned-worker-id",
+  "mode": "write",
+  "status": "active",
+  "allowedPaths": ["src/ui/", "docs/tasks/TASK-001.md", "docs/tasks/TASK-001-handoff.md"],
+  "writeResources": [],
+  "dependsOn": [],
+  "branch": "codex/feat/task-001-demo-screen",
+  "worktree": "task-001",
+  "baseRevision": "replace-with-the-actual-full-git-revision"
+}
+```
+
+`worktree` is a unique slot label; the receipt/handoff records the actual host path. Each writer
+gets a distinct branch and checkout. `allowedPaths` supports exact repo-relative files or
+directory prefixes ending in `/`; wildcards, absolute paths, traversal, and Git metadata are rejected.
+Use the smallest useful scopes. Add schema/routing/shared module paths once the app stack is chosen.
+
+Roles are `integration`, `frontend`, and `backend`. Modes are `write` or `read`; read tasks have
+empty `allowedPaths` and `writeResources`. States are `planned`, `active`, `blocked`, `ready`,
+`integrated`, and `cancelled`. Active tasks require integrated dependencies. Blocked and ready
+writers retain their claims; pausing does not silently release somebody's files.
+
+Reserve semantic or external mutation keys as well as files, for example
+`interface:users-v1`, `schema:demo-db`, or `external:tracker:demo-project:task-9`. A consumer merely
+reading a stable interface does not reserve its mutation key. Keys identify resources, contain
+no credentials/private data, and do not authorize remote writes.
+
+For cross-machine work, the coordinator serializes receipts through an already authorized
+channel. A committed registry on the integration branch or coordinator-accessible file can
+serve as the source. Local copies are snapshots: a Git file is not an atomic distributed lock.
+Check freshness with the coordinator before dispatch/scope changes. If that source is unavailable,
+defer contested writes and continue independent/read-only work.
+
+## Worker scope checks
+
+The worker agent runs this before edits and before handoff, using its receipt:
+
+```sh
+npm run check:task -- --task TASK-001 --allocation 1 --registry /path/to/coordinator/coordination.json
+npm run validate -- --task TASK-001 --allocation 1 --registry /path/to/coordinator/coordination.json
+```
+
+Quote host paths containing spaces. If the acknowledged registry snapshot is in the worker
+root, omit `--registry`. The checker verifies current branch, base ancestry, allocation number,
+and changed-file ownership across committed, staged, unstaged, renamed/deleted, and untracked paths.
+It checks only the provided snapshot; it does not discover a remote coordinator automatically,
+authenticate the person naming a task, enforce a remote server's permissions, or prevent edits
+made outside the workflow. Keep branch/worktree identity and receipt freshness explicit.
+
+Generic CI/`npm run validate` checks registry shape, shared-file ownership, duplicate scopes,
+case-insensitive collisions, write-resource collisions, dependency cycles, and branch/worktree
+reuse. It does not infer which task every PR belongs to. Before integrating a task, the coordinator
+requires its scoped validation evidence; after integration, validate the combined revision and demo.
+Scope checking is additive to app tests and code review, not a replacement for them.
+
+## Resolve refactor or merge conflicts
+
+Load `resolve-conflict` only when a collision appears. Integration designates one resolver;
+other workers pause only the affected paths/resources and keep unrelated work moving.
+
+1. Preserve both variants and compact evidence. Inspect base, intent, and callers/tests.
+2. Choose serialization, a smaller partition, or a combined change. A shared refactor requires
+   an integration allocation; it must not overlap still-reserved frontend/backend scopes.
+3. To release/reassign a contested scope, first quiesce its worker and preserve its dirty work.
+   Narrow its scope or return it to `planned`/`cancelled` as appropriate, increment its allocation,
+   and obtain acknowledgement. `blocked` alone retains the claim. Never infer consent from a timeout.
+4. Resolve behavior and interface changes, not just Git markers. Run relevant regression checks
+   and full validation. For MCP/external conflicts, inspect authoritative state before retrying a mutation.
+5. Record one resolution decision and refreshed receipts. Resume on an aligned committed base;
+   if a fresh checkout is needed, retain the original worktree rather than resetting its dirty work.
+
+The resolver does not automatically merge, publish, force-push, delete worktrees/data, or grant
+access. Existing user authority still governs those actions. A textual merge can succeed while
+semantic behavior fails; interface version references and acceptance checks are essential.
+
+## Context, tokens, and memory
+
+Send workers file/revision references plus the minimum acceptance/contract packet, not full
+parent histories. Use one role skill and only relevant phase skills. Reuse a worker where possible;
+add parallelism only when the work is independent and capacity justifies its cost. No recursive fan-out.
+
+Each worker owns its task/handoff, with concise evidence and the next action. The coordinator
+alone maintains shared summaries/decisions and allocation state. Use roughly 300-600 words for
+a nontrivial handoff, less for a small one; preserve material constraints over a word target.
+Measure tokens only when the host exposes usage, otherwise use timeboxes and scope bounds.
+Archive/release obsolete allocations deliberately; retain dependency records while referenced.
+Revalidate stale revisions rather than trusting old success messages. No transcript duplication.
+
+## Optional MCP connections
+
+Use `mcp-workflow` and the [connection card](templates/mcp.md) for a named server only when it
+removes a concrete task bottleneck. Start with a narrow read-only or sandbox capability; record
+host-specific configuration only after a server is selected and connecting it is authorized.
+No blanket servers, credentials, or global installations are provided here.
+
+MCP provides tools/resources through a host/client/server boundary; it does not itself allocate
+roles or manage model context. Host configuration and permissions vary. See the
+[official architecture](https://modelcontextprotocol.io/docs/learn/architecture) and
+[security guidance](https://modelcontextprotocol.io/specification/latest/basic/security_best_practices).
+Limit tools per role/task when supported, cap/paginate results, reuse evidence only while fresh,
+and keep shared remote writes under one allocation. Store only compact, non-sensitive evidence
+in handoffs; large safe local output can stay ignored under `.local/`.
