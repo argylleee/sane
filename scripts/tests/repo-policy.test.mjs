@@ -14,6 +14,14 @@ test('env examples stay portable; local secrets are rejected in nested projects'
 
 test('adding app code cannot leave foundation-only validation green', () => {
   const config = { application: { status: 'not-selected', scripts: [] } };
+  assert.deepEqual(
+    applicationScripts(config, {}, [
+      '.claude/skills/impeccable/scripts/live-browser.js',
+      '.github/skills/impeccable/scripts/live-browser.js',
+      '.agent/skills/impeccable/scripts/live-browser.js',
+    ]),
+    [],
+  );
   assert.deepEqual(applicationScripts(config, {}, ['scripts/setup.mjs', 'eslint.config.mjs']), []);
   for (const path of ['src/page.tsx', 'index.html', 'main.py', 'apps/api/main.go']) {
     assert.throws(() => applicationScripts(config, {}, [path]), /Configure application checks/);

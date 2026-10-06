@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "skills": {
+    "context-handoff": "3ab468d7b53a84e5f29d661cf4f44f3b0290c59c281ce5e27bc683bf91628a45",
+    "grill-me": "8d501635f6935280c1e493a7551658038fef32a346fb3a4acd21a727ceee3b64",
+    "grilling": "d6ae2cc9cd9778557069d88eff3bbb733ef7f4d6645bb6786c101236d7d422ce",
+    "hackathon-delivery": "4828dfbf5506a94c9b5fcd341805dcfd074af4786df1947bb65790f4b83d05d1",
+    "impeccable": "e0492095ffb7fc2cb4cb70b54f10c389f5563127df095fca639b68a332b8944e",
+    "mcp-workflow": "412a6ccafa5afda37cb089bd34482c79851fe30d41e9e9b3156ab0252159bf4d",
+    "parallel-work": "790bb8c7a79eac6f38454c3f505843526479ad1532ef7d55ab27020cf3a4345f",
+    "resolve-conflict": "c9208dbb1b15a00670b8d38f6bafa3c5496585820bab58c58387b6f69c19a682",
+    "role-backend": "78cfad73d9bdf3151961a1c95ad17237ece5da6b6bc7fbc0dc21bb225032603a",
+    "role-dispatch": "8c259f2d5817cc7ed1c13950d25dbf3313015f52627f999f2897effb78154fad",
+    "role-frontend": "342a75a30d48b0996693dc1e516ac44f5aff9637ebe76565beded7d1663a3220",
+    "role-integration": "261cd73e78eb3bec6b604e3e51dbc8030dfcd6cdf528edb9de7628200a87b2ea",
+    "self-validate": "be113b971e039f716f416b5560dcd5114df635b21d510c049d5af077984b6a2d"
+  }
+}

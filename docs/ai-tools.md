@@ -54,7 +54,7 @@ upstream exhaustive interview. If the host lacks a Skill tool, read both SKILL.m
 If subagents are unavailable, the agent can inspect local facts itself within its allowed tools.
 
 For role/parallel work, use [the allocation protocol](coordination.md). Codex uses `$role-dispatch`
-or `$role-frontend`; Claude uses `/role-dispatch` or `/role-frontend` after export; OpenCode loads
+or `$role-frontend`; Claude uses `/role-dispatch` or `/role-frontend` from the included bundles; OpenCode loads
 the named skill with its native tool. Automatic routing follows an explicit role or task receipt
 first and otherwise proposes the smallest appropriate role. It does not grant tool permissions
 or automatically fan out to all roles. Only one coordinator changes allocation metadata.
@@ -96,9 +96,9 @@ On POSIX systems, `npm run setup` makes the canonical launcher executable before
 | ChatGPT web/other chat-only sessions   | Attach AGENTS.md, the selected skill, task, and required resources                              | Request the skill by name; local checkout alone does not grant file/shell access  |
 | OpenCode                               | AGENTS.md + `.agents/skills` are native                                                         | Ask to load `skill` by name; slash UX depends on version                          |
 | Current Antigravity                    | AGENTS.md + `.agents/skills` are native                                                         | `/<skill-name>`; inspect Customizations                                           |
-| Legacy Antigravity                     | Optional export to `.agent/skills`                                                              | Use a scoped workspace rule pointing to AGENTS.md if needed                       |
-| Claude Code                            | CLAUDE.md imports AGENTS.md; export native skills below                                         | `/<skill-name>` or explicitly read the canonical skill                            |
-| GitHub Copilot                         | `.github/copilot-instructions.md`; optional native skill export                                 | Choose the skill if supported; otherwise explicit file-reading prompt             |
+| Legacy Antigravity                     | Complete versioned bundles in `.agent/skills`                                                   | Use a scoped workspace rule pointing to AGENTS.md if needed                       |
+| Claude Code                            | CLAUDE.md imports AGENTS.md; complete versioned `.claude/skills` bundles                        | `/<skill-name>` or explicitly read the canonical skill                            |
+| GitHub Copilot                         | `.github/copilot-instructions.md` and complete versioned `.github/skills` bundles               | Choose the skill if supported; otherwise explicit file-reading prompt             |
 | Devin / another agent                  | Supply the shared contract and bounded task using its repository knowledge/instructions feature | Explicit file-reading fallback; native skill discovery has not been verified here |
 
 No platform has been launched to prove UI discovery. The canonical locations are supported by
@@ -106,23 +106,28 @@ No platform has been launched to prove UI discovery. The canonical locations are
 [OpenCode](https://opencode.ai/docs/skills/), and
 [Antigravity](https://antigravity.google/docs/skills) documentation. Older versions may differ.
 
-For Claude, Copilot, or a legacy host, export complete bundles locally without Windows symlinks:
+All thirteen bundles and their resources are already checked in for Claude, Copilot, and legacy
+Antigravity. A fresh clone needs no export, reinstall, symlink creation, or copying from this machine.
+Codex, OpenCode, and current Antigravity use the canonical `.agents/skills` directly; their native
+adapter folders contain only required host-specific commands/config, not another skill tree.
+
+For a coordinator changing or adding skills, edit only the canonical bundle, then run:
 
 ```sh
-npm run skills:export -- claude
-npm run skills:export -- copilot grill-me impeccable
-npm run skills:export -- legacy-antigravity context-handoff parallel-work
+npm run skills:sync
 ```
 
-Exporting grill-me also exports grilling. Resources are copied, binaries are omitted, no hooks
-are added, matching existing copies are skipped, and changed copies are never silently overwritten.
-Exports are ignored and generated;
-edit the canonical bundle, review/remove only your generated copy, then re-export. Avoid exporting
-to a tool that already discovers `.agents/skills`, which can create duplicate skill names.
+Commit the canonical change, all updated mirrors, and `.agents/skill-mirrors.json` together.
+Validation/CI compare complete inventories and payload digests, normalizing text line endings and
+excluding downloaded engine binaries. A missing/stale mirror fails validation. Matching copies are
+skipped; approved canonical updates replace only mirrors matching the recorded prior payload.
+Independent native edits are preserved and must be reconciled into the canonical source first.
+Removed/extra skill directories require explicit review rather than automatic deletion.
 
-After updating a custom skill, refresh only its known generated export. Existing matching bundles
-are skipped; a stale/customized copy is refused. Preserve custom edits before replacing it. Role
-skills and their related general workflows should be exported together when native discovery is used.
+`skills:export` remains a compatibility alias for older commands, but now synchronizes all team
+mirrors. Teammates do not need either command for normal use. Reload the host after pulling skill
+updates. Source copies occupy more checkout space but retain one maintained source and matching
+Git blobs; they do not require loading duplicate resources into model context.
 
 For any platform with file access, paste this portable fallback:
 
@@ -154,7 +159,8 @@ Avoid `--all` and global flags. Installation tools can evolve; inspect `--help` 
 For a deliberate future refresh, use `skills@latest` or `impeccable@latest` with the same scoped
 options in a clean isolated checkout. Review the updated instructions, supporting resources,
 dependency wiring, licenses, and launcher VERSION. Update `.agents/vendor.json` version metadata,
-then run `npm run vendor:record`, `npm run format`, and `npm run validate`. Refresh any local exports.
+then run `npm run vendor:record`, `npm run skills:sync`, scoped formatting, and `npm run validate`.
+Include the synchronized native mirrors in the same reviewed change.
 Do not update third-party skills mid-task merely because a newer version exists.
 
 `skills-lock.json` retains installer hashes for grill-me/grilling. `.agents/vendor.json` records
@@ -191,5 +197,5 @@ Read the official guidelines and the selected deliverable's evidence. Report mis
 
 Use lower-case names matching the folder, concise scope, and links to resources loaded on demand.
 Optional `agents/openai.yaml` can customize Codex's picker; the portable frontmatter remains the
-shared interface. Run validation and update native exports only when needed. Do not duplicate
+shared interface. Synchronize the native mirrors when skills change, then run validation. Do not duplicate
 generic agent instructions or accumulate full histories in skills.

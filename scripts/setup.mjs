@@ -1,13 +1,16 @@
 import { copyFileSync, existsSync, chmodSync } from 'node:fs';
 import { join } from 'node:path';
 import { root, git } from './lib/runtime.mjs';
+import { assertSkillMirrors, skillDestinations } from './lib/skill-mirrors.mjs';
 
 const args = process.argv.slice(2);
 if (args.some((arg) => arg !== '--hooks')) throw new Error('Usage: npm run setup [-- --hooks]');
+assertSkillMirrors(root);
 if (!existsSync(join(root, '.env'))) copyFileSync(join(root, '.env.example'), join(root, '.env'));
 if (process.platform !== 'win32') {
   // Windows checkouts cannot preserve executable bits before the scaffold is committed.
-  chmodSync(join(root, '.agents/skills/impeccable/scripts/impeccable'), 0o755);
+  for (const destination of ['.agents/skills', ...Object.values(skillDestinations)])
+    chmodSync(join(root, destination, 'impeccable/scripts/impeccable'), 0o755);
 }
 const config = join(root, '.gitconfig').replaceAll('\\', '/');
 for (const key of ['pull.ff', 'fetch.prune', 'push.default', 'core.autocrlf']) {

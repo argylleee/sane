@@ -14,6 +14,7 @@ export function isPrivateFile(file) {
 }
 
 export function isApplicationFile(file) {
+  if (/^(\.claude|\.agent)\/skills\//.test(file)) return false;
   if (/^(scripts|docs|\.agents|\.github|\.githooks|\.local|\.cache|\.worktrees)\//.test(file))
     return false;
   if (file === 'eslint.config.mjs') return false;

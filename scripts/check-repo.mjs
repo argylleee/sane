@@ -4,6 +4,7 @@ import { parse } from 'yaml';
 import { root, repoFiles, git } from './lib/runtime.mjs';
 import { assertBranch } from './lib/git-conventions.mjs';
 import { assertCoordination } from './lib/coordination-policy.mjs';
+import { assertSkillMirrors, isSkillMirror } from './lib/skill-mirrors.mjs';
 import {
   applicationScripts,
   isPrivateFile,
@@ -39,6 +40,7 @@ for (const file of required) if (!existsSync(join(root, file))) errors.push(`Mis
 
 for (const file of files) {
   if (isPrivateFile(file)) errors.push(`Private file is visible to Git: ${file}`);
+  if (isSkillMirror(file)) continue; // canonical metadata/content checked once; mirror parity checked below
   if (!existsSync(join(root, file))) continue; // deletion may be pending; required paths checked above
   if (isStructuredFile(file)) {
     try {
@@ -65,6 +67,7 @@ for (const file of files) {
 
 try {
   const branch = git('branch', '--show-current');
+  assertSkillMirrors(root);
   if (branch && branch !== 'main') assertBranch(branch); // detached CI checkouts have no local branch
   assertCoordination(JSON.parse(read('coordination.json')));
   applicationScripts(

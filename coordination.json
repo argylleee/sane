@@ -16,6 +16,8 @@
     ".codex/",
     ".claude/settings.json",
     ".opencode/",
+    ".claude/skills/",
+    ".agent/skills/",
     ".gitignore",
     ".gitattributes",
     ".gitconfig",

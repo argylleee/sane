@@ -16,7 +16,7 @@ $mcp-workflow Evaluate whether this named MCP server adds value to TASK-002; do 
 ```
 
 In Claude Code use `/role-integration`, `/role-frontend`, `/role-backend`, `/resolve-conflict`,
-or `/mcp-workflow` after exporting the needed bundles. OpenCode can load each by name using its
+or `/mcp-workflow` from the included native bundles. OpenCode can load each by name using its
 native skill tool, or the provided `/role-*` project commands. Portable fallback: read the
 selected canonical SKILL.md directly. Activate once per chat using [role sessions](role-sessions.md);
 compaction keeps the role, while new/cleared chats and different worktrees require fresh activation.

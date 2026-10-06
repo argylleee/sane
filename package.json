@@ -20,7 +20,8 @@
     "test:tooling": "node --test scripts/tests/*.test.mjs",
     "validate": "node scripts/validate.mjs",
     "vendor:record": "node scripts/record-vendor.mjs",
-    "skills:export": "node scripts/export-skills.mjs"
+    "skills:export": "node scripts/export-skills.mjs",
+    "skills:sync": "node scripts/sync-skills.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

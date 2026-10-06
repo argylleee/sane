@@ -3,11 +3,13 @@ import { join } from 'node:path';
 import { lint } from 'markdownlint/promise';
 import { root, repoFiles } from './lib/runtime.mjs';
 import { vendorNames } from './lib/repo-policy.mjs';
+import { isSkillMirror } from './lib/skill-mirrors.mjs';
 
 const files = repoFiles()
   .filter(
     (file) =>
       file.endsWith('.md') &&
+      !isSkillMirror(file) &&
       !vendorNames.some((name) => file.startsWith(`.agents/skills/${name}/`)),
   )
   .map((file) => join(root, file));

@@ -129,6 +129,10 @@ AGENTS.md                 Shared working contract for every agent
 .agents/skills/           Workflows, role/conflict/MCP skills + requested upstream skills
 .agents/rules/            Future organizer-rule extension point
 .agents/vendor.json       Upstream attribution, versions, payload digests
+.agents/skill-mirrors.json Tracked native skill copies checked against the canonical source
+.claude/skills/           Complete team skill bundles for Claude Code
+.github/skills/           Complete team skill bundles for Copilot
+.agent/skills/            Complete team skill bundles for legacy Antigravity
 .github/                  CI, task issue form, PR template, Copilot adapter
 .codex/hooks.json         Codex chat-local role restoration; requires hook trust
 .claude/settings.json     Claude chat-local role restoration
@@ -141,7 +145,7 @@ docs/role-sessions.md      Activate once; compaction restoration and reset bound
 coordination.json          Empty allocation registry; single coordinator owns it
 docs/templates/           Task and handoff templates
 docs/planning/            Empty planning documents; fill when facts arrive
-scripts/                  Small setup, validation, and skill-export helpers
+scripts/                  Small setup, validation, and skill synchronization helpers
 .env.example              Versioned empty variable template
 .env                      Local only, ignored by Git
 PRODUCT.md / DESIGN.md     Empty product/design documents for future Impeccable setup
@@ -156,7 +160,12 @@ has been guessed. The workflow guide contains suggested process, not contest req
 Open the cloned folder as the project/workspace, then read [AGENTS.md](AGENTS.md).
 The canonical skills use portable `SKILL.md` bundles in `.agents/skills`.
 Native discovery varies by tool; the [AI tools guide](docs/ai-tools.md) provides adapters,
-exports, exact prompts, and a manual fallback for ChatGPT, Devin, and other environments.
+tracked native bundles, exact prompts, and a manual fallback for ChatGPT, Devin, and other environments.
+
+A fresh clone includes all thirteen skill bundles and their supporting resources in the canonical
+folder and the Claude/Copilot/legacy Antigravity folders. No teammate needs an export or reinstall.
+Codex and OpenCode read `.agents/skills` directly; their adapter folders intentionally contain only
+host-specific hooks/commands. Local `.env`, sessions, dependencies, and downloaded engines are not shared.
 
 ### Codex
 
@@ -176,16 +185,15 @@ thirteen skill folders total; load only the selected role and phase workflows fo
 
 ### Claude Code
 
-From the repository root, export the native skill bundles and start Claude Code:
+From the repository root, start Claude Code after the common quick-start setup:
 
 ```sh
-npm run skills:export -- claude
 claude
 ```
 
-The local export goes to `.claude/skills`; CLAUDE.md imports the shared AGENTS.md contract.
-Matching existing exports are skipped; changed/outdated copies are preserved and require review
-before refreshing. Exports are ignored by Git, so run this in each teammate's checkout or worktree.
+The versioned `.claude/skills` bundles are already included; CLAUDE.md imports the shared AGENTS.md
+contract. They match the canonical bundles, including all required supporting resources. Repository
+validation and CI fail if a native bundle is missing or differs. Reload the tool after pulling skill updates.
 In Claude Code chat:
 
 ```text
@@ -252,6 +260,8 @@ configure `validation.config.json`, and extend language-specific tooling. Follow
 - Record official guidelines and the approved MVP before implementation.
 - Add task-specific rules to `.agents/rules` and route relevant agents to them from AGENTS.md.
 - Add focused skills under `.agents/skills/<name>/SKILL.md`, with short descriptions.
+- Edit only the canonical bundles; the coordinator runs `npm run skills:sync` and commits the
+  generated native mirrors and manifest together. Teammates consume the checked-in bundles.
 - Keep shared decisions compact and task handoffs separate to avoid parallel write conflicts.
 - Preserve the existing BSD-2-Clause [license](LICENSE). Vendored skills retain their
   [upstream notices](.agents/third-party/NOTICE.md) and separate licenses.
