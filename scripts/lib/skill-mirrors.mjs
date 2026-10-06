@@ -38,12 +38,37 @@ function sourceState(root) {
   return { version: 1, skills };
 }
 
+function localManifest(root) {
+  return join(root, '.local/skill-mirrors.json');
+}
+
+function readManifest(root) {
+  const file = localManifest(root);
+  if (!existsSync(file)) return null;
+  const state = JSON.parse(readFileSync(file, 'utf8'));
+  if (
+    state.version !== 1 ||
+    !Array.isArray(state.platforms) ||
+    !state.platforms.includes('claude') ||
+    state.platforms.some((platform) => !Object.hasOwn(skillDestinations, platform))
+  )
+    throw new Error('Invalid local skill manifest; inspect it before rebuilding generated copies.');
+  return state;
+}
+
 export function assertSkillMirrors(root) {
   const expected = sourceState(root);
-  const recorded = JSON.parse(readFileSync(join(root, '.agents/skill-mirrors.json'), 'utf8'));
-  if (JSON.stringify(recorded) !== JSON.stringify(expected))
-    throw new Error('Skill mirror manifest is stale; coordinator must run npm run skills:sync.');
-  for (const destination of Object.values(skillDestinations)) {
+  const recorded = readManifest(root);
+  if (!recorded)
+    throw new Error('Run npm run setup once to bootstrap native skills for this checkout.');
+  if (JSON.stringify(recorded.skills) !== JSON.stringify(expected.skills))
+    throw new Error('Generated skills are stale; agent must run npm run skills:sync.');
+  for (const [platform, destination] of Object.entries(skillDestinations)) {
+    if (!recorded.platforms.includes(platform)) {
+      if (existsSync(join(root, destination)))
+        throw new Error(`Unregistered copies in ${destination}; run npm run setup.`);
+      continue;
+    }
     const names = inventory(join(root, destination));
     if (names.join('\0') !== Object.keys(expected.skills).join('\0'))
       throw new Error(`Incomplete or extra skills in ${destination}; run npm run skills:sync.`);
@@ -68,12 +93,24 @@ function payloadFiles(folder, prefix = '') {
   return files;
 }
 
-export function syncSkillMirrors(root) {
+export function syncSkillMirrors(root, requested = []) {
   const expected = sourceState(root);
-  const manifest = join(root, '.agents/skill-mirrors.json');
-  const previous = existsSync(manifest) ? JSON.parse(readFileSync(manifest, 'utf8')) : null;
+  const previous = readManifest(root);
+  if (requested.some((platform) => !Object.hasOwn(skillDestinations, platform)))
+    throw new Error('Unknown skill export platform.');
+  const platforms = [
+    ...new Set([
+      'claude',
+      ...(previous?.platforms ?? []),
+      ...Object.entries(skillDestinations)
+        .filter(([, path]) => existsSync(join(root, path)))
+        .map(([platform]) => platform),
+      ...requested,
+    ]),
+  ].sort();
+  const destinations = platforms.map((platform) => skillDestinations[platform]);
   const pending = [];
-  for (const path of ['.agents', ...Object.values(skillDestinations)]) {
+  for (const path of ['.local', '.agents', ...destinations]) {
     let cursor = root;
     for (const part of path.split('/')) {
       cursor = join(cursor, part);
@@ -82,7 +119,7 @@ export function syncSkillMirrors(root) {
     }
   }
   // Preflight every destination before any writes. Never replace independent mirror edits.
-  for (const destination of Object.values(skillDestinations)) {
+  for (const destination of destinations) {
     const names = inventory(join(root, destination));
     if (names.some((name) => !(name in expected.skills)))
       throw new Error(`Extra/removed skill in ${destination} preserved; review it before syncing.`);
@@ -122,7 +159,8 @@ export function syncSkillMirrors(root) {
       filter: (path) => !path.replaceAll('\\', '/').includes('/scripts/bin'),
     });
   }
-  writeFileSync(manifest, `${JSON.stringify(expected, null, 2)}\n`);
+  mkdirSync(join(root, '.local'), { recursive: true });
+  writeFileSync(localManifest(root), `${JSON.stringify({ ...expected, platforms }, null, 2)}\n`);
   assertSkillMirrors(root);
   return pending.length;
 }

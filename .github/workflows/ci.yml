@@ -32,6 +32,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run setup
       - run: npm run validate
       - name: Check branch and commit conventions
         run: npm run check:git -- ci

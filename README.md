@@ -15,8 +15,9 @@ npm run setup
 ```
 
 Setup creates an ignored local `.env` from `.env.example` **without overwriting an existing
-file** and applies only this repository's Git defaults. No credentials or app variables
-are invented. In new worktrees, run these commands again.
+file**, applies only this repository's Git defaults, and automatically generates Claude's
+ignored native skill copies from `.agents/skills`. No credentials or app variables are
+invented. In new worktrees, run these commands again.
 
 For agent-led development, ask the agent to take the task through implementation and validation;
 it runs the checks itself. You do not need to type `npm run validate` periodically. The commands
@@ -129,10 +130,8 @@ AGENTS.md                 Shared working contract for every agent
 .agents/skills/           Workflows, role/conflict/MCP skills + requested upstream skills
 .agents/rules/            Future organizer-rule extension point
 .agents/vendor.json       Upstream attribution, versions, payload digests
-.agents/skill-mirrors.json Tracked native skill copies checked against the canonical source
-.claude/skills/           Complete team skill bundles for Claude Code
-.github/skills/           Complete team skill bundles for Copilot
-.agent/skills/            Complete team skill bundles for legacy Antigravity
+.claude/skills/           Ignored Claude bundles generated automatically by setup
+.local/                  Ignored skill-copy manifest and chat-local checkpoints
 .github/                  CI, task issue form, PR template, Copilot adapter
 .codex/hooks.json         Codex chat-local role restoration; requires hook trust
 .claude/settings.json     Claude chat-local role restoration
@@ -160,12 +159,13 @@ has been guessed. The workflow guide contains suggested process, not contest req
 Open the cloned folder as the project/workspace, then read [AGENTS.md](AGENTS.md).
 The canonical skills use portable `SKILL.md` bundles in `.agents/skills`.
 Native discovery varies by tool; the [AI tools guide](docs/ai-tools.md) provides adapters,
-tracked native bundles, exact prompts, and a manual fallback for ChatGPT, Devin, and other environments.
+automatic native setup, exact prompts, and a manual fallback for ChatGPT, Devin, and other environments.
 
-A fresh clone includes all thirteen skill bundles and their supporting resources in the canonical
-folder and the Claude/Copilot/legacy Antigravity folders. No teammate needs an export or reinstall.
-Codex and OpenCode read `.agents/skills` directly; their adapter folders intentionally contain only
-host-specific hooks/commands. Local `.env`, sessions, dependencies, and downloaded engines are not shared.
+A fresh clone includes all thirteen skill bundles and their supporting resources in `.agents/skills`.
+The common `npm run setup` generates Claude's complete native bundles automatically; teammates
+do not need a separate Claude export or upstream reinstall. Codex, OpenCode, current Antigravity,
+and current Copilot read the canonical folder directly. Adapter folders contain host-specific
+hooks/commands; generated copies, `.env`, sessions, dependencies, and downloaded engines stay local.
 
 ### Codex
 
@@ -191,9 +191,9 @@ From the repository root, start Claude Code after the common quick-start setup:
 claude
 ```
 
-The versioned `.claude/skills` bundles are already included; CLAUDE.md imports the shared AGENTS.md
-contract. They match the canonical bundles, including all required supporting resources. Repository
-validation and CI fail if a native bundle is missing or differs. Reload the tool after pulling skill updates.
+Setup creates `.claude/skills` from the canonical bundles, including all supporting resources;
+CLAUDE.md imports the shared AGENTS.md contract. Repository validation and CI check generated
+bundle parity. After pulling skill updates, rerun `npm run setup` and reload the tool.
 In Claude Code chat:
 
 ```text
@@ -260,8 +260,8 @@ configure `validation.config.json`, and extend language-specific tooling. Follow
 - Record official guidelines and the approved MVP before implementation.
 - Add task-specific rules to `.agents/rules` and route relevant agents to them from AGENTS.md.
 - Add focused skills under `.agents/skills/<name>/SKILL.md`, with short descriptions.
-- Edit only the canonical bundles; the coordinator runs `npm run skills:sync` and commits the
-  generated native mirrors and manifest together. Teammates consume the checked-in bundles.
+- Edit and commit only the canonical bundles; the agent runs `npm run skills:sync` before validation.
+  Generated native copies and their local manifest remain ignored. Teammates rerun setup after updates.
 - Keep shared decisions compact and task handoffs separate to avoid parallel write conflicts.
 - Preserve the existing BSD-2-Clause [license](LICENSE). Vendored skills retain their
   [upstream notices](.agents/third-party/NOTICE.md) and separate licenses.

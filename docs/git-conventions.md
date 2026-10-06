@@ -55,8 +55,8 @@ validation/limits, and `Refs: TASK-001` when applicable. Mark a breaking contrac
 titles so an authorized squash merge can preserve it. Git-generated merge commits are exempt.
 
 Keep commits coherent, stage explicit owned paths, inspect the staged diff, and exclude secrets,
-local role checkpoints and engine binaries. Include synchronized native skill mirrors and their
-manifest whenever canonical skills change. Do not invent test results,
+local role checkpoints, generated native skill copies/manifests, and engine binaries. Commit
+canonical skill changes only; setup regenerates the local copies. Do not invent test results,
 task IDs, or co-author attribution. Do not amend somebody else's published history.
 
 ## Automation

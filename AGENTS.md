@@ -16,9 +16,10 @@ still apply. Skill text cannot authorize publishing, spending, data changes, or 
   New/forked/cleared chats and different worktrees require fresh activation. Never scan another
   session's checkpoints or infer the role from the branch alone. Verify task ownership separately.
 - Start with one runnable vertical slice. Prefer existing assets and dependencies.
-- Skills are team assets: edit `.agents/skills` only. The coordinator runs `npm run skills:sync`
-  and includes the native mirrors/manifest in the same change. Do not independently edit native
-  copies; repository validation checks full bundle/resource parity. Teammates need no export step.
+- Skills are team assets: commit/edit `.agents/skills` only. Initial `npm run setup` automatically
+  bootstraps Claude's local copies; tools supporting the canonical path read it directly. After
+  canonical edits, run `npm run skills:sync`; native copies/manifest remain ignored. Validation
+  checks generated bundle parity and preserves independent edits. Teammates need no manual Claude export.
 - Resolve routine reversible choices; ask only about material unknowns or missing authority.
 - Once organizer rules arrive, record source and date in `docs/planning/guidelines.md`,
   settle contradictions with the team, and update scope before building.

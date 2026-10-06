@@ -20,8 +20,14 @@ test('team mirrors preserve resources, reject drift, sync approved source change
   writeFileSync(join(source, 'SKILL.md'), 'canonical instructions\n');
   writeFileSync(join(source, 'references/detail.md'), 'supporting evidence\n');
   writeFileSync(join(source, 'scripts/bin/engine.exe'), 'machine-specific');
-  assert.throws(() => assertSkillMirrors(root));
-  assert.equal(syncSkillMirrors(root), 3);
+  assert.throws(() => assertSkillMirrors(root), /npm run setup/);
+  assert.equal(syncSkillMirrors(root), 1);
+  assert.equal(existsSync(join(root, '.github/skills')), false);
+  assert.equal(existsSync(join(root, '.agent/skills')), false);
+  assert.equal(existsSync(join(root, '.local/skill-mirrors.json')), true);
+  assert.equal(existsSync(join(root, '.agents/skill-mirrors.json')), false);
+  assertSkillMirrors(root);
+  assert.equal(syncSkillMirrors(root, ['copilot', 'legacy-antigravity']), 2);
   assertSkillMirrors(root);
   assert.equal(syncSkillMirrors(root), 0);
   assert.equal(

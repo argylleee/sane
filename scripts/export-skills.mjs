@@ -10,7 +10,7 @@ if (!Object.hasOwn(skillDestinations, platform))
   );
 const available = readdirSync(join(root, '.agents/skills'));
 for (const name of names) if (!available.includes(name)) throw new Error(`Unknown skill: ${name}`);
-const count = syncSkillMirrors(root);
+const count = syncSkillMirrors(root, [platform]);
 console.log(
-  `Compatibility export synchronized all team mirrors (${count} bundles updated). Prefer npm run skills:sync; commit the generated mirrors with canonical changes.`,
+  `${platform} skills ready (${count} bundles updated). Copies are generated locally; only canonical skills belong in commits.`,
 );

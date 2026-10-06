@@ -10,6 +10,6 @@ retain their upstream terms:
 
 Installed source/versions and payload digests are in [vendor.json](../vendor.json);
 grill-me/grilling installer hashes are in [skills-lock.json](../../skills-lock.json).
-Upstream skill and resource text has not been rewritten. Platform-native mirrors are generated,
-versioned copies governed by these same licenses. Review source, license, dependency wiring,
+Upstream skill and resource text has not been rewritten. Platform-native copies are generated
+locally from the canonical bundles and governed by these same licenses. Review source, license, dependency wiring,
 and scripts again on any future vendor update.
