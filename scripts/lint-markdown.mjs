@@ -2,16 +2,11 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { lint } from 'markdownlint/promise';
 import { root, repoFiles } from './lib/runtime.mjs';
-import { vendorNames } from './lib/repo-policy.mjs';
+import { isVendoredFile } from './lib/repo-policy.mjs';
 import { isSkillMirror } from './lib/skill-mirrors.mjs';
 
 const files = repoFiles()
-  .filter(
-    (file) =>
-      file.endsWith('.md') &&
-      !isSkillMirror(file) &&
-      !vendorNames.some((name) => file.startsWith(`.agents/skills/${name}/`)),
-  )
+  .filter((file) => file.endsWith('.md') && !isSkillMirror(file) && !isVendoredFile(file))
   .map((file) => join(root, file));
 const config = JSON.parse(readFileSync(join(root, '.markdownlint.json'), 'utf8'));
 const results = await lint({ files, config });

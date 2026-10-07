@@ -22,7 +22,10 @@ Native discovery and execution permissions vary; verify in the tool you actually
 | `resolve-conflict`   | Ownership, refactor, Git, semantic, or external-write collision     |
 | `mcp-workflow`       | A named optional MCP connection, scoped tools, and compact evidence |
 
-Four general workflows, six role/conflict/MCP workflows, and the requested upstream bundles are installed.
+Four general workflows, six role/conflict/MCP workflows, the requested upstream bundles, and
+ten Spec Kit skills are installed. Spec Kit's five core prompts use the official lean preset;
+convergence and optional clarification/analysis/checklist/issue conversion use the core commands.
+See [Spec Kit](spec-kit.md) for exact chat prompts and how they preserve role ownership.
 Vendored support files are preserved, and upstream text is excluded from our style rewriting.
 Review any newly downloaded instructions/scripts before use; they remain within the user's authority.
 
@@ -106,7 +109,7 @@ No platform has been launched to prove UI discovery. The canonical locations are
 [OpenCode](https://opencode.ai/docs/skills/), and
 [Antigravity](https://antigravity.google/docs/skills) documentation. Older versions may differ.
 
-All thirteen bundles and their resources are checked in once under `.agents/skills`. The common
+All twenty-three bundles and their resources are checked in once under `.agents/skills`. The common
 `npm run setup` automatically generates Claude's complete local bundles. No separate Claude export,
 upstream reinstall, symlink creation, or copying from this machine is needed. Codex, OpenCode,
 current Antigravity, and current Copilot read the canonical folder directly. Committed native
@@ -174,7 +177,7 @@ Commit the reviewed canonical bundles and version metadata; generated copies sta
 Do not update third-party skills mid-task merely because a newer version exists.
 
 `skills-lock.json` retains installer hashes for grill-me/grilling. `.agents/vendor.json` records
-SHA-256 payload digests for all three vendor folders (normalizing text line endings and excluding machine binaries); the copied
+SHA-256 payload digests for vendored skill folders and Spec Kit shared assets (normalizing text line endings and excluding machine binaries); the copied
 bundles in Git are the reproducible source. Installer version pins alone do not pin a remote
 GitHub default branch or a remotely supplied skill archive. Validation detects local payload
 changes but is not a cryptographic proof that upstream instructions are safe.

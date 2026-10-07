@@ -21,6 +21,116 @@
       "engineRelease": "0.1.11",
       "license": ".agents/third-party/impeccable-LICENSE.txt",
       "sha256": "e0492095ffb7fc2cb4cb70b54f10c389f5563127df095fca639b68a332b8944e"
+    },
+    "speckit-analyze": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "core",
+      "sha256": "633e8ccc5ef1c5fa0a642e43e0d289fcf7aebd52ed2df165834edf51085f8cd4"
+    },
+    "speckit-checklist": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "core",
+      "sha256": "e9b9cb3069a721c3f2496262a3d66ba967c44b58c2a494f689b3f547c4a503d6"
+    },
+    "speckit-clarify": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "core",
+      "sha256": "25165f98db310dd71539fc302f074eb88acb3cc6fc7ab651569a9b7ff8e6ccd2"
+    },
+    "speckit-constitution": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "lean@1.0.0",
+      "sha256": "182e93aa6ba0e8c2c22b68eaffce522c5767980ddd23cc1104b52b2a7369b0a4"
+    },
+    "speckit-converge": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "core",
+      "sha256": "cc29b07e8b633a34e40dbc0302f82249b74cd0659d39d946bdc468244d3fd92a"
+    },
+    "speckit-implement": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "lean@1.0.0",
+      "sha256": "fb5a5897273342f532d14afa030962aea7bc32e3b7788c03ef471fee0badefc1"
+    },
+    "speckit-plan": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "lean@1.0.0",
+      "sha256": "23d18214157d8127ae8f41f9f02a3a37460cec07f24eba22fa2f0953496a6f0f"
+    },
+    "speckit-specify": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "lean@1.0.0",
+      "sha256": "7c63209f0ddd74a428daefaf662f30b0b194a7490875e61a3ed1903b12d45003"
+    },
+    "speckit-tasks": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "lean@1.0.0",
+      "sha256": "2d04ba019757625c8760dba20485827e96a6ba1779b413a414e2d3596f78d5cb"
+    },
+    "speckit-taskstoissues": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "preset": "core",
+      "sha256": "bfd729b14ac92875b666bfbfa7678307fe38f6c6f0c3b0e44287fc1473d3b611"
+    }
+  },
+  "assets": {
+    ".specify/scripts": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "sha256": "c8f8e8eb4959e394bb0133fcb1196247963e6402ca7c54d5f31df0f36f5988b5"
+    },
+    ".specify/templates": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "sha256": "6a00d3cc42cd24019d62a69fe9fa2d68ad45df217587a982ed28ec7d187c01ae"
+    },
+    ".specify/presets/lean": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "sha256": "4ca88acf5953e464bacb80938722ccf2ceac75035c916af7c16d6b3bc22d7cb7"
+    },
+    ".specify/workflows/speckit": {
+      "source": "https://github.com/github/spec-kit",
+      "release": "v1.1.1",
+      "revision": "663b9cd0c2343c9fb0a20ec56dbc439b06a42fc3",
+      "license": ".agents/third-party/spec-kit-LICENSE.txt",
+      "sha256": "5aca0eda82af60b0cf2e0039dbb6439b0b6cd7b5beb7e04d4ecf95fb06b5cd9d"
     }
   }
 }

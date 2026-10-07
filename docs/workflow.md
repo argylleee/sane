@@ -16,6 +16,10 @@ These are team defaults, not organizer requirements. Record official constraints
 Adjust this after actual judging criteria and submission timing are known. Reserve verification
 and integration time inside each task rather than leaving all checks until the final hour.
 
+Use [the installed Spec Kit lean workflow](spec-kit.md) for bounded feature specs and plans.
+The existing role allocations and validation rules still govern execution; no additional CLI
+installation is required for the normal chat skills.
+
 ## Tasks and memory
 
 Use the [task template](templates/task.md) for nontrivial work. Copy it into

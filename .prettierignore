@@ -3,6 +3,13 @@ package-lock.json
 .agents/skills/grill-me/
 .agents/skills/grilling/
 .agents/skills/impeccable/
+.agents/skills/speckit-*/
+.specify/scripts/
+.specify/templates/
+.specify/presets/
+.specify/workflows/
+.specify/integrations/
+.specify/memory/.constitution-template.json
 .agents/third-party/*LICENSE.txt
 .worktrees/
 .local/

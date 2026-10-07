@@ -3,10 +3,11 @@
 The repository's BSD-2-Clause license covers its original scaffold. Vendored skill bundles
 retain their upstream terms:
 
-| Bundle                | Source                                                      | License                                     |
-| --------------------- | ----------------------------------------------------------- | ------------------------------------------- |
-| grill-me and grilling | [mattpocock/skills](https://github.com/mattpocock/skills)   | [MIT notice](mattpocock-LICENSE.txt)        |
-| impeccable            | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | [Apache-2.0 notice](impeccable-LICENSE.txt) |
+| Bundle                                                     | Source                                                            | License                                     |
+| ---------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------- |
+| grill-me and grilling                                      | [mattpocock/skills](https://github.com/mattpocock/skills)         | [MIT notice](mattpocock-LICENSE.txt)        |
+| impeccable                                                 | [pbakaus/impeccable](https://github.com/pbakaus/impeccable)       | [Apache-2.0 notice](impeccable-LICENSE.txt) |
+| Spec Kit skills, templates, scripts, lean preset, workflow | [github/spec-kit](https://github.com/github/spec-kit/tree/v1.1.1) | [MIT notice](spec-kit-LICENSE.txt)          |
 
 Installed source/versions and payload digests are in [vendor.json](../vendor.json);
 grill-me/grilling installer hashes are in [skills-lock.json](../../skills-lock.json).

@@ -7,6 +7,8 @@ This foundation sets up collaboration and checks without choosing the product.
 ## Quick start
 
 Use Git and Node.js 24.x. Node runs repository tooling; it does not select the app stack.
+Windows tooling validation also uses PowerShell 7 (`pwsh`) for the installed Spec Kit helper test;
+Linux/macOS use Bash. Review local script execution permissions if the host blocks scripts.
 From the cloned repository root:
 
 ```sh
@@ -130,6 +132,7 @@ AGENTS.md                 Shared working contract for every agent
 .agents/skills/           Workflows, role/conflict/MCP skills + requested upstream skills
 .agents/rules/            Future organizer-rule extension point
 .agents/vendor.json       Upstream attribution, versions, payload digests
+.specify/                 Spec Kit lean preset, constitution, templates, cross-platform helpers
 .claude/skills/           Ignored Claude bundles generated automatically by setup
 .local/                  Ignored skill-copy manifest and chat-local checkpoints
 .github/                  CI, task issue form, PR template, Copilot adapter
@@ -161,7 +164,7 @@ The canonical skills use portable `SKILL.md` bundles in `.agents/skills`.
 Native discovery varies by tool; the [AI tools guide](docs/ai-tools.md) provides adapters,
 automatic native setup, exact prompts, and a manual fallback for ChatGPT, Devin, and other environments.
 
-A fresh clone includes all thirteen skill bundles and their supporting resources in `.agents/skills`.
+A fresh clone includes all twenty-three skill bundles and their supporting resources in `.agents/skills`.
 The common `npm run setup` generates Claude's complete native bundles automatically; teammates
 do not need a separate Claude export or upstream reinstall. Codex, OpenCode, current Antigravity,
 and current Copilot read the canonical folder directly. Adapter folders contain host-specific
@@ -181,7 +184,27 @@ $parallel-work Split these independent tasks into isolated worktrees.
 
 These are **chat prompts, not shell commands**. Run Impeccable `init` after the product
 direction is known. `grill-me` includes its required `grilling` dependency. There are
-thirteen skill folders total; load only the selected role and phase workflows for the task.
+twenty-three skill folders total; load only the selected role and phase workflows for the task.
+
+### Spec Kit
+
+Spec Kit **v1.1.1** and its official **lean preset** are included for bounded spec-driven work.
+After the common setup, teammates can use the skills without installing Python, uv, or the
+Specify CLI. Claude copies are generated automatically; OpenCode has `/speckit-*` project commands.
+In Codex chat, once the guidelines and product direction are known:
+
+```text
+$speckit-specify Use feature directory specs/demo-flow. Specify our approved main demo journey.
+$speckit-plan Plan the smallest end-to-end slice using the selected stack.
+$speckit-tasks Break it into dependency-ordered steps and reference approved role allocations.
+$speckit-implement Implement only my assigned steps; run the existing validation workflow.
+$speckit-converge Assess gaps against this feature's spec and verified behavior.
+```
+
+Claude Code and OpenCode use the same names with `/` in place of `$`. The constitution captures
+existing team agreements. Feature specs/checklists stay separate from allocation receipts;
+parallel workers retain existing scope checks. See [Spec Kit setup and usage](docs/spec-kit.md)
+for optional checks, Windows helper equivalents, and the remaining local prerequisites.
 
 ### Claude Code
 

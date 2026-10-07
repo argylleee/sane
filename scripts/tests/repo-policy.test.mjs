@@ -19,6 +19,7 @@ test('adding app code cannot leave foundation-only validation green', () => {
       '.claude/skills/impeccable/scripts/live-browser.js',
       '.github/skills/impeccable/scripts/live-browser.js',
       '.agent/skills/impeccable/scripts/live-browser.js',
+      '.specify/scripts/python/check_prerequisites.py',
     ]),
     [],
   );

@@ -11,6 +11,7 @@ import {
   isStructuredFile,
   treeDigest,
   vendorNames,
+  isVendoredFile,
 } from './lib/repo-policy.mjs';
 
 const errors = [];
@@ -50,11 +51,7 @@ for (const file of files) {
       errors.push(`Invalid structured file ${file}: ${error.message}`);
     }
   }
-  if (
-    !file.endsWith('.md') ||
-    vendorNames.some((name) => file.startsWith(`.agents/skills/${name}/`))
-  )
-    continue;
+  if (!file.endsWith('.md') || isVendoredFile(file)) continue;
   for (const match of read(file).matchAll(/!?\[[^\]\n]*\]\(([^)\n]+)\)/g)) {
     const target = match[1].split('#')[0];
     if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target)) continue;
@@ -107,6 +104,10 @@ try {
     if (!expected || treeDigest(join(root, '.agents/skills', name)) !== expected) {
       errors.push(`Vendored ${name} changed. Review the update, then npm run vendor:record.`);
     }
+  }
+  for (const [path, asset] of Object.entries(vendor.assets ?? {})) {
+    if (treeDigest(join(root, path)) !== asset.sha256)
+      errors.push(`Vendored ${path} changed. Review the update, then npm run vendor:record.`);
   }
   if (!read('.agents/skills/grill-me/SKILL.md').includes('grilling'))
     errors.push('Review grill-me dependency wiring.');

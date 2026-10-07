@@ -1,4 +1,4 @@
-import { copyFileSync, existsSync, chmodSync } from 'node:fs';
+import { copyFileSync, existsSync, chmodSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { root, git } from './lib/runtime.mjs';
 import { assertSkillMirrors, skillDestinations, syncSkillMirrors } from './lib/skill-mirrors.mjs';
@@ -9,6 +9,10 @@ const updated = syncSkillMirrors(root);
 assertSkillMirrors(root);
 if (!existsSync(join(root, '.env'))) copyFileSync(join(root, '.env.example'), join(root, '.env'));
 if (process.platform !== 'win32') {
+  const scripts = join(root, '.specify/scripts/bash');
+  if (existsSync(scripts))
+    for (const file of readdirSync(scripts))
+      if (file.endsWith('.sh')) chmodSync(join(scripts, file), 0o755);
   // Windows checkouts cannot preserve executable bits before the scaffold is committed.
   for (const destination of ['.agents/skills', ...Object.values(skillDestinations)])
     if (existsSync(join(root, destination, 'impeccable/scripts/impeccable')))

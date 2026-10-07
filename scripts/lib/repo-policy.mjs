@@ -2,7 +2,25 @@ import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 
-export const vendorNames = ['grill-me', 'grilling', 'impeccable'];
+export const specKitNames = [
+  'speckit-analyze',
+  'speckit-checklist',
+  'speckit-clarify',
+  'speckit-constitution',
+  'speckit-converge',
+  'speckit-implement',
+  'speckit-plan',
+  'speckit-specify',
+  'speckit-tasks',
+  'speckit-taskstoissues',
+];
+export const vendorNames = ['grill-me', 'grilling', 'impeccable', ...specKitNames];
+export function isVendoredFile(file) {
+  return (
+    vendorNames.some((name) => file.startsWith(`.agents/skills/${name}/`)) ||
+    /^\.specify\/(scripts|templates|presets|workflows|integrations)\//.test(file)
+  );
+}
 
 export function isPrivateFile(file) {
   const name = file.split('/').at(-1);
@@ -15,7 +33,11 @@ export function isPrivateFile(file) {
 
 export function isApplicationFile(file) {
   if (/^(\.claude|\.agent)\/skills\//.test(file)) return false;
-  if (/^(scripts|docs|\.agents|\.github|\.githooks|\.local|\.cache|\.worktrees)\//.test(file))
+  if (
+    /^(scripts|docs|\.agents|\.specify|\.github|\.githooks|\.local|\.cache|\.worktrees)\//.test(
+      file,
+    )
+  )
     return false;
   if (file === 'eslint.config.mjs') return false;
   return /\.(js|mjs|cjs|jsx|ts|tsx|py|go|rs|java|kt|swift|php|rb|cs|html|css|scss|vue|svelte)$/i.test(
