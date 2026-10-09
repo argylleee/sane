@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import {
+  detectCapabilities,
   extractText,
   getEmbeddingsStatus,
   getLlmStatus,
+  LLM_DOWNLOAD_MB,
   loadEmbeddings,
+  loadLlm,
   shouldAutoPreload,
   startEmbeddingsPreload,
   startLlmPreload,
@@ -267,6 +270,8 @@ export function App() {
   const [modelAtScan, setModelAtScan] = useState<EmbeddingsStatus['state']>('idle');
   const [llmStatus, setLlmStatus] = useState<LlmStatus>(getLlmStatus);
   const [llmWriting, setLlmWriting] = useState(false);
+  const llmTier = detectCapabilities().tier;
+  const downloadLlm = () => void loadLlm(llmTier).catch(() => undefined);
   const copy = copyFor('en');
 
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
@@ -716,6 +721,27 @@ export function App() {
                             <p>{embeddingStatus.message}</p>
                           </details>
                         )}
+                      </>
+                    )}
+                    {/* Explanation model: loads by itself on Wi-Fi; on mobile data it waits here. */}
+                    {llmTier !== 'C' &&
+                      llmStatus.state === 'idle' &&
+                      embeddingStatus.state !== 'loading' && (
+                        <>
+                          <p>{copy.llmPaused(LLM_DOWNLOAD_MB)}</p>
+                          <Button type="button" variant="outline" onPress={downloadLlm}>
+                            {copy.llmDownloadAction}
+                          </Button>
+                        </>
+                      )}
+                    {llmStatus.state === 'loading' && <p>{copy.llmProgress(llmStatus.progress)}</p>}
+                    {llmStatus.state === 'ready' && <p>{copy.llmReady}</p>}
+                    {llmStatus.state === 'error' && (
+                      <>
+                        <p>{copy.llmError}</p>
+                        <Button type="button" variant="outline" onPress={downloadLlm}>
+                          {copy.llmRetry}
+                        </Button>
                       </>
                     )}
                   </div>

@@ -97,6 +97,12 @@ type Copy = {
   modelNotReadyAtScan: string;
   modelFailedAtScan: string;
   modelSkippedAtScan: string;
+  llmPaused: (size: number) => string;
+  llmDownloadAction: string;
+  llmProgress: (percent: number) => string;
+  llmReady: string;
+  llmError: string;
+  llmRetry: string;
   llmWriting: string;
   llmExplanationTitle: string;
   llmDisclaimer: string;
@@ -215,6 +221,13 @@ export const COPY: Record<Lang, Copy> = {
     modelFailedAtScan:
       'The AI check could not run, so this used rules only. You can try preparing it again.',
     modelSkippedAtScan: 'The AI check is paused to save data, so this used rules only.',
+    llmPaused: (size) =>
+      `The AI explanation is paused to save mobile data (about ${size} MB, downloaded once).`,
+    llmDownloadAction: 'Download AI explanation',
+    llmProgress: (percent) => `Preparing the AI explanation: ${percent}%`,
+    llmReady: 'AI explanation ready.',
+    llmError: 'The AI explanation could not load. Results still include fixed advice.',
+    llmRetry: 'Try the AI explanation again',
     llmWriting: 'Writing a short explanation on this device…',
     llmExplanationTitle: 'AI explanation',
     llmDisclaimer: 'AI-written, may be wrong. It cannot change the risk level.',
@@ -386,6 +399,13 @@ export const COPY: Record<Lang, Copy> = {
       'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Maaari mong subukang ihanda itong muli.',
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
+    llmPaused: (size) =>
+      `Naka-pause ang AI na paliwanag para makatipid ng mobile data (mga ${size} MB, isang beses lang).`,
+    llmDownloadAction: 'I-download ang AI na paliwanag',
+    llmProgress: (percent) => `Inihahanda ang AI na paliwanag: ${percent}%`,
+    llmReady: 'Handa na ang AI na paliwanag.',
+    llmError: 'Hindi ma-load ang AI na paliwanag. May payo pa rin sa bawat resulta.',
+    llmRetry: 'Subukan ulit ang AI na paliwanag',
     llmWriting: 'Isinusulat ang maikling paliwanag sa device na ito…',
     llmExplanationTitle: 'AI na paliwanag',
     llmDisclaimer: 'AI ang sumulat nito at puwedeng magkamali. Hindi nito mababago ang risk level.',
@@ -555,6 +575,13 @@ export const COPY: Record<Lang, Copy> = {
       'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Pwede mong subukang i-prepare ulit.',
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
+    llmPaused: (size) =>
+      `Naka-pause ang AI explanation para makatipid sa mobile data (mga ${size} MB, one-time lang).`,
+    llmDownloadAction: 'I-download ang AI explanation',
+    llmProgress: (percent) => `Inihahanda ang AI explanation: ${percent}%`,
+    llmReady: 'Ready na ang AI explanation.',
+    llmError: 'Hindi ma-load ang AI explanation. May advice pa rin sa bawat result.',
+    llmRetry: 'I-try ulit ang AI explanation',
     llmWriting: 'Sinusulat ang maikling explanation sa device na ito…',
     llmExplanationTitle: 'AI explanation',
     llmDisclaimer: 'AI-written ito at puwedeng magkamali. Hindi nito mababago ang risk level.',
