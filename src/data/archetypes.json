@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "note": "AI-drafted seeds. Review with a native Filipino speaker and add real phrasings before use. Human-authored reference data, not training data. The benign list holds hand-written examples of ordinary messages, used to compare against scam similarity (no training).",
   "archetypes": [
     {
@@ -13,7 +13,10 @@
       "phrases": [
         "Your GCash account has been limited. Verify your details within 24 hours to avoid permanent suspension.",
         "Na-limit ang iyong GCash account. I-verify ang iyong detalye sa loob ng 24 oras para hindi tuluyang ma-suspend.",
-        "Na-lock na GCash mo. I-verify mo na agad ang account mo sa link para hindi ma-suspend."
+        "Na-lock na GCash mo. I-verify mo na agad ang account mo sa link para hindi ma-suspend.",
+        "Hello po, na-restrict ang GCash ninyo dahil sa kulang na detalye. Paki-update po agad sa link para hindi ma-deactivate.",
+        "Na-flag ang Maya mo, i-verify mo na ngayon or mawawala yung access mo sa account.",
+        "GCash Alert: may kahina-hinalang activity sa wallet mo. I-confirm ang pangalan at MPIN sa link sa ibaba."
       ]
     },
     {
@@ -27,7 +30,10 @@
       "phrases": [
         "Please send the 6-digit code we just texted you so we can cancel the wrong transaction.",
         "Pakisabi ang 6-digit code na ipinadala namin para makansela ang maling transaksyon.",
-        "Pa-send naman ng OTP na na-receive mo, nagkamali kasi kami ng transaction."
+        "Pa-send naman ng OTP na na-receive mo, nagkamali kasi kami ng transaction.",
+        "Pwede po bang ibigay ang 6 digit na pumasok sa phone ninyo? Kailangan lang po namin para ma-refund ang bayad ninyo.",
+        "Boss, paki-send yung code na dumating sa number mo, mali kasi yung nailagay ko na amount.",
+        "Please reply with the verification code you just received so we can reverse the charge on your card."
       ]
     },
     {
@@ -41,7 +47,10 @@
       "phrases": [
         "Earn 3,000 pesos a day by liking videos. No experience needed. Message us on Telegram to start.",
         "Kumita ng 3,000 piso kada araw sa pag-like ng videos. Walang karanasan na kailangan. Mag-message sa Telegram para magsimula.",
-        "Earn ka ng 3k daily, like lang ng videos. Walang experience needed, chat ka lang sa Telegram."
+        "Earn ka ng 3k daily, like lang ng videos. Walang experience needed, chat ka lang sa Telegram.",
+        "Hiring po kami ng part-time online. Kikita ka ng 500 to 1,000 kada araw, i-like at i-share lang ang posts. Chat ka sa Telegram.",
+        "Work from home, walang kailangang experience! Sumali sa group namin at magsimulang kumita ngayon din.",
+        "Complete simple tasks, get paid daily. First, top up your account to unlock your tasks."
       ]
     },
     {
@@ -55,7 +64,10 @@
       "phrases": [
         "Your parcel is on hold. Pay the 49 peso redelivery fee at the link below or it will be returned.",
         "Naka-hold ang iyong parcel. Bayaran ang 49 pisong redelivery fee sa link sa ibaba o ibabalik ito.",
-        "Hold ang parcel mo. Bayaran mo yung 49 pesos na redelivery fee sa link or ibabalik na 'to."
+        "Hold ang parcel mo. Bayaran mo yung 49 pesos na redelivery fee sa link or ibabalik na 'to.",
+        "Hi po, hindi ma-deliver ang parcel ninyo dahil kulang ang address. Magbayad po ng 35 pesos sa link para ma-reschedule.",
+        "May package ka sa courier, kailangan mo munang bayaran yung customs fee para ma-release.",
+        "Your parcel could not be delivered. Pay the small redelivery fee at this link within 24 hours or it will be sent back."
       ]
     },
     {
@@ -69,7 +81,10 @@
       "phrases": [
         "Congratulations! You won 50,000 pesos in our raffle. Claim your prize now by sending your details.",
         "Binabati ka! Nanalo ka ng 50,000 piso sa aming raffle. I-claim ang premyo ngayon sa pagpapadala ng iyong detalye.",
-        "Congrats, nanalo ka ng 50k sa raffle! I-claim mo na ngayon, send mo lang details mo."
+        "Congrats, nanalo ka ng 50k sa raffle! I-claim mo na ngayon, send mo lang details mo.",
+        "Congrats po! Napili kayo bilang winner ng 100,000 piso. Para ma-claim, magbayad lang po ng processing fee.",
+        "Nanalo ka sa promo ng mall, i-send mo lang ang buong pangalan, address at GCash number mo para ma-release ang premyo.",
+        "You are today’s lucky winner. Reply with your details and pay the claim fee to receive your prize."
       ]
     },
     {
@@ -83,7 +98,10 @@
       "phrases": [
         "Hi Mom, this is my new number. I lost my phone. Can you send 5,000 pesos by e-wallet? It's urgent.",
         "Hello Ma, ito ang bago kong numero. Nawala ang telepono ko. Maaari bang magpadala ng 5,000 piso sa e-wallet? Madalian.",
-        "Ma, new number ko 'to, nawala phone ko. Pa-send naman ng 5k sa GCash, urgent talaga."
+        "Ma, new number ko 'to, nawala phone ko. Pa-send naman ng 5k sa GCash, urgent talaga.",
+        "Ma, ito na po bagong number ko. Nasira phone ko. Pwede po ba kayong mag-GCash ng 3,000 ngayon? Babayaran ko po mamaya.",
+        "Tita, si Jun ito, naaksidente ako at kailangan ng pang-ospital. Pakisend po agad sa number na ito, huwag niyo muna sabihin kay Mama.",
+        "Hi, it is me. I am in trouble and I need money right now. Please send it to this e-wallet and do not tell anyone."
       ]
     },
     {
@@ -97,7 +115,10 @@
       "phrases": [
         "You are overdue. Pay now or we will message all your contacts and post your photo online.",
         "Lampas ka na sa due date. Magbayad na o ime-message namin ang lahat ng contacts mo at ipo-post ang iyong larawan.",
-        "Overdue ka na. Bayaran mo ngayon or ime-message namin lahat ng contacts mo."
+        "Overdue ka na. Bayaran mo ngayon or ime-message namin lahat ng contacts mo.",
+        "Overdue na po kayo. Kapag hindi kayo nagbayad ngayong araw, ipo-post namin ang litrato ninyo at sasabihan namin ang lahat ng contacts ninyo.",
+        "Last warning: bayaran mo na yung utang mo today or ite-text namin family at employer mo na scammer ka.",
+        "You have not paid your loan. We will contact everyone in your phone and post your ID online if you do not pay now."
       ]
     },
     {
@@ -111,7 +132,10 @@
       "phrases": [
         "Unusual login detected on your bank account. Click here to secure your account immediately.",
         "May kahina-hinalang pag-login sa iyong bank account. Mag-click dito para ma-secure agad ang account.",
-        "May unusual login sa bank account mo. I-click mo 'to para ma-secure agad."
+        "May unusual login sa bank account mo. I-click mo 'to para ma-secure agad.",
+        "BDO Alert: may na-detect na hindi pamilyar na login sa account ninyo. I-click ang link para i-secure, o ila-lock ang card ninyo.",
+        "Hello po, ito ang security team ng bank. May nag-try mag-withdraw sa account mo. I-verify ang card number mo para ma-cancel.",
+        "Suspicious sign-in blocked. To keep your account open, confirm your online banking login at the link below."
       ]
     },
     {
@@ -125,7 +149,10 @@
       "phrases": [
         "Your SSS/PhilHealth benefit is ready for release. Confirm your details at the link to receive payment.",
         "Handa na ang iyong benepisyo sa SSS/PhilHealth. Kumpirmahin ang detalye sa link para matanggap ang bayad.",
-        "Ready na yung SSS benefit mo. I-confirm mo details mo sa link para ma-release."
+        "Ready na yung SSS benefit mo. I-confirm mo details mo sa link para ma-release.",
+        "May naka-hold na ayuda para sa inyo mula sa DSWD. Para ma-release, ibigay po ang buong pangalan at bank details sa link.",
+        "Ready na ang SSS pension mo, i-click mo yung link at i-confirm ang UMID number para makuha mo na.",
+        "Your tax refund is available. Verify your identity and bank account at the link to receive the payment."
       ]
     },
     {
@@ -139,7 +166,10 @@
       "phrases": [
         "Final notice: your electricity will be disconnected today due to unpaid bill. Call this number now.",
         "Huling abiso: puputulin ang inyong kuryente ngayon dahil sa hindi nabayarang bill. Tumawag sa numerong ito ngayon.",
-        "Final notice, puputulin na kuryente mo today dahil unpaid ang bill. Tawag ka agad sa number na 'to."
+        "Final notice, puputulin na kuryente mo today dahil unpaid ang bill. Tawag ka agad sa number na 'to.",
+        "Final notice po: puputulin ang kuryente ninyo ngayong araw dahil sa hindi nabayarang bill. Tumawag agad sa numerong ito para maayos.",
+        "Putol na ang tubig mo bukas kapag hindi ka nag-settle today. Bayaran mo via GCash sa number na to.",
+        "Your internet will be disconnected within 2 hours due to an unpaid balance. Pay now using this link to avoid disconnection."
       ]
     },
     {
@@ -153,7 +183,10 @@
       "phrases": [
         "Invest 1,000 pesos and get 5,000 in three days. Guaranteed returns. Limited slots only.",
         "Mag-invest ng 1,000 piso at makakuha ng 5,000 sa loob ng tatlong araw. Garantisadong tubo. Limitado ang slot.",
-        "Invest ka ng 1k, 5k balik in 3 days, guaranteed. Limited slots lang kaya sumali ka na."
+        "Invest ka ng 1k, 5k balik in 3 days, guaranteed. Limited slots lang kaya sumali ka na.",
+        "Mag-invest ka lang ng 2,000, siguradong 10,000 ang balik sa loob ng isang linggo. Limitado lang ang slots, sumali na.",
+        "Guaranteed profit daily sa crypto trading group namin. Mag-deposit ka lang para makapag-start, walang talo.",
+        "Double your money in 7 days with our trading system. No risk, guaranteed returns. Join the group before slots run out."
       ]
     },
     {
@@ -167,7 +200,58 @@
       "phrases": [
         "I sent you a gift from abroad but it is stuck at customs. Please pay the release fee so I can send it.",
         "Nagpadala ako ng regalo mula abroad pero naipit sa customs. Pakibayaran ang release fee para maipadala ko.",
-        "Nag-send ako ng gift from abroad pero stuck sa customs. Bayaran mo muna release fee para ma-deliver."
+        "Nag-send ako ng gift from abroad pero stuck sa customs. Bayaran mo muna release fee para ma-deliver.",
+        "Hi dear, nagpadala ako ng regalo pero naipit sa customs sa Manila. Pakibayaran muna ang tax para ma-release, babayaran kita pagdating ko.",
+        "Mahal, may emergency ako sa abroad at kailangan ko ng pera para sa ospital. Pakisend sa account na ito, pangako babalik ko.",
+        "My love, I am stuck at the airport and need money for the fee. Please send it now and I will repay you when we meet."
+      ]
+    },
+    {
+      "id": "reward_points_expiry",
+      "name": {
+        "en": "Reward points about to expire",
+        "fil": "Reward points na malapit nang mag-expire",
+        "taglish": "Reward points na mag-e-expire na"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Smart reminds you: your reward points will expire today. Redeem your gift now at this link.",
+        "Mawawala na ang iyong reward points ngayong araw. I-redeem na ang regalo mo sa link bago ito mag-expire.",
+        "Hello po, mag-e-expire na ang points mo sa Globe ngayon. I-claim mo na yung voucher sa link na ito.",
+        "Your bank rewards of 6,000 points expire tonight. Redeem for cash or a gift card here before you lose them.",
+        "Congrats, may 8,500 points ka na pwede pang i-redeem. Mag-login sa link para ma-claim bago mag-expire."
+      ]
+    },
+    {
+      "id": "marketplace_deposit",
+      "name": {
+        "en": "Deposit demanded before you can see the item",
+        "fil": "Hinihinging deposito bago makita ang gamit",
+        "taglish": "Deposit muna bago i-check ang item"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Interested pa po ba kayo sa camera? Kailangan ng 1,000 pesos na reservation fee bago niyo ma-inspect ang item.",
+        "Deposit muna ng 500 sa GCash para ma-hold ko ang unit, saka kita ipapakita ang item, may ibang buyer na kasi.",
+        "Send a reservation deposit first so I can hold the phone for you. You can inspect it after you pay.",
+        "Para sa binebenta kong laptop, magpadala muna kayo ng downpayment bago kayo makapunta sa meetup.",
+        "Sorry po, wala akong time mag-meet. Pay the full amount muna, ipapadala ko na lang sa courier."
+      ]
+    },
+    {
+      "id": "advance_fee_release",
+      "name": {
+        "en": "Pay a fee first to receive money or a loan",
+        "fil": "Magbayad muna ng bayad bago matanggap ang pera o pautang",
+        "taglish": "Fee muna bago ma-release ang pera o loan"
+      },
+      "defaultWeight": 40,
+      "phrases": [
+        "Approved na ang loan ninyo na 20,000. Magbayad muna po ng 1,500 na insurance fee bago namin i-release.",
+        "Para ma-release ang ayuda mo, send ka muna ng processing fee sa GCash, i-refund din namin yan pagkatanggap.",
+        "Your loan of 30,000 is approved. Pay a 2,000 advance fee first so we can release the funds today.",
+        "Nanalo ka ng cash prize pero kailangan mo munang bayaran ang tax at claim fee bago namin ipadala.",
+        "To receive your aid grant, send a verification payment first. The amount will be returned to you with the grant."
       ]
     }
   ],
@@ -189,6 +273,14 @@
     "Walang pasok bukas dahil sa masamang panahon. Mag-ingat po tayong lahat.",
     "Thanks for shopping with us! Enjoy 10 percent off on your next visit this weekend.",
     "Your data promo is active until tomorrow night. Check your balance in the official app.",
-    "Game ka ba mamaya? Magkita tayo sa court, ambag lang tayo sa renta."
+    "Game ka ba mamaya? Magkita tayo sa court, ambag lang tayo sa renta.",
+    "Dadating bukas ang parcel mo. Hindi mo kailangang magbayad ng kahit ano, bayad na ang shipping.",
+    "Paalala po: may check-up kayo bukas ng 9 ng umaga sa clinic. Dalhin lang po ang ID at resulta ng lab.",
+    "Class reminder: walang pasok bukas dahil sa bagyo. Mag-ingat po tayong lahat.",
+    "Your Meralco bill for September is now available in the official app. Due date is October 20.",
+    "Ang code mo ay 482913. Huwag itong ibahagi kahit kanino, kahit sa taga-bangko. Mag-e-expire ito sa 5 minuto.",
+    "Hi, nandito na ako sa lobby ng building ninyo, paki-confirm na lang kung anong floor.",
+    "Meeting po bukas ay inilipat sa 3pm. Paki-send na lang ang report bago iyon, salamat!",
+    "Reminder: your appointment is tomorrow at 10 AM. Please bring a valid ID. No payment is required."
   ]
 }
