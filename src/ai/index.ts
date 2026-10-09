@@ -8,3 +8,12 @@ export {
 } from './embedClient';
 export { matchArchetypes, SIMILARITY_FLOOR } from './match';
 export { archetypes, type Archetype } from './archetypeIndex';
+export {
+  explainWithLlm,
+  getLlmStatus,
+  loadLlm,
+  subscribeLlm,
+  LLM_MODEL_BY_TIER,
+  type LlmStatus,
+} from './llm';
+export { extractText } from './ocr';
