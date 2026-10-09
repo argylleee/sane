@@ -28,3 +28,25 @@ only through refreshed receipts. No branch, worktree, or external Figma mutation
 At Hour 2, native capture failure is a core blocker. Preserve manual flow and independent work,
 but do not declare success or remove automatic detection. Resolve permission/device/source options
 with concrete evidence. Sources and classifiers must be real before the final demo.
+
+## Proposed writing scopes
+
+Not yet allocated. `coordination.json` remains empty by design: the integration lead creates each
+entry with a real owner ID, branch, worktree path, and full base revision, and obtains the worker's
+acknowledgement before any status becomes `active`. The scopes below are a collision-free starting
+layout, not a receipt. Paths under `android/` are provisional until TASK-101 scaffolds the project.
+
+| Task     | Role        | Proposed paths                                             | Write resources                                            | Depends on |
+| -------- | ----------- | ---------------------------------------------------------- | ---------------------------------------------------------- | ---------- |
+| TASK-101 | integration | `android/`, `capacitor.config.ts`, `specs/native-capture/` | `schema:android-manifest`, `interface:capacitor-bridge-v1` | none       |
+| TASK-102 | backend     | `model/`, `specs/local-classifier/`                        | `interface:model-artifact-v1`                              | none       |
+| TASK-103 | frontend    | `app/`, `specs/scan-experience/`                           | none                                                       | none       |
+| TASK-104 | backend     | shared analyzer package, `specs/shared-analyzer/`          | `interface:analyzer-v1`                                    | 101, 102   |
+| TASK-105 | integration | bridge glue, `specs/monitoring-integration/`               | `interface:bridge-surface-v1`                              | 103, 104   |
+| TASK-106 | integration | `docs/sane/verification.md`, `specs/release-verification/` | `external:submission:appbuildersph-2026`                   | 105        |
+
+Each worker also owns `docs/tasks/TASK-1xx.md` and its handoff. TASK-101, TASK-102, and TASK-103
+are independent and can hold scopes simultaneously. TASK-104 writes inside the native project
+TASK-101 created, so TASK-101 must reach `integrated` and release its claim first; integration
+narrows TASK-101 and issues TASK-104 its own receipt rather than letting both hold `android/`.
+Add the selected stack's shared configuration and lockfile paths to `sharedPaths` at that point.
