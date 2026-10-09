@@ -6,7 +6,16 @@ export {
   subscribeEmbeddings,
   type EmbeddingsStatus,
 } from './embedClient';
-export { matchArchetypes, SIMILARITY_FLOOR } from './match';
+export {
+  evidenceLevel,
+  matchArchetypes,
+  matchWithEvidence,
+  MARGIN_MODERATE,
+  MARGIN_STRONG,
+  SIMILARITY_FLOOR,
+  type EvidenceLevel,
+  type MatchWithEvidence,
+} from './match';
 export { archetypes, type Archetype } from './archetypeIndex';
 export {
   explainWithLlm,

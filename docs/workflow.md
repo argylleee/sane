@@ -59,7 +59,8 @@ git worktree add .worktrees/TASK-001 -b codex/feat/task-001-demo-screen main
 For one branch and worktree per role (`codex/chore/role-<role>` in `.worktrees/role-<role>`), run
 `npm run role:worktree`; it is idempotent and leaves existing worktrees untouched.
 
-Open `.worktrees/TASK-001` as that worker's workspace. In it, run:
+Role skills do the following automatically for allocated tasks via `npm run task:start -- --role <role>` (or `--task ID`).
+Otherwise, open `.worktrees/TASK-001` as that worker's workspace. In it, run:
 
 ```sh
 npm ci --ignore-scripts

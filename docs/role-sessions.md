@@ -71,3 +71,10 @@ The helper behavior is covered by isolated tests; actual platform hook delivery/
 confirmed in the installed host. See [Codex hooks](https://learn.chatgpt.com/docs/hooks),
 [Claude hooks](https://code.claude.com/docs/en/hooks#sessionstart), and
 [OpenCode commands](https://opencode.ai/docs/commands/).
+
+## Task worktrees after activation
+
+Activation does not create a checkout. After it, the role skill runs `npm run task:start -- --role <role>` so each
+allocated task gets its own `.worktrees/<slot>` on the allocated branch, with a registry snapshot for `check:task`.
+The role stays attached to the session that activated it; a worktree the skill creates for an allocated task is
+part of that session. Opening a chat directly inside a different worktree still needs a fresh activation.

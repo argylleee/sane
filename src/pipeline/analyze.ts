@@ -1,20 +1,33 @@
 // OWNER: backend (orchestration and fallbacks). Contract: src/types.ts.
-import type { AnalyzeInput, AnalyzeOptions, Match, Verdict } from '../types';
+import type { AnalyzeInput, AnalyzeOptions, Verdict } from '../types';
 import { extractText } from '../ai/ocr';
-import { matchArchetypes } from '../ai/match';
-import { explain } from '../explain/templates';
+import { matchWithEvidence, type MatchWithEvidence } from '../ai/match';
+import { explain, localizeSignals } from '../explain/templates';
 import { runRules } from '../rules';
 import { score } from '../score/score';
 import { normalize } from './normalize';
 
-function fallback(opts: AnalyzeOptions): Verdict {
+function fallback(opts: AnalyzeOptions, ocrFailed = false): Verdict {
+  const explanation = explain('not_sure', opts.lang);
   return {
     level: 'not_sure',
     score: 0,
     signals: [],
     matches: [],
     lang: opts.lang,
-    explanation: explain('not_sure', opts.lang),
+    explanation: ocrFailed
+      ? {
+          ...explanation,
+          steps: [
+            {
+              en: 'Could not read the image. Paste the message text instead.',
+              fil: 'Hindi mabasa ang larawan. I-paste na lang ang mensahe.',
+              taglish: 'Hindi mabasa ang image. I-paste na lang ang message.',
+            }[opts.lang],
+            ...explanation.steps,
+          ],
+        }
+      : explanation,
     usedModels: { ocr: false, embeddings: false, llm: false },
   };
 }
@@ -33,25 +46,26 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
     if (!text) return fallback(opts);
 
     const signals = runRules(text);
-    let matches: Match[] = [];
+    let evidence: MatchWithEvidence | null = null;
     try {
-      matches = await matchArchetypes(text);
+      evidence = await matchWithEvidence(text);
     } catch {
       // Fallback 1: embeddings failed, so score from rules only.
     }
 
-    const { level, score: total } = score(signals, matches);
+    const matches = evidence?.matches ?? [];
+    const { level, score: total, archetypeId } = score(signals, matches, evidence?.level);
     return {
       level,
       score: total,
-      signals,
+      signals: localizeSignals(signals, opts.lang),
       matches,
-      archetypeId: matches[0]?.archetypeId,
+      archetypeId,
       lang: opts.lang,
       explanation: explain(level, opts.lang),
-      usedModels: { ocr, embeddings: matches.length > 0, llm: false },
+      usedModels: { ocr, embeddings: evidence !== null, llm: false },
     };
   } catch {
-    return fallback(opts); // Fallback 4: never show a blank screen.
+    return fallback(opts, 'image' in input); // Fallback 4: never show a blank screen.
   }
 }

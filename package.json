@@ -15,6 +15,7 @@
     "lint": "eslint . && node scripts/lint-markdown.mjs",
     "check:repo": "node scripts/check-repo.mjs",
     "check:task": "node scripts/check-task.mjs",
+    "task:start": "node scripts/start-task.mjs",
     "check:git": "node scripts/check-git.mjs",
     "role:session": "node scripts/role-session.mjs",
     "role:worktree": "node scripts/role-worktree.mjs",
@@ -49,7 +50,10 @@
     "katex": "0.19.0"
   },
   "dependencies": {
+    "@huggingface/transformers": "4.3.1",
+    "@mlc-ai/web-llm": "0.2.85",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "tesseract.js": "7.0.0"
   }
 }

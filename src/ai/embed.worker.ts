@@ -1,8 +1,15 @@
 // OWNER: model. Runs Transformers.js off the main thread so the UI never freezes.
-import { createEmbedder, type Embed, type EmbedKind, type LoadProgress } from './embedder';
+import {
+  createEmbedder,
+  type Embed,
+  type EmbedKind,
+  type LoadProgress,
+  type ModelSource,
+} from './embedder';
 
 export type WorkerRequest =
-  { id: number; type: 'init' } | { id: number; type: 'embed'; texts: string[]; kind: EmbedKind };
+  | { id: number; type: 'init'; source?: ModelSource }
+  | { id: number; type: 'embed'; texts: string[]; kind: EmbedKind };
 
 export type WorkerResponse =
   | { id: number; type: 'progress'; progress: LoadProgress }
@@ -21,8 +28,10 @@ ctx.onmessage = async (event) => {
   const request = event.data;
   try {
     if (request.type === 'init') {
-      embedder ??= createEmbedder((progress) =>
-        ctx.postMessage({ id: request.id, type: 'progress', progress }),
+      embedder ??= createEmbedder(
+        (progress) => ctx.postMessage({ id: request.id, type: 'progress', progress }),
+        'wasm',
+        request.source,
       );
       await embedder;
       ctx.postMessage({ id: request.id, type: 'ready' });

@@ -30,7 +30,8 @@ named teammates or spawn every role merely because roles exist. Integration is r
 6. Every role gets its own branch and worktree automatically. Run
    `npm run role:worktree -- [--base REF] [frontend|backend|model|integration]` (no role = all four).
    It creates `codex/chore/role-<role>` at `.worktrees/role-<role>` from `main`, skips existing
-   worktrees untouched, and never resets or deletes. Task work inside a role worktree still follows
+   worktrees untouched, and never resets or deletes. For allocated tasks, role skills use `npm run task:start -- --role <role>` instead,
+   which creates the task branch and worktree from `coordination.json`. Task work inside a role worktree still follows
    `docs/git-conventions.md` task branches once a task is allocated.
 7. Reuse workers and wait for milestones. Integrate one completed slice at a time, validate
    combined behavior, then release its claim. Blocked/ready work retains ownership until explicitly released.
