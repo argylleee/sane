@@ -47,3 +47,5 @@ references (`design-ux` for the mobile-first PWA and three-language copy). Follo
 
 MCP is optional. Load `mcp-workflow` only when a named design/browser/documentation service
 adds task value; use only the approved tools and resources scoped to this task.
+
+When a slice is committed and checked, land it with `npm run task:land` (direct to `main`, no PR). Resolve any merge conflict yourself via `resolve-conflict`, keeping both sides; never force-push.

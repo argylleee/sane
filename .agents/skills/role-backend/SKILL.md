@@ -48,3 +48,5 @@ boundary (`architecture`, `security-privacy`). Follow `docs/coordination.md` for
 
 For a necessary MCP service, load `mcp-workflow` and use a scoped sandbox/read-only connection
 first. A task's external write-resource claim coordinates workers; it does not authorize the write.
+
+When a slice is committed and checked, land it with `npm run task:land` (direct to `main`, no PR). Resolve any merge conflict yourself via `resolve-conflict`, keeping both sides; never force-push.

@@ -31,3 +31,5 @@ Read `RULES.md`, `PLAN.md`, the assigned task, and the guidelines. Keep one feas
 
 When executing a parallel writing allocation, use the task scope check and validation receipt
 commands in `docs/coordination.md`. Load only the other skills needed for the current phase.
+
+When a slice is committed and checked, land it with `npm run task:land` (direct to `main`, no PR). Resolve any merge conflict yourself via `resolve-conflict`, keeping both sides; never force-push.
