@@ -1,6 +1,6 @@
 # PLAN.md: Sane
 
-**Goal:** A web app (installable PWA) that checks a suspicious SMS or chat message, in English, Filipino or Taglish, and returns a risk level, highlighted red flags and what to do next. All AI runs in the browser. Works in airplane mode.
+**Goal:** A web app (installable PWA) that checks a suspicious message (pasted, screenshot, or shared in; no inbox access), in English, Filipino or Taglish, and returns a risk level, highlighted red flags and what to do next. All AI runs in the browser. Works in airplane mode.
 
 **Deadline:** 10:00 AM, Oct 10. No extensions.
 **Feature freeze:** T+11 (about 3 hours before deadline). **Submit by:** T+14.
@@ -46,6 +46,7 @@ Times below are hours from start (T+0). Adjust if you start later than about 7 P
 - [ ] Manifest, icons, installable on Android Chrome; iOS add-to-home-screen hint
 - [ ] Download-size prompt before big model downloads on mobile
 - [ ] "Offline ready" badge, live "network requests during scan: 0" counter
+- [ ] (Cut-ladder item 1) Web Share Target handler per `.agents/skills/design-ux/references/share-target.md`, tested on a real Android phone
       **Gate:** Airplane mode on the phone, cold start from the home-screen icon, run 5 messages. Identical results to online.
 
 ### M4: OCR + LLM explanation (T+8.5 to T+11)
@@ -60,6 +61,7 @@ Times below are hours from start (T+0). Adjust if you start later than about 7 P
 ### M5: Evaluation + demo prep (T+11 to T+13)
 
 - [ ] Run 30-message test set (separate from archetypes). Record results with the report template
+- [ ] Pick thresholds with the method in `.agents/skills/data-eval/references/metrics-and-parameters.md` before the freeze
 - [ ] Fix only bugs and threshold tweaks
 - [ ] Rehearse demo twice in airplane mode on the demo device
 - [ ] Record a backup screen capture of a full run

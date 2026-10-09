@@ -75,12 +75,14 @@ Why: scam texts arrive on phones, users check them on the same phone, and phones
 
 ## Verdict levels
 
-| Level         | Tone  | Label (EN)    | Notes                                     |
-| ------------- | ----- | ------------- | ----------------------------------------- |
-| likely_scam   | red   | Likely scam   | Do not click, do not reply                |
-| suspicious    | amber | Be careful    | Verify through the official app or number |
-| probably_fine | green | Probably fine | Still never share OTP/PIN                 |
-| not_sure      | grey  | Not sure      | Show why, suggest verifying               |
+Labels and tokens follow the component sheet recorded in `DESIGN.md` (decision D-12). Filipino labels are in that file.
+
+| Level         | Tone  | Label (EN)               | Notes                                     |
+| ------------- | ----- | ------------------------ | ----------------------------------------- |
+| likely_scam   | red   | High concern             | Do not click, do not reply                |
+| suspicious    | amber | Use caution              | Verify through the official app or number |
+| probably_fine | green | No obvious warning signs | Not "safe". Still never share OTP/PIN     |
+| not_sure      | grey  | Unable to assess         | Show why, suggest verifying               |
 
 Never rely on color alone. Use an icon and the text label so it works for color-blind users and in sunlight.
 
@@ -122,7 +124,7 @@ Every user-facing string lives in one file keyed by id, with `en`, `fil`, `tagli
 }
 ```
 
-- Share Target works on Android Chrome only, once installed. It is the first thing on the cut ladder.
+- Share Target works on Android Chrome only, once installed. It is the first thing on the cut ladder. Handler code, page-side handoff and a test checklist are in `references/share-target.md`.
 - Clipboard fallback must always exist (works everywhere, needs a user tap). The Web OTP API only reads OTP codes tied to a domain, so it cannot help with scam detection.
 - Be honest in the UI: "Share or copy a message to check it." Never "scans your inbox."
 

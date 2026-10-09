@@ -1,5 +1,7 @@
 # Sane architecture and stack
 
+> **Superseded (D-10, D-12, October 9, 2026):** this Android/Capacitor/native-monitoring design is history. The live architecture is the `architecture` skill (`.agents/skills/architecture/SKILL.md`). Do not build SMS or notification capture.
+
 Status: implementation direction established for this guidance bundle; all runtime and model
 claims require validation. Read [scope](scope.md), [contracts](../sane/contracts.md),
 [model](../sane/model.md), and [security](../sane/security.md) for their authoritative details.
