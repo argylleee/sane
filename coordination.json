@@ -260,6 +260,45 @@
       "branch": "codex/feat/task-211-llm-guards",
       "worktree": "task-211",
       "baseRevision": "77f92550ed6d82eb8c948b788317197ee60ccc57"
+    },
+    {
+      "id": "TASK-212",
+      "allocation": 1,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/rules/",
+        "src/explain/",
+        "src/data/keywords.json",
+        "src/data/brands.json",
+        "docs/tasks/TASK-212.md",
+        "docs/tasks/TASK-212-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-207", "TASK-208"],
+      "branch": "codex/feat/task-212-rule-gaps",
+      "worktree": "task-212",
+      "baseRevision": "cc62e4f6f55eb72db86f441fc3b01ad028766a1d"
+    },
+    {
+      "id": "TASK-213",
+      "allocation": 1,
+      "role": "model",
+      "owner": "model-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "eval/embeddings/",
+        "docs/tasks/TASK-213.md",
+        "docs/tasks/TASK-213-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-202", "TASK-205", "TASK-208"],
+      "branch": "codex/feat/task-213-embedding-measurement",
+      "worktree": "task-213",
+      "baseRevision": "cc62e4f6f55eb72db86f441fc3b01ad028766a1d"
     }
   ]
 }
