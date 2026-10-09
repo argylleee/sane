@@ -11,3 +11,6 @@
 *.woff2 binary
 *.zip binary
 *.exe binary
+
+# Hosted model files are verified by SHA-256; never convert line endings or reformat them.
+public/models/** -text
