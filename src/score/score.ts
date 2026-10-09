@@ -1,11 +1,18 @@
-// OWNER: backend. Stub: no evidence means "not sure", never "probably fine".
+// OWNER: backend. Similarity thresholds await TASK-202 measurements.
 import type { Level, Match, Signal } from '../types';
 
 export function score(signals: Signal[], _matches: Match[]): { level: Level; score: number } {
-  if (signals.length === 0) return { level: 'not_sure', score: 0 };
   const total = Math.min(
     100,
     signals.reduce((sum, signal) => sum + signal.weight, 0),
   );
-  return { level: total >= 60 ? 'likely_scam' : 'suspicious', score: total };
+  if (total >= 60) return { level: 'likely_scam', score: total };
+  if (
+    total >= 30 ||
+    signals.some(({ id }) => id === 'otp_pin_request' || id === 'lookalike_domain')
+  )
+    return { level: 'suspicious', score: total };
+  if (total === 0 && signals.some(({ id }) => id === 'safe_credential_notice'))
+    return { level: 'probably_fine', score: 0 };
+  return { level: 'not_sure', score: total };
 }

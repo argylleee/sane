@@ -1,0 +1,60 @@
+{
+  "urgency": [
+    "urgent",
+    "immediately",
+    "act now",
+    "last warning",
+    "within 24 hours",
+    "expires today",
+    "ngayon na",
+    "ngayon din",
+    "agad",
+    "madalian",
+    "sa loob ng 24 oras"
+  ],
+  "account_threat": [
+    "suspended",
+    "blocked",
+    "locked",
+    "deactivated",
+    "account will close",
+    "mawawalan ng access",
+    "ma-block",
+    "na-lock",
+    "ma-suspend",
+    "ipapasara"
+  ],
+  "money_request": [
+    "processing fee",
+    "release fee",
+    "redelivery fee",
+    "send money",
+    "pay now",
+    "magbayad",
+    "bayaran",
+    "magpadala ng pera",
+    "mag-load",
+    "pa-gcash"
+  ],
+  "prize_or_job_bait": [
+    "you won",
+    "claim your prize",
+    "easy income",
+    "per task",
+    "guaranteed returns",
+    "nanalo ka",
+    "i-claim ang premyo",
+    "madaling trabaho",
+    "garantisadong tubo",
+    "earn ka daily"
+  ],
+  "relative_claims": [
+    "new number ko",
+    "bagong numero ko",
+    "lost my phone",
+    "nawala phone ko",
+    "it's me, new number"
+  ],
+  "shorteners": ["bit.ly", "tinyurl.com", "cutt.ly", "t.ly", "is.gd", "rb.gy"],
+  "suspicious_tlds": ["xyz", "top", "click", "icu", "buzz", "cfd", "sbs"]
+}

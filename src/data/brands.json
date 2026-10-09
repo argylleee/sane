@@ -1,0 +1,8 @@
+{
+  "brands": [
+    { "name": "gcash", "domains": ["gcash.com"] },
+    { "name": "maya", "domains": ["maya.ph"] },
+    { "name": "bdo", "domains": ["bdo.com.ph"] },
+    { "name": "bpi", "domains": ["bpi.com.ph"] }
+  ]
+}
