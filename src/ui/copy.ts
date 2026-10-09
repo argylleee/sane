@@ -97,20 +97,7 @@ type Copy = {
   modelNotReadyAtScan: string;
   modelFailedAtScan: string;
   modelSkippedAtScan: string;
-  llmTitle: string;
-  llmToggleLabel: string;
-  llmDescription: string;
-  llmPromptTitle: string;
-  llmPromptBody: (size: number) => string;
   llmWriting: string;
-  llmDownloadAction: string;
-  llmCancelAction: string;
-  llmProgress: (percent: number) => string;
-  llmProgressLabel: string;
-  llmReady: string;
-  llmError: string;
-  llmRetry: string;
-  llmUnavailable: string;
   llmExplanationTitle: string;
   llmDisclaimer: string;
   llmModelRan: string;
@@ -144,8 +131,7 @@ export const COPY: Record<Lang, Copy> = {
     themeLight: 'Light',
     themeDark: 'Dark',
     welcomeTitle: 'May duda? I-check muna.',
-    welcomeDescription:
-      'Unsure about a message? Paste it here to check for possible scam warning signs.',
+    welcomeDescription: 'Sane spots scam signs in suspicious messages, right in your browser.',
     languageLabel: 'Language',
     manualLabel: 'Manual',
     manualTitle: 'Paste to scan',
@@ -229,22 +215,7 @@ export const COPY: Record<Lang, Copy> = {
     modelFailedAtScan:
       'The AI check could not run, so this used rules only. You can try preparing it again.',
     modelSkippedAtScan: 'The AI check is paused to save data, so this used rules only.',
-    llmTitle: 'AI explanation',
-    llmToggleLabel: 'Use an AI-written explanation',
-    llmDescription:
-      'A small on-device model explains each result in plain words. Rules still decide the risk level.',
-    llmPromptTitle: 'Download the explanation model?',
-    llmPromptBody: (size) =>
-      `Paused to save mobile data. About ${size} MB, downloaded once. Your message stays on this device.`,
     llmWriting: 'Writing a short explanation on this device…',
-    llmDownloadAction: 'Download model',
-    llmCancelAction: 'Maybe later',
-    llmProgress: (percent) => `Downloading the AI model: ${percent}%`,
-    llmProgressLabel: 'AI model download progress',
-    llmReady: 'AI explanation is ready on this device.',
-    llmError: 'The model could not load. Checks still work without it.',
-    llmRetry: 'Try again',
-    llmUnavailable: 'AI explanation needs a browser with WebGPU. The regular check still works.',
     llmExplanationTitle: 'AI explanation',
     llmDisclaimer: 'AI-written, may be wrong. It cannot change the risk level.',
     llmModelRan: 'The AI explanation model ran for this check.',
@@ -255,24 +226,24 @@ export const COPY: Record<Lang, Copy> = {
     notAGuaranteeTitle: 'Not a guarantee',
     notAGuarantee:
       'No obvious warning signs do not prove that the sender or request is legitimate. Verify independently.',
-    learnTitle: 'Pause and verify',
-    learnDescription: 'Short guides you can read offline.',
+    learnTitle: 'How to use Sane',
+    learnDescription: 'Follow these steps to check a message and understand what to do next.',
     guides: [
       {
-        title: 'Verification codes',
-        body: 'Never share a verification code. If you requested a sign-in, open the official app yourself.',
+        title: 'Add a message',
+        body: 'Paste or type a message, or choose a screenshot to read its text.',
       },
       {
-        title: 'Suspicious links',
-        body: 'Do not follow a message link to verify a claim. Open the official app or type its known website yourself.',
+        title: 'Review the text',
+        body: 'Check the extracted screenshot text, edit it if needed, then select Analyze.',
       },
       {
-        title: 'Payment requests',
-        body: 'Pause before paying a fee or sending money. Verify the reason independently, even when the amount is small.',
+        title: 'Read the result',
+        body: 'Review the risk level, warning signs, and suggested next step.',
       },
       {
-        title: 'Contact independently',
-        body: 'Use a contact route from an official app, known website, or trusted statement, not a number or link in the message.',
+        title: 'Verify independently',
+        body: 'No warning signs do not prove a message is safe. Check with an official source.',
       },
     ],
     learnDisclaimerTitle: 'A check, not a verdict',
@@ -415,23 +386,7 @@ export const COPY: Record<Lang, Copy> = {
       'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Maaari mong subukang ihanda itong muli.',
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
-    llmTitle: 'AI na paliwanag',
-    llmToggleLabel: 'Gumamit ng AI na paliwanag',
-    llmDescription:
-      'Isang maliit na model sa device ang nagpapaliwanag ng bawat resulta. Rules pa rin ang nagtatakda ng risk level.',
-    llmPromptTitle: 'I-download ang model para sa paliwanag?',
-    llmPromptBody: (size) =>
-      `Naka-pause para makatipid ng mobile data. Mga ${size} MB, isang beses lang ida-download. Sa device mo mananatili ang mensahe.`,
     llmWriting: 'Isinusulat ang maikling paliwanag sa device na ito…',
-    llmDownloadAction: 'I-download ang model',
-    llmCancelAction: 'Mamaya na lang',
-    llmProgress: (percent) => `Dina-download ang AI model: ${percent}%`,
-    llmProgressLabel: 'Progress ng pag-download ng AI model',
-    llmReady: 'Handa na sa device ang AI na paliwanag.',
-    llmError: 'Hindi ma-load ang model. Gagana pa rin ang check kahit wala ito.',
-    llmRetry: 'Subukan ulit',
-    llmUnavailable:
-      'Kailangan ng WebGPU para sa AI na paliwanag. Gagana pa rin ang regular na check.',
     llmExplanationTitle: 'AI na paliwanag',
     llmDisclaimer: 'AI ang sumulat nito at puwedeng magkamali. Hindi nito mababago ang risk level.',
     llmModelRan: 'Tumakbo ang AI explanation model para sa check na ito.',
@@ -442,24 +397,25 @@ export const COPY: Record<Lang, Copy> = {
     notAGuaranteeTitle: 'Hindi garantiya',
     notAGuarantee:
       'Hindi patunay na lehitimo ang sender kapag walang nakitang babala. Mag-verify sa ibang paraan.',
-    learnTitle: 'Huminto at mag-verify',
-    learnDescription: 'Maiikling gabay na mababasa offline.',
+    learnTitle: 'Paano gamitin ang Sane',
+    learnDescription:
+      'Sundin ang mga hakbang para suriin ang mensahe at malaman ang susunod na gagawin.',
     guides: [
       {
-        title: 'Mga verification code',
-        body: 'Huwag ibahagi ang verification code. Kung ikaw ang nag-sign in, buksan mismo ang opisyal na app.',
+        title: 'Maglagay ng mensahe',
+        body: 'I-paste o i-type ang mensahe, o pumili ng screenshot para basahin ang text.',
       },
       {
-        title: 'Kahina-hinalang link',
-        body: 'Huwag sundan ang link para patunayan ang claim. Buksan ang opisyal na app o i-type ang kilalang website.',
+        title: 'Suriin ang text',
+        body: 'Suriin at i-edit kung kailangan ang text mula sa screenshot, saka piliin ang Suriin.',
       },
       {
-        title: 'Hiling na pagbabayad',
-        body: 'Huminto muna bago magbayad o magpadala ng pera. Beripikahin ang dahilan sa ibang paraan.',
+        title: 'Basahin ang resulta',
+        body: 'Tingnan ang risk level, mga babala, at mungkahing susunod na hakbang.',
       },
       {
-        title: 'Makipag-ugnayan nang hiwalay',
-        body: 'Gamitin ang contact mula sa opisyal na app o kilalang website, hindi ang numero o link sa mensahe.',
+        title: 'Mag-verify nang hiwalay',
+        body: 'Hindi patunay na ligtas ang mensahe kapag walang babala. Magtanong sa opisyal na source.',
       },
     ],
     learnDisclaimerTitle: 'Pagsusuri lang, hindi hatol',
@@ -599,23 +555,7 @@ export const COPY: Record<Lang, Copy> = {
       'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Pwede mong subukang i-prepare ulit.',
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
-    llmTitle: 'AI explanation',
-    llmToggleLabel: 'Gumamit ng AI-written explanation',
-    llmDescription:
-      'May maliit na on-device model na nag-e-explain ng bawat result. Rules pa rin ang nagde-decide ng risk level.',
-    llmPromptTitle: 'I-download ang model para sa explanation?',
-    llmPromptBody: (size) =>
-      `Naka-pause para makatipid sa mobile data. Mga ${size} MB, one-time download lang. Sa device mo lang ang message.`,
     llmWriting: 'Sinusulat ang maikling explanation sa device na ito…',
-    llmDownloadAction: 'I-download ang model',
-    llmCancelAction: 'Mamaya na lang',
-    llmProgress: (percent) => `Dina-download ang AI model: ${percent}%`,
-    llmProgressLabel: 'Progress ng pag-download ng AI model',
-    llmReady: 'Ready na sa device ang AI explanation.',
-    llmError: 'Hindi ma-load ang model. Gagana pa rin ang check kahit wala ito.',
-    llmRetry: 'Try ulit',
-    llmUnavailable:
-      'Kailangan ng WebGPU para sa AI explanation. Gagana pa rin ang regular na check.',
     llmExplanationTitle: 'AI explanation',
     llmDisclaimer: 'AI-written ito at puwedeng magkamali. Hindi nito mababago ang risk level.',
     llmModelRan: 'Tumakbo ang AI explanation model para sa check na ito.',
@@ -626,24 +566,25 @@ export const COPY: Record<Lang, Copy> = {
     notAGuaranteeTitle: 'Hindi guarantee',
     notAGuarantee:
       'Hindi ibig sabihin na legit ang sender kapag walang nakitang warning signs. Mag-verify nang hiwalay.',
-    learnTitle: 'Pause at mag-verify',
-    learnDescription: 'Maiikling guide na mababasa offline.',
+    learnTitle: 'Paano gamitin ang Sane',
+    learnDescription:
+      'Sundin ang steps para i-check ang message at malaman ang susunod na gagawin.',
     guides: [
       {
-        title: 'Verification codes',
-        body: 'Huwag i-share ang verification code. Kung ikaw ang nag-sign in, buksan mismo ang official app.',
+        title: 'Add a message',
+        body: 'I-paste o i-type ang message, o pumili ng screenshot para basahin ang text.',
       },
       {
-        title: 'Suspicious links',
-        body: 'Huwag sundan ang message link para mag-verify. Buksan ang official app o i-type ang known website.',
+        title: 'Review the text',
+        body: 'I-check at i-edit kung kailangan ang text mula sa screenshot, saka piliin ang Analyze.',
       },
       {
-        title: 'Payment requests',
-        body: 'Pause muna bago magbayad o mag-send ng money. I-verify ang dahilan sa ibang paraan.',
+        title: 'Read the result',
+        body: 'Tingnan ang risk level, warning signs, at suggested next step.',
       },
       {
-        title: 'Contact independently',
-        body: 'Gamitin ang contact mula sa official app o known website, hindi ang number o link sa message.',
+        title: 'Verify independently',
+        body: 'Hindi ibig sabihin na safe ang message kapag walang warning signs. Mag-check sa official source.',
       },
     ],
     learnDisclaimerTitle: 'Check lang, hindi verdict',
