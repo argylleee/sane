@@ -1,0 +1,148 @@
+{
+  "measuredOn": "2026-10-10",
+  "note": "Frozen held-out set (datasetHash 8d301bfb1825...), real multilingual-e5-small int8, Node CPU. Aggregates only. A measurement, not tuning: nothing was changed after seeing it. Rules code is the pre-TASK-216 revision, so the one false alarm is a rules issue.",
+  "rulesOnly": {
+    "overall": {
+      "scams": 21,
+      "caught": 13,
+      "falseAlarms": 1,
+      "abstained": 24,
+      "total": 42,
+      "precision": 0.9285714285714286,
+      "recall": 0.6190476190476191,
+      "abstentionRate": 0.5714285714285714,
+      "levelAgreement": 0.2857142857142857
+    },
+    "perLanguage": {
+      "en": {
+        "scams": 7,
+        "caught": 5,
+        "falseAlarms": 0,
+        "abstained": 8,
+        "total": 14,
+        "precision": 1,
+        "recall": 0.7142857142857143,
+        "abstentionRate": 0.5714285714285714,
+        "levelAgreement": 0.35714285714285715
+      },
+      "fil": {
+        "scams": 7,
+        "caught": 4,
+        "falseAlarms": 1,
+        "abstained": 7,
+        "total": 14,
+        "precision": 0.8,
+        "recall": 0.5714285714285714,
+        "abstentionRate": 0.5,
+        "levelAgreement": 0.2857142857142857
+      },
+      "taglish": {
+        "scams": 7,
+        "caught": 4,
+        "falseAlarms": 0,
+        "abstained": 9,
+        "total": 14,
+        "precision": 1,
+        "recall": 0.5714285714285714,
+        "abstentionRate": 0.6428571428571429,
+        "levelAgreement": 0.21428571428571427
+      }
+    }
+  },
+  "embeddingsBaselineArchetypes": {
+    "overall": {
+      "scams": 21,
+      "caught": 14,
+      "falseAlarms": 1,
+      "abstained": 23,
+      "total": 42,
+      "precision": 0.9333333333333333,
+      "recall": 0.6666666666666666,
+      "abstentionRate": 0.5476190476190477,
+      "levelAgreement": 0.30952380952380953
+    },
+    "perLanguage": {
+      "en": {
+        "scams": 7,
+        "caught": 5,
+        "falseAlarms": 0,
+        "abstained": 8,
+        "total": 14,
+        "precision": 1,
+        "recall": 0.7142857142857143,
+        "abstentionRate": 0.5714285714285714,
+        "levelAgreement": 0.35714285714285715
+      },
+      "fil": {
+        "scams": 7,
+        "caught": 4,
+        "falseAlarms": 1,
+        "abstained": 7,
+        "total": 14,
+        "precision": 0.8,
+        "recall": 0.5714285714285714,
+        "abstentionRate": 0.5,
+        "levelAgreement": 0.2857142857142857
+      },
+      "taglish": {
+        "scams": 7,
+        "caught": 5,
+        "falseAlarms": 0,
+        "abstained": 8,
+        "total": 14,
+        "precision": 1,
+        "recall": 0.7142857142857143,
+        "abstentionRate": 0.5714285714285714,
+        "levelAgreement": 0.2857142857142857
+      }
+    }
+  },
+  "embeddingsNewArchetypes": {
+    "overall": {
+      "scams": 21,
+      "caught": 15,
+      "falseAlarms": 1,
+      "abstained": 22,
+      "total": 42,
+      "precision": 0.9375,
+      "recall": 0.7142857142857143,
+      "abstentionRate": 0.5238095238095238,
+      "levelAgreement": 0.3333333333333333
+    },
+    "perLanguage": {
+      "en": {
+        "scams": 7,
+        "caught": 5,
+        "falseAlarms": 0,
+        "abstained": 8,
+        "total": 14,
+        "precision": 1,
+        "recall": 0.7142857142857143,
+        "abstentionRate": 0.5714285714285714,
+        "levelAgreement": 0.35714285714285715
+      },
+      "fil": {
+        "scams": 7,
+        "caught": 5,
+        "falseAlarms": 1,
+        "abstained": 6,
+        "total": 14,
+        "precision": 0.8333333333333334,
+        "recall": 0.7142857142857143,
+        "abstentionRate": 0.42857142857142855,
+        "levelAgreement": 0.35714285714285715
+      },
+      "taglish": {
+        "scams": 7,
+        "caught": 5,
+        "falseAlarms": 0,
+        "abstained": 8,
+        "total": 14,
+        "precision": 1,
+        "recall": 0.7142857142857143,
+        "abstentionRate": 0.5714285714285714,
+        "levelAgreement": 0.2857142857142857
+      }
+    }
+  }
+}
