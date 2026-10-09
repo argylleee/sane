@@ -1080,7 +1080,7 @@ p {
   background: #101813;
   --color-background: #101813;
   --color-surface: #1a241e;
-  --color-primary: #8cd8ad;
+  --color-primary: #e9f0e8;
   --color-topbar-background: #173a2a;
   --color-on-topbar: #ffffff;
   --color-topbar-border: color-mix(in srgb, #ffffff 20%, transparent);
@@ -1094,7 +1094,7 @@ p {
   --color-high-surface: #422522;
   --color-caution: #f0cc75;
   --color-caution-surface: #3c321b;
-  --color-good: #8cd8ad;
+  --color-good: #bbcabd;
   --color-good-surface: #223b2d;
 }
 
