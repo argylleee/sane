@@ -21,45 +21,45 @@ Mixed English, Filipino and Taglish. Check that the Filipino and Taglish ones so
 
 ### Request for OTP or PIN (otp_request)
 
-- [ ] A4. Please send the 6-digit code we just texted you so we can cancel the wrong transaction.  
+- [x] A4. Please send the 6-digit code we just texted you so we can cancel the wrong transaction.  
       Fix:
-- [ ] A5. Pakisabi ang 6-digit code na ipinadala namin para makansela ang maling transaksyon.  
+- [x] A5. Pakisabi ang 6-digit code na ipinadala namin para makansela ang maling transaksyon.  
       Fix:
-- [ ] A6. Pa-send naman ng OTP na na-receive mo, nagkamali kasi kami ng transaction.  
+- [x] A6. Pa-send naman ng OTP na na-receive mo, nagkamali kasi kami ng transaction.  
       Fix:
 
 ### Online task or easy job scam (task_job_scam)
 
-- [ ] A7. Earn 3,000 pesos a day by liking videos. No experience needed. Message us on Telegram to start.  
+- [x] A7. Earn 3,000 pesos a day by liking videos. No experience needed. Message us on Telegram to start.  
       Fix:
-- [ ] A8. Kumita ng 3,000 piso kada araw sa pag-like ng videos. Walang karanasan na kailangan. Mag-message sa Telegram para magsimula.  
+- [x] A8. Kumita ng 3,000 piso kada araw sa pag-like ng videos. Walang karanasan na kailangan. Magpadala ng mensahe sa Telegram para magsimula.  
       Fix:
-- [ ] A9. Earn ka ng 3k daily, like lang ng videos. Walang experience needed, chat ka lang sa Telegram.  
+- [x] A9. Earn ka ng 3k daily, like lang ng videos. Walang experience needed, chat ka lang sa Telegram.  
       Fix:
 
 ### Fake parcel or delivery fee (parcel_fee)
 
-- [ ] A10. Your parcel is on hold. Pay the 49 peso redelivery fee at the link below or it will be returned.  
+- [x] A10. Your parcel is on hold. Pay the 49 peso redelivery fee at the link below or it will be returned.  
       Fix:
-- [ ] A11. Naka-hold ang iyong parcel. Bayaran ang 49 pisong redelivery fee sa link sa ibaba o ibabalik ito.  
-      Fix:
-- [ ] A12. Hold ang parcel mo. Bayaran mo yung 49 pesos na redelivery fee sa link or ibabalik na 'to.  
+- [x] A11. Naka-hold ang iyong parcel. Bayaran ang 49 pisong redelivery fee sa link sa ibaba o ibabalik ito.  
+      Fix:  
+- [x] A12. Hold ang parcel mo. Bayaran mo yung 49 pesos na redelivery fee sa link or ibabalik na 'to.  
       Fix:
 
 ### Fake prize or raffle (prize_promo)
 
-- [ ] A13. Congratulations! You won 50,000 pesos in our raffle. Claim your prize now by sending your details.  
+- [x] A13. Congratulations! You won 50,000 pesos in our raffle. Claim your prize now by sending your details.  
       Fix:
-- [ ] A14. Binabati ka! Nanalo ka ng 50,000 piso sa aming raffle. I-claim ang premyo ngayon sa pagpapadala ng iyong detalye.  
-      Fix:
-- [ ] A15. Congrats, nanalo ka ng 50k sa raffle! I-claim mo na ngayon, send mo lang details mo.  
+- [x] A14. Binabati ka! Nanalo ka ng 50,000 piso sa aming raffle. I-claim ang premyo ngayon sa pagpapadala ng iyong detalye.  
+      Fix: 
+- [x] A15. Congrats, nanalo ka ng 50k sa raffle! I-claim mo na ngayon, send mo lang details mo.  
       Fix:
 
 ### Fake relative in emergency (relative_emergency)
 
-- [ ] A16. Hi Mom, this is my new number. I lost my phone. Can you send 5,000 pesos by e-wallet? It's urgent.  
+- [x] A16. Hi Mom, this is my new number. I lost my phone. Can you send 5,000 pesos by e-wallet? It's urgent.  
       Fix:
-- [ ] A17. Hello Ma, ito ang bago kong numero. Nawala ang telepono ko. Maaari bang magpadala ng 5,000 piso sa e-wallet? Madalian.  
-      Fix:
+- [x] A17. Hello Ma, ito ang bago kong numero. Nawala ang telepono ko. Maaari bang magpadala ng 5,000 piso sa e-wallet? Madalian.  
+      Fix: 
 - [ ] A18. Ma, new number ko 'to, nawala phone ko. Pa-send naman ng 5k sa GCash, urgent talaga.  
-      Fix:
+      Fix: Ma, new number ko 'to, nawala phone ko. Pa-send naman ng 5k sa GCash, urgent lang.
