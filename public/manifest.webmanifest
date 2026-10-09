@@ -6,5 +6,28 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0f766e",
-  "icons": []
+  "icons": [
+    {
+      "src": "./icons/sane.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "share_target": {
+    "action": "./share/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "image",
+          "accept": ["image/*", ".png", ".jpg", ".jpeg", ".webp"]
+        }
+      ]
+    }
+  }
 }

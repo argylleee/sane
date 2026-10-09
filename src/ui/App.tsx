@@ -1,21 +1,39 @@
-import { useEffect, useRef, useState } from 'react';
-import type { FormEvent } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FormEvent, ReactNode } from 'react';
+import { extractText } from '../ai';
 import { analyze } from '../pipeline/analyze';
-import type { Lang, Level, Verdict } from '../types';
+import { normalize } from '../pipeline/normalize';
+import type { Lang, Level, Signal, Verdict } from '../types';
 import { copyFor } from './copy';
 
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const LANGUAGES: readonly Lang[] = ['en', 'fil', 'taglish'];
+const LANGUAGE_NAMES: Record<Lang, string> = { en: 'English', fil: 'Filipino', taglish: 'Taglish' };
 const THEMES = ['system', 'light', 'dark'] as const;
 type Screen = 'welcome' | 'scan' | 'result' | 'learn';
 type Theme = (typeof THEMES)[number];
+type OcrState = 'idle' | 'loading' | 'ready' | 'error';
 type FeedbackKey =
   | 'clipboardUnavailable'
   | 'clipboardError'
   | 'screenshotTypeError'
   | 'screenshotLimitError'
-  | 'analysisError';
+  | 'analysisError'
+  | 'sharedLimitError'
+  | 'shareEmpty';
+
+type SharedPayload = {
+  text?: unknown;
+  textTooLong?: unknown;
+  image?: unknown;
+  imageRejected?: unknown;
+};
+
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+};
 
 function StatusMark({ level }: { level: Level }) {
   if (level === 'likely_scam') {
@@ -80,6 +98,42 @@ function InertMessage({ text }: { text: string }) {
   );
 }
 
+function HighlightedMessage({ text, signals }: { text: string; signals: Signal[] }) {
+  const normalized = normalize(text);
+  const spans = signals
+    .flatMap((signal) => (signal.span ? [signal.span] : []))
+    .map(([start, end]) => [Math.max(0, start), Math.min(normalized.length, end)] as const)
+    .filter(([start, end]) => end > start)
+    .sort(([left], [right]) => left - right);
+  const merged: [number, number][] = [];
+
+  for (const [start, end] of spans) {
+    const previous = merged.at(-1);
+    if (previous && start <= previous[1]) previous[1] = Math.max(previous[1], end);
+    else merged.push([start, end]);
+  }
+
+  if (merged.length === 0) return <InertMessage text={normalized} />;
+
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+  for (const [start, end] of merged) {
+    if (start > cursor) {
+      parts.push(<InertMessage key={`text-${cursor}`} text={normalized.slice(cursor, start)} />);
+    }
+    parts.push(
+      <mark className="signal-highlight" key={`signal-${start}-${end}`}>
+        <InertMessage text={normalized.slice(start, end)} />
+      </mark>,
+    );
+    cursor = end;
+  }
+  if (cursor < normalized.length) {
+    parts.push(<InertMessage key={`text-${cursor}`} text={normalized.slice(cursor)} />);
+  }
+  return <>{parts}</>;
+}
+
 function LanguagePicker({
   lang,
   onChange,
@@ -104,7 +158,7 @@ function LanguagePicker({
       >
         {LANGUAGES.map((language) => (
           <option key={language} value={language}>
-            {copyFor(language).languageName}
+            {LANGUAGE_NAMES[language]}
           </option>
         ))}
       </select>
@@ -123,7 +177,7 @@ function ThemePicker({
 }) {
   return (
     <label className="theme-picker">
-      <span>{copy.themeLabel}</span>
+      <span className="visually-hidden">{copy.themeLabel}</span>
       <select
         aria-label={copy.themeLabel}
         value={theme}
@@ -175,15 +229,154 @@ export function App() {
   const [theme, setTheme] = useState<Theme>('system');
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<File | null>(null);
+  const [ocrState, setOcrState] = useState<OcrState>('idle');
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [resultMessage, setResultMessage] = useState('');
   const [resultIsImage, setResultIsImage] = useState(false);
+  const [resultUsedOcr, setResultUsedOcr] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackKey | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
+  const installPrompt = useRef<InstallPromptEvent | null>(null);
+  const ocrRequestId = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
   const copy = copyFor(lang);
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
+  const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  const showIosInstallHint = isAppleMobile && !isStandalone;
+
+  const clearScreenshot = useCallback(() => {
+    ocrRequestId.current += 1;
+    setImage(null);
+    setOcrState('idle');
+  }, []);
+
+  const selectScreenshot = useCallback(
+    (file: File | undefined) => {
+      setFeedback(null);
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        clearScreenshot();
+        setFeedback('screenshotTypeError');
+        return;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        clearScreenshot();
+        setFeedback('screenshotLimitError');
+        return;
+      }
+      setImage(file);
+      setMessage('');
+      setScreen('scan');
+      setOcrState('loading');
+      const requestId = ++ocrRequestId.current;
+      void extractText(file)
+        .then((text) => {
+          if (requestId !== ocrRequestId.current) return;
+          setMessage(text);
+          setOcrState('ready');
+        })
+        .catch(() => {
+          if (requestId !== ocrRequestId.current) return;
+          setOcrState('error');
+        });
+    },
+    [clearScreenshot],
+  );
+
+  useEffect(() => {
+    const onInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      installPrompt.current = event as InstallPromptEvent;
+      setCanInstall(true);
+    };
+    const onInstalled = () => {
+      installPrompt.current = null;
+      setCanInstall(false);
+    };
+    window.addEventListener('beforeinstallprompt', onInstallPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onInstallPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+
+    const appRoot = new URL('./', document.baseURI);
+    const onWorkerMessage = (event: MessageEvent) => {
+      if (event.data?.type !== 'shared') return;
+
+      const payload = event.data.payload as SharedPayload | null;
+      setScreen('scan');
+      setFeedback(null);
+      if (!payload) {
+        setFeedback('shareEmpty');
+        return;
+      }
+
+      const hasText = typeof payload.text === 'string' && payload.text.length > 0;
+      const hasImage = payload.image instanceof File;
+      if (!hasText && !hasImage && payload.imageRejected !== true) {
+        setFeedback('shareEmpty');
+        return;
+      }
+
+      if (
+        payload.textTooLong === true ||
+        (typeof payload.text === 'string' && payload.text.length > MAX_MESSAGE_LENGTH)
+      ) {
+        setMessage('');
+        setFeedback('sharedLimitError');
+      } else if (typeof payload.text === 'string') {
+        clearScreenshot();
+        setMessage(payload.text);
+      }
+
+      if (payload.image instanceof File) {
+        selectScreenshot(payload.image);
+      } else if (payload.imageRejected === true) {
+        setFeedback('screenshotLimitError');
+      }
+    };
+
+    navigator.serviceWorker.addEventListener('message', onWorkerMessage);
+    void navigator.serviceWorker
+      .register(new URL('sw.js', appRoot), { scope: appRoot.pathname })
+      .then(async (registration) => {
+        const ready = await navigator.serviceWorker.ready;
+        const worker = registration.active ?? ready.active;
+        if (!worker) return;
+        const resources = performance
+          .getEntriesByType('resource')
+          .map((entry) => entry.name)
+          .filter((name) => {
+            try {
+              return new URL(name).origin === appRoot.origin;
+            } catch {
+              return false;
+            }
+          });
+        worker.postMessage({ type: 'cache-shell', resources });
+
+        const currentUrl = new URL(window.location.href);
+        if (currentUrl.searchParams.has('shared')) {
+          window.history.replaceState({}, '', appRoot.pathname);
+          worker.postMessage({ type: 'get-shared' });
+        }
+      })
+      .catch((error: unknown) => console.error('Service worker registration failed', error));
+
+    return () => {
+      navigator.serviceWorker.removeEventListener('message', onWorkerMessage);
+    };
+  }, [clearScreenshot, selectScreenshot]);
 
   useEffect(() => {
     document.documentElement.lang = lang === 'taglish' ? 'en-PH' : lang;
@@ -212,37 +405,28 @@ export function App() {
 
     try {
       const clipboardText = await navigator.clipboard.readText();
-      setImage(null);
+      clearScreenshot();
       setMessage(clipboardText);
     } catch {
       setFeedback('clipboardError');
     }
   }
 
-  function selectScreenshot(file: File | undefined) {
-    setFeedback(null);
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setImage(null);
-      setFeedback('screenshotTypeError');
-      return;
-    }
-    if (file.size > MAX_IMAGE_BYTES) {
-      setImage(null);
-      setFeedback('screenshotLimitError');
-      return;
-    }
-    setImage(file);
-  }
-
   async function runAnalysis(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isAnalyzing || (!image && !message.trim()) || (!image && overLimit)) return;
+    if (
+      isAnalyzing ||
+      ocrState === 'loading' ||
+      (!image && !message.trim()) ||
+      (!message.trim() && !image) ||
+      overLimit
+    )
+      return;
 
     setFeedback(null);
     setIsAnalyzing(true);
-    const sourceImage = image;
-    const sourceMessage = sourceImage ? '' : message;
+    const sourceImage = image && !message.trim() ? image : null;
+    const sourceMessage = message;
 
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
@@ -251,7 +435,8 @@ export function App() {
       });
       setVerdict(result);
       setResultMessage(sourceMessage);
-      setResultIsImage(Boolean(sourceImage));
+      setResultIsImage(Boolean(image));
+      setResultUsedOcr(Boolean(image && sourceMessage.trim() && ocrState === 'ready'));
       setScreen('result');
     } catch {
       setFeedback('analysisError');
@@ -260,12 +445,22 @@ export function App() {
     }
   }
 
+  async function promptInstall() {
+    const prompt = installPrompt.current;
+    if (!prompt) return;
+    await prompt.prompt();
+    await prompt.userChoice;
+    installPrompt.current = null;
+    setCanInstall(false);
+  }
+
   function startAnotherCheck() {
     setMessage('');
-    setImage(null);
+    clearScreenshot();
     setVerdict(null);
     setResultMessage('');
     setResultIsImage(false);
+    setResultUsedOcr(false);
     setFeedback(null);
     setScreen('scan');
     window.requestAnimationFrame(() => messageInput.current?.focus());
@@ -333,7 +528,7 @@ export function App() {
               >
                 {copy.start}
               </button>
-              <p className="supporting-copy">{copy.localDescription}</p>
+              <p className="supporting-copy">{copy.privacyFootnote}</p>
             </div>
             <div className="welcome-details">
               <section className="detail-block">
@@ -358,44 +553,43 @@ export function App() {
             </div>
             <div className="scan-layout">
               <form className="scan-form" onSubmit={runAnalysis}>
-                {image ? (
+                {image && (
                   <div className="selected-image" aria-live="polite">
                     <p>{copy.screenshotSelected(image.name)}</p>
                     <button
                       className="button button--quiet"
                       type="button"
-                      onClick={() => setImage(null)}
+                      onClick={clearScreenshot}
                     >
                       {copy.useText}
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <label className="field-label" htmlFor="message-input">
-                      {copy.messageLabel}
-                    </label>
-                    <textarea
-                      ref={messageInput}
-                      id="message-input"
-                      rows={7}
-                      value={message}
-                      placeholder={copy.messagePlaceholder}
-                      aria-describedby="message-count"
-                      onChange={(event) => {
-                        setMessage(event.currentTarget.value);
-                        setFeedback(null);
-                      }}
-                    />
-                    <div
-                      id="message-count"
-                      className={`character-count${overLimit ? ' character-count--error' : ''}`}
-                      aria-live="polite"
-                    >
-                      {copy.characterCount(message.length, MAX_MESSAGE_LENGTH)}
-                    </div>
-                    {overLimit && <p className="field-error">{copy.overLimit}</p>}
-                  </>
                 )}
+
+                <label className="field-label" htmlFor="message-input">
+                  {image ? copy.extractedMessageLabel : copy.messageLabel}
+                </label>
+                <textarea
+                  ref={messageInput}
+                  id="message-input"
+                  rows={7}
+                  value={message}
+                  placeholder={copy.messagePlaceholder}
+                  aria-describedby="message-count"
+                  disabled={ocrState === 'loading'}
+                  onChange={(event) => {
+                    setMessage(event.currentTarget.value);
+                    setFeedback(null);
+                  }}
+                />
+                <div
+                  id="message-count"
+                  className={`character-count${overLimit ? ' character-count--error' : ''}`}
+                  aria-live="polite"
+                >
+                  {copy.characterCount(message.length, MAX_MESSAGE_LENGTH)}
+                </div>
+                {overLimit && <p className="field-error">{copy.overLimit}</p>}
 
                 <div className="input-actions">
                   <button
@@ -429,7 +623,17 @@ export function App() {
                     {feedbackText}
                   </p>
                 )}
-                {image && <p className="supporting-copy">{copy.screenshotUnavailable}</p>}
+                {ocrState === 'loading' && (
+                  <p className="loading-message" role="status">
+                    {copy.screenshotLoading}
+                  </p>
+                )}
+                {ocrState === 'ready' && <p className="supporting-copy">{copy.screenshotReady}</p>}
+                {ocrState === 'error' && (
+                  <p className="field-error" role="status">
+                    {copy.screenshotFailed}
+                  </p>
+                )}
                 {isAnalyzing && (
                   <p className="loading-message" role="status">
                     {copy.checking}
@@ -439,7 +643,12 @@ export function App() {
                 <button
                   className="button button--primary analyze-button"
                   type="submit"
-                  disabled={isAnalyzing || (!image && !message.trim()) || (!image && overLimit)}
+                  disabled={
+                    isAnalyzing ||
+                    ocrState === 'loading' ||
+                    (!image && !message.trim()) ||
+                    overLimit
+                  }
                 >
                   {isAnalyzing ? copy.checking : copy.analyze}
                 </button>
@@ -459,6 +668,7 @@ export function App() {
                     ))}
                   </ol>
                 </section>
+                {showIosInstallHint && <p className="supporting-copy">{copy.iosInstallHint}</p>}
               </aside>
             </div>
           </>
@@ -477,26 +687,34 @@ export function App() {
                   <h2>{copy.assessment[verdict.level].label}</h2>
                 </div>
                 <p className="coverage-label">
-                  {resultIsImage ? copy.coverageImage : copy.coverageText}
+                  {resultUsedOcr
+                    ? copy.coverageOcr
+                    : resultIsImage
+                      ? copy.coverageImage
+                      : copy.coverageText}
                 </p>
                 <p className="assessment-summary">{copy.assessment[verdict.level].summary}</p>
-
-                <div className="next-step">
-                  <h2>
-                    {copy.nextPrefix}: {copy.assessment[verdict.level].nextTitle}
+                <section className={`next-step next-step--${verdict.level}`}>
+                  <h2 className="next-step-heading">
+                    <StatusMark level="suspicious" />
+                    <span>
+                      {copy.nextPrefix}: {copy.assessment[verdict.level].nextTitle}
+                    </span>
                   </h2>
                   <p>{copy.assessment[verdict.level].nextStep}</p>
-                </div>
+                </section>
 
-                <section className="result-section">
+                <section className="result-section model-section">
                   <h2>{copy.modelTitle}</h2>
                   <p>
                     {verdict.usedModels.embeddings ||
                     verdict.usedModels.ocr ||
-                    verdict.usedModels.llm
+                    verdict.usedModels.llm ||
+                    resultUsedOcr
                       ? copy.modelRan
                       : copy.noModel}
                   </p>
+                  {resultUsedOcr && <p>{copy.ocrUsed}</p>}
                 </section>
 
                 <section className="result-section evidence-section">
@@ -514,14 +732,14 @@ export function App() {
                 </section>
 
                 {verdict.level === 'probably_fine' && (
-                  <aside className="notice notice--neutral">
+                  <aside className="notice notice--neutral not-guarantee">
                     <h2>{copy.notAGuaranteeTitle}</h2>
                     <p>{copy.notAGuarantee}</p>
                   </aside>
                 )}
-                {resultIsImage && (
+                {resultIsImage && !resultMessage && (
                   <p className="field-error" role="status">
-                    {copy.screenshotUnavailable}
+                    {copy.screenshotFailed}
                   </p>
                 )}
               </section>
@@ -530,9 +748,21 @@ export function App() {
                 <section className="original-message">
                   <h2>{copy.originalTitle}</h2>
                   <p className="original-copy">
-                    {resultIsImage ? copy.imageOriginal : <InertMessage text={resultMessage} />}
+                    {resultMessage ? (
+                      <HighlightedMessage text={resultMessage} signals={verdict.signals} />
+                    ) : (
+                      copy.imageOriginal
+                    )}
                   </p>
                   <p className="supporting-copy">{copy.originalNote}</p>
+                  {resultMessage && normalize(resultMessage) !== resultMessage && (
+                    <details className="original-source">
+                      <summary>{copy.viewOriginal}</summary>
+                      <p className="original-copy">
+                        <InertMessage text={resultMessage} />
+                      </p>
+                    </details>
+                  )}
                 </section>
                 <button
                   className="button button--primary another-button"
@@ -541,6 +771,15 @@ export function App() {
                 >
                   {copy.another}
                 </button>
+                {canInstall && (
+                  <button
+                    className="button button--secondary install-button"
+                    type="button"
+                    onClick={promptInstall}
+                  >
+                    {copy.installApp}
+                  </button>
+                )}
               </aside>
             </div>
           </>
