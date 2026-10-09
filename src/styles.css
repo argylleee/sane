@@ -381,12 +381,12 @@ p {
 }
 
 .button--primary {
-  color: var(--color-on-primary);
-  background: var(--color-primary);
+  color: var(--color-on-topbar);
+  background: var(--color-topbar-background);
 }
 
 .button--primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--color-primary) 88%, var(--color-text));
+  background: color-mix(in srgb, var(--color-topbar-background) 90%, var(--color-text));
 }
 
 .button--primary:disabled {
@@ -1096,10 +1096,6 @@ p {
   --color-caution-surface: #3c321b;
   --color-good: #8cd8ad;
   --color-good-surface: #223b2d;
-}
-
-:root[data-theme='dark'] .button--primary:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--color-primary) 88%, #ffffff);
 }
 
 @media (prefers-reduced-motion: reduce) {

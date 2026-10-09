@@ -29,8 +29,6 @@ type Copy = {
   localDescription: string;
   privacyFootnote: string;
   start: string;
-  scanNav: string;
-  learnNav: string;
   backToScan: string;
   useText: string;
   scanTitle: string;
@@ -127,8 +125,6 @@ export const COPY: Record<Lang, Copy> = {
       'The baseline may miss or incorrectly flag messages. Its accuracy is not validated.',
     privacyFootnote: 'No account needed. Messages are analyzed on your device.',
     start: 'Start Manual Check',
-    scanNav: 'Scan',
-    learnNav: 'Learn',
     backToScan: 'Back to scan',
     useText: 'Use text instead',
     scanTitle: 'Scan a message',
@@ -282,8 +278,6 @@ export const COPY: Record<Lang, Copy> = {
       'Maaaring may hindi makita o maling ma-flag ang baseline. Hindi pa napatunayan ang accuracy nito.',
     privacyFootnote: 'Hindi kailangan ng account. Sinusuri ang mensahe sa iyong device.',
     start: 'Simulan ang Pagsusuri',
-    scanNav: 'Suriin',
-    learnNav: 'Alamin',
     backToScan: 'Bumalik sa pagsusuri',
     useText: 'Gamitin ang text',
     scanTitle: 'Suriin ang mensahe',
@@ -438,8 +432,6 @@ export const COPY: Record<Lang, Copy> = {
     localDescription: 'Puwedeng magkamali ang result. Hindi pa validated ang accuracy.',
     privacyFootnote: 'No account kailangan. Sa device mo chine-check ang message.',
     start: 'Simulan ang manual check',
-    scanNav: 'I-check',
-    learnNav: 'Alamin',
     backToScan: 'Bumalik sa pag-check',
     useText: 'Gamitin ang text',
     scanTitle: 'I-check ang message',

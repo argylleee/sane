@@ -197,11 +197,9 @@ function ThemePicker({
 
 function MainNavigation({
   screen,
-  copy,
   onNavigate,
 }: {
   screen: Screen;
-  copy: ReturnType<typeof copyFor>;
   onNavigate: (screen: 'scan' | 'learn') => void;
 }) {
   return (
@@ -211,14 +209,14 @@ function MainNavigation({
         aria-current={screen === 'scan' ? 'page' : undefined}
         onClick={() => onNavigate('scan')}
       >
-        {copy.scanNav}
+        Scan
       </button>
       <button
         type="button"
         aria-current={screen === 'learn' ? 'page' : undefined}
         onClick={() => onNavigate('learn')}
       >
-        {copy.learnNav}
+        Learn
       </button>
     </nav>
   );
@@ -498,7 +496,7 @@ export function App() {
           <img src="/icons/sane-logo.svg" alt="" />
         </button>
         {(screen === 'scan' || screen === 'learn') && (
-          <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />
+          <MainNavigation screen={screen} onNavigate={setScreen} />
         )}
         <LanguagePicker
           className="topbar-language"
