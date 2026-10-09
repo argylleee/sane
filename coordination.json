@@ -44,5 +44,71 @@
     "index.html",
     "src/types.ts"
   ],
-  "tasks": []
+  "tasks": [
+    {
+      "id": "TASK-201",
+      "allocation": 1,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/pipeline/",
+        "src/rules/",
+        "src/score/",
+        "src/explain/",
+        "src/data/keywords.json",
+        "src/data/brands.json",
+        "docs/tasks/TASK-201.md",
+        "docs/tasks/TASK-201-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": [],
+      "branch": "codex/feat/task-201-rules-scoring-pipeline",
+      "worktree": "task-201",
+      "baseRevision": "924fe03b7b4cc2dab50cb54731e1ca80cc07cc26"
+    },
+    {
+      "id": "TASK-202",
+      "allocation": 1,
+      "role": "model",
+      "owner": "model-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ai/",
+        "src/data/archetypes.json",
+        "eval/",
+        "docs/tasks/TASK-202.md",
+        "docs/tasks/TASK-202-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": [],
+      "branch": "codex/feat/task-202-local-ai-eval",
+      "worktree": "task-202",
+      "baseRevision": "924fe03b7b4cc2dab50cb54731e1ca80cc07cc26"
+    },
+    {
+      "id": "TASK-203",
+      "allocation": 1,
+      "role": "frontend",
+      "owner": "frontend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ui/",
+        "src/main.tsx",
+        "src/styles.css",
+        "src/sw.ts",
+        "public/",
+        "docs/tasks/TASK-203.md",
+        "docs/tasks/TASK-203-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": [],
+      "branch": "codex/feat/task-203-mobile-ui-pwa",
+      "worktree": "task-203",
+      "baseRevision": "924fe03b7b4cc2dab50cb54731e1ca80cc07cc26"
+    }
+  ]
 }
