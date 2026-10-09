@@ -8,6 +8,27 @@ export function hasUrl(text: string): boolean {
   return text.search(URL_TEXT) >= 0;
 }
 
+function hostOf(value: string): string | null {
+  try {
+    return new URL(/^https?:\/\//i.test(value) ? value : 'https://' + value).hostname.toLowerCase();
+  } catch {
+    return null;
+  }
+}
+
+/** True when the text has a link whose host is not on a known official brand domain. */
+export function hasUnverifiedUrl(text: string): boolean {
+  for (const match of text.matchAll(URL_TEXT)) {
+    const host = hostOf(match[0].replace(/[),.!?;:]+$/, ''));
+    if (!host || !host.includes('.')) continue;
+    const official = brands.brands.some(({ domains }) =>
+      domains.some((domain) => host === domain || host.endsWith('.' + domain)),
+    );
+    if (!official) return true;
+  }
+  return false;
+}
+
 export function urlSignals(text: string): Signal[] {
   const signals: Signal[] = [];
   for (const match of text.matchAll(URL_TEXT)) {

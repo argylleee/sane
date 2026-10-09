@@ -1,14 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import {
+  detectCapabilities,
   extractText,
   getEmbeddingsStatus,
+  getLlmStatus,
+  LLM_MODEL_BY_TIER,
   loadEmbeddings,
+  loadLlm,
   shouldAutoPreload,
   startEmbeddingsPreload,
   subscribeEmbeddings,
+  subscribeLlm,
 } from '../ai';
-import type { EmbeddingsStatus } from '../ai';
+import type { EmbeddingsStatus, LlmStatus, Tier } from '../ai';
 import { analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Lang, Level, Signal, Verdict } from '../types';
@@ -294,6 +299,11 @@ export function App() {
   const messageInput = useRef<HTMLTextAreaElement>(null);
   const [embeddingStatus, setEmbeddingStatus] = useState<EmbeddingsStatus>(getEmbeddingsStatus);
   const [modelAtScan, setModelAtScan] = useState<EmbeddingsStatus['state']>('idle');
+  const [llmEnabled, setLlmEnabled] = useState(false);
+  const [llmPromptOpen, setLlmPromptOpen] = useState(false);
+  const [llmStatus, setLlmStatus] = useState<LlmStatus>(getLlmStatus);
+  const llmTier: Tier = detectCapabilities().tier;
+  const llmAvailable = LLM_MODEL_BY_TIER[llmTier] !== null;
   const copy = copyFor(lang);
 
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
@@ -309,6 +319,27 @@ export function App() {
   }, []);
 
   useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
+  useEffect(() => subscribeLlm(setLlmStatus), []);
+
+  function requestLlm(enabled: boolean) {
+    if (!enabled) {
+      setLlmEnabled(false);
+      setLlmPromptOpen(false);
+      return;
+    }
+    if (getLlmStatus().state === 'ready') setLlmEnabled(true);
+    else if (getLlmStatus().state !== 'loading') setLlmPromptOpen(true);
+  }
+
+  async function downloadLlm() {
+    setLlmPromptOpen(false);
+    try {
+      await loadLlm(llmTier);
+      setLlmEnabled(true);
+    } catch {
+      setLlmEnabled(false);
+    }
+  }
 
   const clearScreenshot = useCallback(() => {
     ocrRequestId.current += 1;
@@ -477,7 +508,7 @@ export function App() {
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
         lang,
-        useLLM: false,
+        useLLM: llmEnabled && getLlmStatus().state === 'ready',
       });
       setVerdict(result);
       setModelAtScan(modelStateAtScan);
@@ -837,6 +868,85 @@ export function App() {
                   </h2>
                   <p className="text-sm text-secondary leading-relaxed">{copy.readyDescription}</p>
                 </div>
+                <section
+                  className="clay-panel rounded-2xl p-6 space-y-3"
+                  aria-labelledby="llm-title"
+                >
+                  <h2 id="llm-title" className="text-base font-bold text-text tracking-tight">
+                    {copy.llmTitle}
+                  </h2>
+                  {llmAvailable ? (
+                    <>
+                      <label className="flex items-center gap-3 text-sm font-semibold text-text cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="h-5 w-5 accent-primary cursor-pointer"
+                          checked={llmEnabled}
+                          disabled={llmStatus.state === 'loading'}
+                          onChange={(event) => requestLlm(event.currentTarget.checked)}
+                        />
+                        {copy.llmToggleLabel}
+                      </label>
+                      <p className="text-xs text-secondary leading-relaxed">
+                        {copy.llmDescription}
+                      </p>
+                      {llmPromptOpen && (
+                        <div
+                          className="bg-neutral rounded-xl p-4 space-y-3"
+                          role="dialog"
+                          aria-labelledby="llm-prompt-title"
+                        >
+                          <h3 id="llm-prompt-title" className="text-sm font-bold text-text">
+                            {copy.llmPromptTitle}
+                          </h3>
+                          <p className="text-xs text-secondary">
+                            {copy.llmPromptBody(llmTier === 'A' ? 880 : 290)}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="primary" onPress={() => void downloadLlm()}>
+                              {copy.llmDownloadAction}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onPress={() => setLlmPromptOpen(false)}
+                            >
+                              {copy.llmCancelAction}
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                      {llmStatus.state === 'loading' && (
+                        <div className="space-y-2" role="status" aria-live="polite">
+                          <p className="text-xs text-secondary">
+                            {copy.llmProgress(llmStatus.progress)}
+                          </p>
+                          <progress
+                            className="w-full h-2"
+                            max={100}
+                            value={llmStatus.progress}
+                            aria-label={copy.llmProgressLabel}
+                          />
+                        </div>
+                      )}
+                      {llmStatus.state === 'ready' && (
+                        <p className="text-xs text-good font-medium" role="status">
+                          {copy.llmReady}
+                        </p>
+                      )}
+                      {llmStatus.state === 'error' && (
+                        <div className="space-y-2" role="alert">
+                          <p className="text-xs text-high font-medium">{copy.llmError}</p>
+                          <Button size="sm" variant="outline" onPress={() => requestLlm(true)}>
+                            {copy.llmRetry}
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-xs text-secondary">{copy.llmUnavailable}</p>
+                  )}
+                </section>
                 <section className="px-2">
                   <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4">
                     {copy.howTitle}
@@ -912,6 +1022,14 @@ export function App() {
                       <p className="text-sm text-text/80 leading-relaxed">
                         {copy.assessment[verdict.level].nextStep}
                       </p>
+                      {(verdict.level === 'likely_scam' || verdict.level === 'suspicious') &&
+                        verdict.explanation.steps.length > 0 && (
+                          <ul className="mt-3 space-y-2 list-disc pl-5 text-sm text-text/90 leading-relaxed">
+                            {verdict.explanation.steps.map((step) => (
+                              <li key={step}>{step}</li>
+                            ))}
+                          </ul>
+                        )}
                     </div>
                   </div>
 

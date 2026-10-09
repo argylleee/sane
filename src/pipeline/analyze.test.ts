@@ -90,7 +90,7 @@ describe('local rule verdicts', () => {
       { text: 'Ibigay ang buong pangalan at bank account number para sa ayuda.' },
       { lang: 'fil', useLLM: false },
     );
-    expect(prize.level).toBe('suspicious');
+    expect(prize.level).toBe('likely_scam');
     expect(details.signals.map(({ id }) => id)).toContain('personal_data_request');
   });
 
@@ -157,10 +157,10 @@ describe('local rule verdicts', () => {
   it.each([
     ['GCash: send OTP now at gcash-login.top', 'likely_scam'],
     ['BPI alert: send your PIN to unlock your account', 'suspicious'],
-    ['Anak, new number ko. Magpadala ng pera ngayon na.', 'suspicious'],
-    ['You won! Pay now for your processing fee.', 'suspicious'],
-    ['Your account is blocked. Pay now.', 'suspicious'],
-    ['Visit bpi-support.top for updates.', 'suspicious'],
+    ['Anak, new number ko. Magpadala ng pera ngayon na.', 'likely_scam'],
+    ['You won! Pay now for your processing fee.', 'likely_scam'],
+    ['Your account is blocked. Pay now.', 'likely_scam'],
+    ['Visit bpi-support.top for updates.', 'likely_scam'],
     ['Please share your password.', 'suspicious'],
     ['Your code is 123456. Never share your OTP.', 'probably_fine'],
     ['Delivery update: parcel arrives tomorrow. Visit gcash.com.', 'not_sure'],
@@ -168,5 +168,29 @@ describe('local rule verdicts', () => {
   ])('returns %s as %s in the ten-message smoke set', async (text, expected) => {
     const verdict = await analyze({ text }, opts);
     expect(verdict.level).toBe(expected);
+  });
+});
+
+describe('signal-specific explanations', () => {
+  it.each(['en', 'fil', 'taglish'] as const)(
+    'gives advice for the red flags found in %s',
+    async (lang) => {
+      const verdict = await analyze(
+        { text: 'Anak, new number ko. Magpadala ng pera ngayon na.' },
+        { lang, useLLM: false },
+      );
+      expect(verdict.explanation.steps.length).toBeGreaterThanOrEqual(2);
+      expect(verdict.explanation.steps.length).toBeLessThanOrEqual(3);
+      expect(verdict.explanation.steps[0]).toMatch(/relative|kamag-anak/i);
+      expect(verdict.explanation.steps.join(' ')).not.toMatch(/\u2014/);
+    },
+  );
+
+  it('keeps the general advice when nothing specific was found', async () => {
+    const verdict = await analyze(
+      { text: 'Kumusta! Kita tayo bukas.' },
+      { lang: 'en', useLLM: false },
+    );
+    expect(verdict.explanation.steps).toHaveLength(2);
   });
 });
