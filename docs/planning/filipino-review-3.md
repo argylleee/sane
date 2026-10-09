@@ -10,15 +10,15 @@ How to use this file on GitHub: click the pencil (Edit this file), change `[ ]` 
 
 Also check the label: is it really a scam or a normal message?
 
-- [ ] C-t11 (fil, labeled likely_scam). Magandang araw po. May hindi po natuloy na bayad sa account ninyo. Pakisabi lang po ang code na pumasok sa cellphone ninyo para maibalik ang pera.  
+- [x] C-t11 (fil, labeled likely_scam). Magandang araw po. May hindi po natuloy na bayad sa account ninyo. Pakisabi lang po ang code na pumasok sa cellphone ninyo para maibalik ang pera.  
       Fix:
-- [ ] C-t12 (fil, labeled likely_scam). Babala: isasara ang inyong account sa loob ng 2 oras kung hindi ninyo ito kukumpirmahin. Pindutin ang link na ito ngayon din.  
+- [x] C-t12 (fil, labeled likely_scam). Babala: isasara ang inyong account sa loob ng 2 oras kung hindi ninyo ito kukumpirmahin. Pindutin ang link na ito ngayon din.  
       Fix:
-- [ ] C-t13 (fil, labeled likely_scam). Binabati ka! Napili ka bilang panalo ng bagong motorsiklo. Magpadala ng 1,000 piso para sa papeles bago ito maipadala sa iyo.  
+- [x] C-t13 (fil, labeled likely_scam). Binabati ka! Napili ka bilang panalo ng bagong motorsiklo. Magpadala ng 1,000 piso para sa papeles bago ito maipadala sa iyo.  
       Fix:
-- [ ] C-t14 (fil, labeled likely_scam). May natanggap kang ayuda mula sa gobyerno. Ibigay ang inyong buong pangalan at numero ng bank account sa link para ma-release ang pera.  
+- [x] C-t14 (fil, labeled likely_scam). May natanggap kang ayuda mula sa gobyerno. Ibigay ang inyong buong pangalan at numero ng bank account sa link para ma-release ang pera.  
       Fix:
-- [ ] C-t15 (fil, labeled suspicious). Mag-invest ngayon at tiyak na dodoble ang pera mo sa isang linggo. Kaunting slots na lang ang natitira.  
+- [x] C-t15 (fil, labeled suspicious). Mag-invest ngayon at tiyak na dodoble ang pera mo sa isang linggo. Kaunting slots na lang ang natitira.  
       Fix:
 - [ ] C-t16 (fil, labeled probably_fine). Anak, nakauwi na ako. May niluto akong adobo, kumain ka na pag-uwi mo ha.  
       Fix:
@@ -32,13 +32,13 @@ Also check the label: is it really a scam or a normal message?
       Fix:
 - [ ] C-t21 (taglish, labeled likely_scam). Ate, ito na new number ko, nasira phone ko. Pa-load naman ako ng 500 ngayon, emergency lang, babayaran kita mamaya promise.  
       Fix:
-- [ ] C-t22 (taglish, labeled likely_scam). Sir, nag-error yung refund mo. Paki-send na lang dito yung OTP na dumating para ma-process na namin agad ngayon.  
+- [x] C-t22 (taglish, labeled likely_scam). Sir, nag-error yung refund mo. Paki-send na lang dito yung OTP na dumating para ma-process na namin agad ngayon.  
       Fix:
 - [ ] C-t23 (taglish, labeled likely_scam). Hindi ka pa nagbabayad ng utang mo. Kung hindi mo bayaran today, i-text namin family at friends mo na scammer ka.  
       Fix:
-- [ ] C-t24 (taglish, labeled likely_scam). Hello, may package ka sa warehouse namin. Mag-pay ka muna ng 80 pesos na handling fee sa link para ma-deliver ngayon.  
+- [x] C-t24 (taglish, labeled likely_scam). Hello, may package ka sa warehouse namin. Mag-pay ka muna ng 80 pesos na handling fee sa link para ma-deliver ngayon.  
       Fix:
-- [ ] C-t25 (taglish, labeled suspicious). Sumali ka sa group namin, guaranteed profit daily sa crypto trading. Mag-deposit ka lang ng 2,000 para makapag-start.  
+- [x] C-t25 (taglish, labeled suspicious). Sumali ka sa group namin, guaranteed profit daily sa crypto trading. Mag-deposit ka lang ng 2,000 para makapag-start.  
       Fix:
 - [ ] C-t26 (taglish, labeled probably_fine). Guys, na-move yung meeting sa 4pm. Paki-send na lang yung report before that, thanks!  
       Fix:
@@ -50,19 +50,19 @@ Also check the label: is it really a scam or a normal message?
       Fix:
 - [ ] C-t30 (taglish, labeled probably_fine). Reminder: your data promo ends tomorrow. Mag-register ulit sa official app para ma-extend ang unli data mo.  
       Fix:
-- [ ] C-p02 (fil, labeled scam). Maaari po bang ibigay ang code na dumating sa inyong telepono? Kailangan lang po para ma-confirm namin ang refund ninyo.  
+- [x] C-p02 (fil, labeled scam). Maaari po bang ibigay ang code na dumating sa inyong telepono? Kailangan lang po para ma-confirm namin ang refund ninyo.  
       Fix:
-- [ ] C-p03 (taglish, labeled scam). Boss paki-forward yung 6 digit na pumasok sa phone mo, mali kasi yung nasend ko sa'yo na pera.  
+- [x] C-p03 (taglish, labeled scam). Boss paki-forward yung 6 digit na pumasok sa phone mo, mali kasi yung nasend ko sa'yo na pera.  
       Fix:
-- [ ] C-p05 (fil, labeled scam). Naka-hold ang inyong GCash dahil kulang ang impormasyon. Pindutin ang link at i-update agad bago mag-expire ngayong gabi.  
+- [x] C-p05 (fil, labeled scam). Naka-hold ang inyong GCash dahil kulang ang impormasyon. Pindutin ang link at i-update agad bago mag-expire ngayong gabi.  
       Fix:
 - [ ] C-p06 (taglish, labeled scam). Hello po, na-flag yung Maya account mo. Click mo to re-activate, 12 hrs lang ang palugit bago i-close.  
       Fix:
 - [ ] C-p08 (taglish, labeled scam). May parcel ka na naka-pending sa courier, bayaran mo muna yung shipping fee na 120 para ma-deliver today.  
       Fix:
-- [ ] C-p10 (fil, labeled scam). Nanalo po kayo ng 50,000 piso sa aming raffle! Magbayad lang ng maliit na bayad para makuha ang premyo.  
+- [x] C-p10 (fil, labeled scam). Nanalo po kayo ng 50,000 piso sa aming raffle! Magbayad lang ng maliit na bayad para makuha ang premyo.  
       Fix:
-- [ ] C-p11 (taglish, labeled scam). Anak ito si Mama, nasira cellphone ko kaya new number to. Pwede ka bang mag-send ng load, may emergency kasi ako ngayon.  
+- [x] C-p11 (taglish, labeled scam). Anak ito si Mama, nasira cellphone ko kaya new number to. Pwede ka bang mag-send ng load, may emergency kasi ako ngayon.  
       Fix:
 - [ ] C-p13 (taglish, labeled scam). Overdue ka na sa loan mo. Kapag di ka nagbayad ngayon, ipapadala namin sa lahat ng contacts mo ang pangalan mo.  
       Fix:
