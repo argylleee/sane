@@ -1,5 +1,7 @@
 # Classifier and evaluation contract
 
+> **Superseded (D-10, October 9, 2026):** the Android-native, Filipino+English, trained-classifier approach below was replaced by the web-only kit in `RULES.md` and `PLAN.md`. Kept for history; do not build from it.
+
 Status: selected baseline to evaluate, not a trained model or accuracy claim. Languages required:
 Filipino and English. A model upgrade is possible only with integration approval and evidence
 that native execution, background monitoring, language quality, and timebox remain viable.

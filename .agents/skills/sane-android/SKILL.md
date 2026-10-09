@@ -1,6 +1,6 @@
 ---
 name: sane-android
-description: Implement or diagnose Sane automatic SMS reception, selected-chat notification capture, Java/Capacitor bridges, permissions, native warning delivery, and background lifecycle. Use for Android capture; not full inbox reading or iOS.
+description: SUPERSEDED by D-10 (web-only kit, see RULES.md); do not use. Implement or diagnose Sane automatic SMS reception, selected-chat notification capture, Java/Capacitor bridges, permissions, native warning delivery, and background lifecycle. Use for Android capture; not full inbox reading or iOS.
 ---
 
 # Sane android workflow

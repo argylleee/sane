@@ -16,7 +16,8 @@ Native discovery and execution permissions vary; verify in the tool you actually
 | `grilling`           | Required interview implementation called by upstream grill-me            |
 | `impeccable`         | Frontend design; its command router loads only relevant references       |
 | `role-dispatch`      | Task routing, allocation receipts, and bounded dispatch                  |
-| `role-integration`   | Product/shared integration coordination                                  |
+| `role-integration`   | Automatic AI integration, allocation, and checks                         |
+| `role-model`         | Assigned on-device AI/model implementation and evaluation                |
 | `role-frontend`      | Assigned UI implementation and verification                              |
 | `role-backend`       | Assigned core/service implementation and verification                    |
 | `resolve-conflict`   | Ownership, refactor, Git, semantic, or external-write collision          |

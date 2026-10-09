@@ -1,6 +1,6 @@
 ---
 name: sane-security
-description: Review Sane Android message privacy, untrusted inputs, native bridge permissions, model integrity, warning notifications, retention, and AI-assisted development boundaries. Use for security-sensitive Sane work; no live-data or publishing authority.
+description: SUPERSEDED by D-10 (web-only kit, see RULES.md); do not use. Review Sane Android message privacy, untrusted inputs, native bridge permissions, model integrity, warning notifications, retention, and AI-assisted development boundaries. Use for security-sensitive Sane work; no live-data or publishing authority.
 ---
 
 # Sane security workflow

@@ -1,6 +1,6 @@
 ---
 name: sane-delivery-plan
-description: Run assigned Sane development work from allocation through submission using the Spec Kit loop, role scopes, and gate evidence. Use when starting, resuming, or coordinating a Sane build task; not for one-off repository maintenance.
+description: SUPERSEDED by D-10 (web-only kit, see RULES.md); do not use. Run assigned Sane development work from allocation through submission using the Spec Kit loop, role scopes, and gate evidence. Use when starting, resuming, or coordinating a Sane build task; not for one-off repository maintenance.
 ---
 
 # Sane delivery plan

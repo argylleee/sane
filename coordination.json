@@ -27,6 +27,8 @@
     ".prettierrc.json",
     ".prettierignore",
     ".env.example",
+    "RULES.md",
+    "PLAN.md",
     "PRODUCT.md",
     "DESIGN.md",
     "scripts/",

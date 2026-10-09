@@ -1,6 +1,6 @@
 ---
 name: sane-release
-description: Verify Sane APK/device readiness, automatic SMS/chat sources, local AI contribution, bilingual evaluation, offline relaunch, privacy/accessibility, demo provenance, and hackathon submission evidence. Use with self-validate; tooling/Figma are not device proof.
+description: SUPERSEDED by D-10 (web-only kit, see RULES.md); do not use. Verify Sane APK/device readiness, automatic SMS/chat sources, local AI contribution, bilingual evaluation, offline relaunch, privacy/accessibility, demo provenance, and hackathon submission evidence. Use with self-validate; tooling/Figma are not device proof.
 ---
 
 # Sane release workflow

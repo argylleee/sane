@@ -93,7 +93,8 @@ worktree requires activation again. Only the relevant role instructions load:
 | Skill              | Responsibility                                                                       |
 | ------------------ | ------------------------------------------------------------------------------------ |
 | `role-dispatch`    | Select one role, allocate bounded scopes, and dispatch through permitted host tools. |
-| `role-integration` | Product scope, shared contracts/config, integration, and combined demo evidence.     |
+| `role-integration` | Automatic AI coordinator: allocation, scope checks, combined validation, demo path.  |
+| `role-model`       | On-device OCR, embeddings, small LLM, reference data, and model evaluation.          |
 | `role-frontend`    | Assigned screens, client state, accessibility, responsive behavior, and UI checks.   |
 | `role-backend`     | Assigned domain logic/services, integrations, fixtures, and failure-path checks.     |
 | `resolve-conflict` | Reconcile ownership, refactor, merge, interface, or external-resource collisions.    |
@@ -120,7 +121,7 @@ serializes or repartitions the work. Workers resume only with acknowledged updat
 No skill can guarantee zero conflicts; the protocol makes collisions visible and recoverable.
 See [coordination and exact task-check commands](docs/coordination.md).
 
-Claude Code and OpenCode use `/role-frontend`, `/role-backend`, or `/role-integration` in chat;
+Claude Code and OpenCode use `/role-model`, `/role-frontend`, or `/role-backend` in chat;
 Codex uses `$role-*` or the skill picker. Codex/Claude lifecycle hooks restore the exact session
 checkpoint after compaction and reset on `/clear`. OpenCode's project slash commands use a compact
 anchor in the summary; no lifecycle plugin is installed. `/clean` is not a universal command, and
@@ -263,8 +264,8 @@ Load role-dispatch and allocate these tasks before parallel writing.
 Load resolve-conflict and reconcile these conflicting task changes.
 ```
 
-This repository also provides native project commands `/role-frontend`, `/role-backend`, and
-`/role-integration`. Invoke one once at chat start; subsequent tasks keep the selected role.
+This repository also provides native project commands `/role-model`, `/role-frontend`,
+`/role-backend`, and `/role-integration` (the last is run automatically by the AI). Invoke one once at chat start; subsequent tasks keep the selected role.
 Other skills can still be loaded using the prompts above. Confirm the commands appear after reload.
 
 Ask OpenCode to use its native `skill` tool. If a skill is missing, verify the workspace root,

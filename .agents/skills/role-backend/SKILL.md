@@ -10,11 +10,12 @@ session key/epoch, then retain it through ordinary turns and compaction without 
 On implicit loading for one task, do not create a sticky role. Restore only this same chat/checkout;
 new/cleared/forked chats and other worktrees activate afresh. Task ownership is checked separately.
 
-Read the task, its allocation receipt for parallel work, and the relevant contract/runtime
-boundary. Follow `docs/coordination.md` for scope checks. No backend is required solely by this role.
+Read `RULES.md`, the task, its allocation receipt for parallel work, and the relevant contract/runtime
+boundary (`architecture`, `security-privacy`). Follow `docs/coordination.md` for scope checks. No backend is required solely by this role.
 
-- Own assigned core behavior/services and isolated fixtures. For a frontend-only app, work on
-  core processing or automation. Keep the first real integration small and runnable.
+- Own assigned core behavior/services and isolated fixtures. For this web-only app, own the
+  Web Worker pipeline, deterministic detectors (links, lookalike domains, OTP requests), and scoring code.
+  Model loading and prompts belong to `model`. Keep the first real integration small and runnable.
 - Propose interfaces, schema changes, environment requirements, and dependency changes to
   integration. Do not edit coordinator-owned schema/config/lockfiles while another role is active.
 - Inspect authoritative trust boundaries for auth, tenancy, payment, and provisioning when

@@ -5,6 +5,8 @@ description: Preserve Sane scope, local execution, Android architecture, and sha
 
 # Sane system boundaries
 
+> **Superseded (D-10, October 9, 2026):** the Android-native, Filipino+English, trained-classifier approach below was replaced by the web-only kit in `RULES.md` and `PLAN.md`. Kept for history; do not build from it.
+
 Read `docs/planning/scope.md`, `docs/planning/architecture.md`, and the relevant
 `docs/sane/` contract. Confirmed user requirements outrank the older attached proposal.
 

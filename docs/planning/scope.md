@@ -1,5 +1,7 @@
 # Sane scope and requirements
 
+> **Superseded (D-10, October 9, 2026):** the Android-native, Filipino+English, trained-classifier approach below was replaced by the web-only kit in `RULES.md` and `PLAN.md`. Kept for history; do not build from it.
+
 Confirmed by the user on October 9, 2026: scam-related message detection through manual paste
 and automatic arrival monitoring; Android SMS plus selected chat apps through notifications;
 Filipino and English; three developers without Kotlin experience; approximately 15 build hours;

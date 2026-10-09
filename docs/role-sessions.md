@@ -1,16 +1,17 @@
 # Activate a role once per chat
 
-Activate `integration`, `frontend`, or `backend` once. It remains the selected role for later
+Activate `model`, `frontend`, or `backend` once. `integration` is run automatically by the AI
+coordinator and is rarely activated by hand. It remains the selected role for later
 messages and compaction in that same chat and checkout. Other task/validation skills can load
 as needed without changing the role. A role selection does not grant tools, file ownership,
 or permission to publish; task allocations remain independently checked.
 
-| Host        | Activate in chat                                       | Reset boundary                                |
-| ----------- | ------------------------------------------------------ | --------------------------------------------- |
-| Codex       | `$role-frontend`, `$role-backend`, `$role-integration` | New/forked chat, different worktree, `/clear` |
-| Claude Code | `/role-frontend`, `/role-backend`, `/role-integration` | New/forked chat, different worktree, `/clear` |
-| OpenCode    | Same `/role-*` commands from `.opencode/commands`      | New/cleared chat or different worktree        |
-| Other hosts | Ask to activate the named canonical role skill         | Fresh/cleared chat or different worktree      |
+| Host        | Activate in chat                                  | Reset boundary                                |
+| ----------- | ------------------------------------------------- | --------------------------------------------- |
+| Codex       | `$role-model`, `$role-frontend`, `$role-backend`  | New/forked chat, different worktree, `/clear` |
+| Claude Code | `/role-model`, `/role-frontend`, `/role-backend`  | New/forked chat, different worktree, `/clear` |
+| OpenCode    | Same `/role-*` commands from `.opencode/commands` | New/cleared chat or different worktree        |
+| Other hosts | Ask to activate the named canonical role skill    | Fresh/cleared chat or different worktree      |
 
 Use the host's actual reset command. `/clean` is not a portable command we can assume exists.
 Clearing only the terminal display is not a conversation reset. To switch roles deliberately,

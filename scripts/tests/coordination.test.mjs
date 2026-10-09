@@ -41,6 +41,16 @@ test('independent role allocations pass; parent/child and case-only file collisi
   );
 });
 
+test('model role is a valid writer but cannot claim shared files', () => {
+  assertCoordination(
+    registry(task('TASK-001', ['src/ml/'], { role: 'model' }), task('TASK-002', ['src/ui/'])),
+  );
+  assert.throws(
+    () => assertCoordination(registry(task('TASK-001', ['package.json'], { role: 'model' }))),
+    /integration ownership/,
+  );
+});
+
 test('shared configuration and broad refactors require integration ownership', () => {
   assert.throws(
     () => assertCoordination(registry(task('TASK-001', ['package.json']))),

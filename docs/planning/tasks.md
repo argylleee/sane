@@ -1,5 +1,7 @@
 # Proposed implementation sequence
 
+> **Superseded (D-10, October 9, 2026):** the Android-native, Filipino+English, trained-classifier approach below was replaced by the web-only kit in `RULES.md` and `PLAN.md`. Kept for history; do not build from it.
+
 Status: planned, not allocated or active. No named owners or writing receipts exist in
 `coordination.json`. Integration must allocate real scopes/worktrees before parallel writers start.
 The current task creates documentation/skills only; it does not implement these tasks.

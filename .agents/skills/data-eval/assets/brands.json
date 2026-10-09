@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "note": "Verify each official domain yourself before use. Exact registrable-domain match only.",
+  "brands": [
+    {
+      "name": "gcash",
+      "official": ["gcash.com"]
+    },
+    {
+      "name": "maya",
+      "official": ["maya.ph"]
+    },
+    {
+      "name": "paymaya",
+      "official": ["maya.ph"]
+    },
+    {
+      "name": "bdo",
+      "official": ["bdo.com.ph"]
+    },
+    {
+      "name": "bpi",
+      "official": ["bpi.com.ph"]
+    },
+    {
+      "name": "metrobank",
+      "official": ["metrobank.com.ph"]
+    },
+    {
+      "name": "unionbank",
+      "official": ["unionbankph.com"]
+    },
+    {
+      "name": "landbank",
+      "official": ["landbank.com"]
+    },
+    {
+      "name": "sss",
+      "official": ["sss.gov.ph"]
+    },
+    {
+      "name": "philhealth",
+      "official": ["philhealth.gov.ph"]
+    },
+    {
+      "name": "pagibig",
+      "official": ["pagibigfund.gov.ph"]
+    },
+    {
+      "name": "meralco",
+      "official": ["meralco.com.ph"]
+    },
+    {
+      "name": "lbc",
+      "official": ["lbcexpress.com"]
+    },
+    {
+      "name": "jnt",
+      "official": ["jtexpress.ph"]
+    },
+    {
+      "name": "shopee",
+      "official": ["shopee.ph"]
+    },
+    {
+      "name": "lazada",
+      "official": ["lazada.com.ph"]
+    },
+    {
+      "name": "globe",
+      "official": ["globe.com.ph"]
+    },
+    {
+      "name": "smart",
+      "official": ["smart.com.ph"]
+    }
+  ]
+}

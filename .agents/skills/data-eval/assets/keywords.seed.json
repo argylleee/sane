@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "note": "Seed lists. Expand with real messages. Match against normalized lowercase text.",
+  "otp_pin_request": {
+    "en": [
+      "otp",
+      "one-time password",
+      "6-digit code",
+      "verification code",
+      "pin",
+      "mpin",
+      "password",
+      "security code"
+    ],
+    "fil": ["ibigay ang otp", "pakisabi ang code", "ibigay ang pin"],
+    "taglish": ["send mo otp", "pa-send ng code", "i-share ang otp", "sabihin mo code"]
+  },
+  "urgency": {
+    "en": [
+      "within 24 hours",
+      "immediately",
+      "urgent",
+      "last warning",
+      "final notice",
+      "act now",
+      "today only",
+      "expires today"
+    ],
+    "fil": ["ngayon din", "madalian", "huling abiso", "sa loob ng 24 oras"],
+    "taglish": ["ngayon na", "asap", "agad-agad", "final notice", "urgent talaga"]
+  },
+  "account_threat": {
+    "en": [
+      "suspended",
+      "blocked",
+      "locked",
+      "limited",
+      "disconnected",
+      "deactivated",
+      "unusual login",
+      "permanently closed"
+    ],
+    "fil": ["ma-suspend", "mawawalan ng access", "ma-block", "ipapasara", "puputulin"],
+    "taglish": ["na-lock", "na-limit", "ma-deactivate", "mawawalan ka ng access"]
+  },
+  "money_request": {
+    "en": [
+      "pay",
+      "send money",
+      "fee",
+      "processing fee",
+      "release fee",
+      "redelivery fee",
+      "transfer"
+    ],
+    "fil": ["magbayad", "bayaran", "magpadala ng pera", "bayad"],
+    "taglish": ["pa-send", "bayaran mo", "mag-load", "pa-gcash", "i-send mo"]
+  },
+  "prize_or_job_bait": {
+    "en": [
+      "you won",
+      "claim your prize",
+      "easy income",
+      "per task",
+      "work from home",
+      "no experience",
+      "guaranteed returns"
+    ],
+    "fil": ["nanalo ka", "i-claim ang premyo", "madaling trabaho", "garantisadong tubo"],
+    "taglish": ["nanalo ka ng", "earn ka daily", "walang experience", "guaranteed ang balik"]
+  },
+  "relative_claims": {
+    "en": ["new number", "lost my phone", "it's me", "don't tell"],
+    "fil": ["bagong numero", "nawala ang telepono", "huwag mong sabihin"],
+    "taglish": ["new number ko", "nawala phone ko", "wag mo sabihin"]
+  },
+  "suspicious_tlds": [".xyz", ".top", ".click", ".icu", ".buzz", ".cfd", ".sbs"],
+  "shorteners": ["bit.ly", "tinyurl.com", "cutt.ly", "t.ly", "is.gd", "rb.gy", "shorturl.at"],
+  "safe_phrases": [
+    "do not share this code",
+    "huwag ibigay ang code",
+    "never share your otp",
+    "huwag ibabahagi"
+  ]
+}

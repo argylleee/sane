@@ -1,5 +1,7 @@
 # Sane development guide
 
+> **Superseded (D-10, October 9, 2026):** the Android-native, Filipino+English, trained-classifier approach below was replaced by the web-only kit in `RULES.md` and `PLAN.md`. Kept for history; do not build from it.
+
 Status: system contracts and agent instructions, October 9, 2026. No app or model is implemented
 or validated by this bundle. The user requested these files and a push to main; that authority
 is specific to this documentation task and does not authorize future app deployment.

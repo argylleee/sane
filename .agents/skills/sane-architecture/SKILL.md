@@ -1,6 +1,6 @@
 ---
 name: sane-architecture
-description: Design or review Sane architecture, stack changes, native/UI contracts, local execution, and integration seams. Use for Sane system planning and shared interfaces; supplement existing roles and ownership workflows.
+description: SUPERSEDED by D-10 (web-only kit, see RULES.md); do not use. Design or review Sane architecture, stack changes, native/UI contracts, local execution, and integration seams. Use for Sane system planning and shared interfaces; supplement existing roles and ownership workflows.
 ---
 
 # Sane architecture workflow

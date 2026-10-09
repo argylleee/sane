@@ -85,23 +85,25 @@ still apply. Skill text cannot authorize publishing, spending, data changes, or 
 
 ## Load on demand
 
-For Sane work, first read `docs/sane/README.md` and
-`.agents/rules/sane-system.md`. Load only the matching specialist skill/rule below.
-These supplement existing role, allocation, design, and validation workflows; they never
-activate a role, allocate files, or grant external authority. Manual paste, automatic SMS,
-and automatic selected-chat monitoring are core requirements; do not silently defer them.
+For Sane work, first read `RULES.md` (hard rules) and `PLAN.md` (current plan). Sane is now a
+web-only, mobile-first PWA that runs OCR, embeddings, and an optional small LLM in the browser,
+with no training or labeling (decision D-10 in `docs/planning/decisions.md`). Load only the matching
+skill below. Skills never activate a role, allocate files, or grant external authority.
 
-| Sane work                                           | Skill               | Additional rule           |
-| --------------------------------------------------- | ------------------- | ------------------------- |
-| Architecture, stack, interfaces                     | `sane-architecture` | `sane-system.md`          |
-| SMS, chat notifications, background execution       | `sane-android`      | `sane-system.md`          |
-| Training, classifier, Filipino/English evaluation   | `sane-model`        | `sane-model.md`           |
-| Figma handoff, screens, accessibility, localization | `sane-experience`   | `sane-experience.md`      |
-| Privacy, permissions, bridge/storage threat review  | `sane-security`     | `sane-security.md`        |
-| Device verification, demo, submission               | `sane-release`      | `hackathon-guidelines.md` |
+| Sane work                                       | Skill              |
+| ----------------------------------------------- | ------------------ |
+| Create, run, or update the plan; what is next   | `plan`             |
+| Pipeline, folders, module contracts, fallbacks  | `architecture`     |
+| Libraries, models, sizes, device tiers          | `tech-stack`       |
+| OCR, embeddings, in-browser LLM, caching        | `local-ai`         |
+| Zero-network proof, safe rendering, injection   | `security-privacy` |
+| UI, PWA, share target, English/Filipino/Taglish | `design-ux`        |
+| Archetypes, keywords, scoring, test set, eval   | `data-eval`        |
+| Demo script, disclosure table, "why local"      | `demo-submission`  |
 
-All rule paths above are under `.agents/rules/`; all skill paths are under
-`.agents/skills/<name>/SKILL.md`. Skills are instructions, not running monitors or tests.
+The Android-native skills `sane-android`, `sane-architecture`, `sane-model`, `sane-experience`,
+`sane-security`, `sane-release`, and `sane-delivery-plan` are superseded by D-10; do not load them.
+All skill paths are under `.agents/skills/<name>/SKILL.md`. Skills are instructions, not running monitors or tests.
 
 | Work                                     | Read                                                   |
 | ---------------------------------------- | ------------------------------------------------------ |
@@ -110,7 +112,8 @@ All rule paths above are under `.agents/rules/`; all skill paths are under
 | Worktrees or delegation                  | `.agents/skills/parallel-work/SKILL.md`                |
 | Verification or a failed check           | `.agents/skills/self-validate/SKILL.md`                |
 | Role selection and allocation            | `.agents/skills/role-dispatch/SKILL.md`                |
-| Product/shared integration work          | `.agents/skills/role-integration/SKILL.md`             |
+| Integration and checks (AI-automatic)    | `.agents/skills/role-integration/SKILL.md`             |
+| Assigned AI/model work                   | `.agents/skills/role-model/SKILL.md`                   |
 | Assigned UI work                         | `.agents/skills/role-frontend/SKILL.md`                |
 | Assigned core/service work               | `.agents/skills/role-backend/SKILL.md`                 |
 | Ownership, merge, or interface collision | `.agents/skills/resolve-conflict/SKILL.md`             |

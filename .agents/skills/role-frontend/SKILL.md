@@ -10,15 +10,15 @@ session key/epoch, then retain it through ordinary turns and compaction without 
 On implicit loading for one task, do not create a sticky role. Restore only this same chat/checkout;
 new/cleared/forked chats and other worktrees activate afresh. Task ownership is checked separately.
 
-Read the task, its allocation receipt for parallel work, and only the relevant interface/design
-references. Follow `docs/coordination.md` for scope checks. A role tag is not permission to edit all UI.
+Read `RULES.md`, the task, its allocation receipt for parallel work, and only the relevant interface/design
+references (`design-ux` for the mobile-first PWA and three-language copy). Follow `docs/coordination.md` for scope checks. A role tag is not permission to edit all UI.
 
 - Build the main user journey within assigned paths: client state, accessible controls,
   responsive layout, and loading/empty/error states. Connect agreed interfaces early.
 - Use `impeccable` only for relevant design work and load only its selected command references.
   PRODUCT.md/DESIGN.md and shared design contracts are coordinator-owned unless explicitly allocated.
 - Do not invent server success, auth/payment/session behavior, or change API/schema/shared routes
-  outside the task. Propose a contract change to integration; use `resolve-conflict` when it collides.
+  outside the task. Propose a contract change to the automatic integration coordinator; use `resolve-conflict` when it collides.
 - Test meaningful UI/state behavior, check relevant viewports, format owned files, and run
   validation before handoff. Report mock/pending backend integration clearly.
 - Allocate a subagent only for an independent bounded slice/review when permitted; a writer

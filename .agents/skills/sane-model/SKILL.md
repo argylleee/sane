@@ -1,6 +1,6 @@
 ---
 name: sane-model
-description: Train, export, evaluate, or review Sane Filipino/English scam classifiers, contextual rules, thresholds, model contribution, data provenance, and Python/Java feature parity. Use for detection quality; UI translation is not model evidence.
+description: SUPERSEDED by D-10 (web-only kit, see RULES.md); do not use. Train, export, evaluate, or review Sane Filipino/English scam classifiers, contextual rules, thresholds, model contribution, data provenance, and Python/Java feature parity. Use for detection quality; UI translation is not model evidence.
 ---
 
 # Sane model workflow

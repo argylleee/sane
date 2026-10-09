@@ -1,6 +1,6 @@
 ---
 name: sane-experience
-description: Design or implement Sane manual scanning, automatic warning details, monitoring setup/status, bilingual accessible UI, and Figma-to-React handoff. Use with existing Impeccable/frontend workflows; prototypes do not prove native behavior.
+description: SUPERSEDED by D-10 (web-only kit, see RULES.md); do not use. Design or implement Sane manual scanning, automatic warning details, monitoring setup/status, bilingual accessible UI, and Figma-to-React handoff. Use with existing Impeccable/frontend workflows; prototypes do not prove native behavior.
 ---
 
 # Sane experience workflow

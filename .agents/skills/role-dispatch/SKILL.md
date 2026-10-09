@@ -6,7 +6,7 @@ description: Route a hackathon task to one role and coordinate bounded parallel 
 # Route and allocate work
 
 Use `docs/coordination.md` for the registry schema and agent command examples. Do not assign
-named teammates or spawn all three roles merely because three roles exist.
+named teammates or spawn every role merely because roles exist. Integration is run automatically by the AI.
 
 1. Honor explicit activation, then this chat's active role using `docs/role-sessions.md`.
    A conflicting task receipt needs assignment reconciliation, not automatic role replacement.

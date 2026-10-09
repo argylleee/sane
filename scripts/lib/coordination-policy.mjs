@@ -1,4 +1,4 @@
-export const roles = ['integration', 'frontend', 'backend'];
+export const roles = ['integration', 'frontend', 'backend', 'model'];
 const states = ['planned', 'active', 'blocked', 'ready', 'integrated', 'cancelled'];
 const heldStates = new Set(['active', 'blocked', 'ready']);
 
