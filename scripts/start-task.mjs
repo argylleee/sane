@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { selectTasks } from './lib/task-start.mjs';
 
@@ -33,15 +33,21 @@ try {
   const main = dirname(common); // main checkout; task worktrees live under its .worktrees/
 
   let registryText;
+  const localRegistry = readFileSync(join(main, 'coordination.json'), 'utf8');
   try {
     git(main, 'fetch', 'origin', '--quiet');
-    registryText = git(main, 'show', 'origin/main:coordination.json');
+    const remoteRegistry = git(main, 'show', 'origin/main:coordination.json');
+    if (remoteRegistry !== localRegistry) {
+      console.warn(
+        'Local coordination.json differs from origin/main; using the local coordinator registry.',
+      );
+      registryText = localRegistry;
+    } else {
+      registryText = remoteRegistry;
+    }
   } catch {
     console.warn('Could not read origin/main (offline?); using the local coordination.json.');
-    registryText = run(main, process.execPath, [
-      '-e',
-      "process.stdout.write(require('fs').readFileSync('coordination.json','utf8'))",
-    ]);
+    registryText = localRegistry;
   }
   const config = JSON.parse(registryText);
   const tasks = selectTasks(config, { id: options.get('--task'), role: options.get('--role') });
@@ -82,11 +88,9 @@ try {
     const check = `npm run check:task -- --task ${task.id} --allocation ${task.allocation} --registry "${snapshot}"`;
     try {
       execFileSync(
-        process.platform === 'win32' ? 'npm.cmd' : 'npm',
+        process.execPath,
         [
-          'run',
-          'check:task',
-          '--',
+          join(path, 'scripts', 'check-task.mjs'),
           '--task',
           task.id,
           '--allocation',
@@ -94,7 +98,7 @@ try {
           '--registry',
           snapshot,
         ],
-        { cwd: path, stdio: 'inherit', shell: process.platform === 'win32' },
+        { cwd: path, stdio: 'inherit' },
       );
     } catch {
       throw new Error(`Scope check failed for ${task.id}. Re-run: ${check}`);

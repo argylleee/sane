@@ -18,6 +18,7 @@
     "task:start": "node scripts/start-task.mjs",
     "check:git": "node scripts/check-git.mjs",
     "role:session": "node scripts/role-session.mjs",
+    "role:worktree": "node scripts/role-worktree.mjs",
     "test:tooling": "node --test scripts/tests/*.test.mjs",
     "validate": "node scripts/validate.mjs",
     "vendor:record": "node scripts/record-vendor.mjs",
