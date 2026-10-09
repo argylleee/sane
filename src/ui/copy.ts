@@ -49,6 +49,24 @@ type Copy = {
   howTitle: string;
   howSteps: readonly [string, string, string];
   pasteOnlyNotice: string;
+  offlineReady: string;
+  offlinePreparing: string;
+  online: string;
+  offline: string;
+  networkRequests: (count: number) => string;
+  embeddingTitle: string;
+  embeddingAction: string;
+  embeddingReady: string;
+  embeddingUnavailable: string;
+  embeddingProgress: (percent: number) => string;
+  downloadPromptTitle: string;
+  downloadPromptBody: string;
+  downloadContinue: string;
+  downloadCancel: string;
+  sharedLimitError: string;
+  shareEmpty: string;
+  iosInstallHint: string;
+  installApp: string;
   analysisError: string;
   resultTitle: string;
   resultSubtitle: string;
@@ -120,6 +138,27 @@ export const COPY: Record<Lang, Copy> = {
       'Read the possible signs and next step.',
     ],
     pasteOnlyNotice: 'Clipboard is read only when you choose Paste. Links are never opened.',
+    offlineReady: 'Offline ready',
+    offlinePreparing: 'Preparing offline use',
+    online: 'Online',
+    offline: 'Offline',
+    networkRequests: (count) => `Network requests during this check: ${count}`,
+    embeddingTitle: 'Optional message matching',
+    embeddingAction: 'Load offline matching',
+    embeddingReady: 'Offline message matching is ready.',
+    embeddingUnavailable:
+      'Offline message matching could not load. You can still check with the basic rules.',
+    embeddingProgress: (percent) => `Preparing message matching: ${percent}%`,
+    downloadPromptTitle: 'Download message matching?',
+    downloadPromptBody:
+      'The model weights are about 120 MB, plus supporting files. Use Wi-Fi if you can. Your message stays on this device.',
+    downloadContinue: 'Download on this device',
+    downloadCancel: 'Maybe later',
+    sharedLimitError:
+      'This shared message is over the 2,000 character limit. Paste a shorter part to check.',
+    shareEmpty: 'No message or screenshot came through. Paste or choose one to check.',
+    iosInstallHint: 'On iPhone or iPad, use Share, then Add to Home Screen to keep Sane handy.',
+    installApp: 'Install Sane',
     analysisError: 'The check could not finish. Try again or paste the message into the box.',
     resultTitle: 'Message assessment',
     resultSubtitle: 'A helpful check, not a guarantee.',
@@ -241,6 +280,28 @@ export const COPY: Record<Lang, Copy> = {
     ],
     pasteOnlyNotice:
       'Binabasa lang ang clipboard kapag pinili mo ang I-paste. Hindi binubuksan ang mga link.',
+    offlineReady: 'Handa offline',
+    offlinePreparing: 'Inihahanda para magamit offline',
+    online: 'Online',
+    offline: 'Offline',
+    networkRequests: (count) => `Mga network request habang nagsusuri: ${count}`,
+    embeddingTitle: 'Opsyonal na pagtutugma ng mensahe',
+    embeddingAction: 'I-load para offline',
+    embeddingReady: 'Handa na ang pagtutugma ng mensahe offline.',
+    embeddingUnavailable:
+      'Hindi na-load ang pagtutugma offline. Maaari ka pa ring magsuri gamit ang mga batayang tuntunin.',
+    embeddingProgress: (percent) => `Inihahanda ang pagtutugma ng mensahe: ${percent}%`,
+    downloadPromptTitle: 'I-download ang pagtutugma ng mensahe?',
+    downloadPromptBody:
+      'Mga 120 MB ang model weights, dagdag pa ang supporting files. Gumamit ng Wi-Fi kung kaya. Mananatili sa device mo ang mensahe.',
+    downloadContinue: 'I-download sa device na ito',
+    downloadCancel: 'Mamaya na lang',
+    sharedLimitError:
+      'Lampas sa 2,000 character ang mensaheng ipinasa. Mag-paste ng mas maikling bahagi para masuri.',
+    shareEmpty: 'Walang dumating na mensahe o screenshot. Mag-paste o pumili ng susuriin.',
+    iosInstallHint:
+      'Sa iPhone o iPad, piliin ang Share, saka Add to Home Screen para madaling buksan ang Sane.',
+    installApp: 'I-install ang Sane',
     analysisError: 'Hindi natapos ang pagsusuri. Subukan ulit o i-paste ang mensahe sa kahon.',
     resultTitle: 'Resulta ng pagsusuri',
     resultSubtitle: 'Gabay lang ito, hindi garantiya.',
@@ -361,6 +422,28 @@ export const COPY: Record<Lang, Copy> = {
     ],
     pasteOnlyNotice:
       'Clipboard lang ang binabasa kapag pinili mo ang I-paste. Hindi ino-open ang links.',
+    offlineReady: 'Ready offline',
+    offlinePreparing: 'Inihahanda para offline',
+    online: 'Online',
+    offline: 'Offline',
+    networkRequests: (count) => `Network requests habang nagche-check: ${count}`,
+    embeddingTitle: 'Optional na message matching',
+    embeddingAction: 'I-load para offline',
+    embeddingReady: 'Ready na ang offline message matching.',
+    embeddingUnavailable:
+      'Hindi na-load ang offline message matching. Puwede pa ring mag-check gamit ang basic rules.',
+    embeddingProgress: (percent) => `Inihahanda ang message matching: ${percent}%`,
+    downloadPromptTitle: 'I-download ang message matching?',
+    downloadPromptBody:
+      'Mga 120 MB ang model weights, plus supporting files. Wi-Fi muna kung kaya. Dito lang sa device ang message mo.',
+    downloadContinue: 'I-download sa device na ito',
+    downloadCancel: 'Later na lang',
+    sharedLimitError:
+      'Lampas 2,000 characters ang shared message. I-paste ang mas maikling part para ma-check.',
+    shareEmpty: 'Walang dumating na message o screenshot. Mag-paste o pumili ng iche-check.',
+    iosInstallHint:
+      'Sa iPhone o iPad, tap Share, tapos Add to Home Screen para madaling balikan ang Sane.',
+    installApp: 'I-install ang Sane',
     analysisError: 'Hindi natapos ang check. Try ulit o i-paste ang message sa box.',
     resultTitle: 'Message assessment',
     resultSubtitle: 'Helpful na check ito, hindi guarantee.',
