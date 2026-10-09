@@ -51,7 +51,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/pipeline/",
         "src/rules/",
@@ -74,7 +74,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ai/",
         "src/data/archetypes.json",
@@ -94,7 +94,7 @@
       "role": "frontend",
       "owner": "frontend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ui/",
         "src/main.tsx",
