@@ -532,6 +532,76 @@ p {
   padding-left: 1.25rem;
 }
 
+.llm-control {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+}
+
+.llm-control h2,
+.llm-download-prompt h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.llm-toggle {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 650;
+}
+
+.llm-toggle input {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  accent-color: var(--color-primary);
+}
+
+.llm-control > .supporting-copy,
+.llm-download-prompt p,
+.llm-load-status p,
+.llm-load-error p {
+  margin: 0;
+}
+
+.llm-download-prompt {
+  display: grid;
+  gap: 0.65rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.llm-prompt-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.llm-load-status,
+.llm-load-error {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.llm-load-status progress {
+  display: block;
+  width: 100%;
+  height: 0.5rem;
+  accent-color: var(--color-primary);
+}
+
+.llm-unavailable {
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: var(--radius-control);
+  color: var(--color-secondary);
+  background: var(--color-neutral);
+}
+
 .loading-message {
   margin: 0;
   color: var(--color-secondary);
@@ -548,6 +618,7 @@ p {
     'verdict'
     'coverage'
     'summary'
+    'llm'
     'next'
     'model'
     'evidence'
@@ -573,6 +644,34 @@ p {
 
 .assessment-summary {
   grid-area: summary;
+}
+
+.llm-explanation {
+  grid-area: llm;
+  align-self: start;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  background: var(--color-neutral);
+}
+
+.llm-explanation h2 {
+  margin-bottom: 0.35rem;
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.llm-explanation-disclaimer {
+  margin-bottom: 0.5rem;
+  color: var(--color-secondary);
+  font-size: 0.875rem;
+}
+
+.llm-explanation-text {
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .model-section {
@@ -882,6 +981,7 @@ p {
       'verdict next'
       'coverage original'
       'summary original'
+      'llm original'
       'model another'
       'evidence install'
       'guarantee .';
