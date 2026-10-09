@@ -3,6 +3,14 @@
     { "name": "gcash", "domains": ["gcash.com"] },
     { "name": "maya", "domains": ["maya.ph"] },
     { "name": "bdo", "domains": ["bdo.com.ph"] },
-    { "name": "bpi", "domains": ["bpi.com.ph"] }
+    { "name": "bpi", "domains": ["bpi.com.ph"] },
+    { "name": "unionbank", "domains": ["unionbankph.com"] },
+    { "name": "metrobank", "domains": ["metrobank.com.ph"] },
+    { "name": "securitybank", "domains": ["securitybank.com"] },
+    { "name": "rcbc", "domains": ["rcbc.com"] },
+    { "name": "landbank", "domains": ["landbank.com"] },
+    { "name": "pnb", "domains": ["pnb.com.ph"] },
+    { "name": "gotyme", "domains": ["gotyme.com.ph"] },
+    { "name": "coinsph", "domains": ["coins.ph"] }
   ]
 }

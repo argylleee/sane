@@ -1,13 +1,14 @@
 import { spawnSync } from 'node:child_process';
 
 const CHECKS = ['lint', 'format:check', 'typecheck', 'test:app'];
-const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+// Run npm through node so no shell is needed (avoids DEP0190 on Windows).
+const npmBin = process.execPath;
+const npmCli = process.env.npm_execpath;
 
 function run(command, args, { inherit = false } = {}) {
   const result = spawnSync(command, args, {
     encoding: 'utf8',
     stdio: inherit ? 'inherit' : 'pipe',
-    shell: command === npmBin && process.platform === 'win32',
   });
   if (result.error) throw result.error;
   return {
@@ -23,6 +24,7 @@ function git(...args) {
 }
 
 try {
+  if (!npmCli) throw new Error('Run through npm: npm run task:land.');
   const branch = git('branch', '--show-current');
   if (!branch || branch === 'main') throw new Error('Run from a task branch worktree, not main.');
   if (git('status', '--porcelain'))
@@ -44,7 +46,7 @@ try {
     }
     for (const script of CHECKS) {
       console.log(`\n> npm run ${script}`);
-      if (run(npmBin, ['run', script], { inherit: true }).status !== 0)
+      if (run(npmBin, [npmCli, 'run', script], { inherit: true }).status !== 0)
         throw new Error(`Check "${script}" failed on the merged result; fix it, commit, rerun.`);
     }
     const push = run('git', ['push', 'origin', `HEAD:refs/heads/main`]);
