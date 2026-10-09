@@ -56,6 +56,9 @@ git log -1 --oneline main
 git worktree add .worktrees/TASK-001 -b codex/feat/task-001-demo-screen main
 ```
 
+For one branch and worktree per role (`codex/chore/role-<role>` in `.worktrees/role-<role>`), run
+`npm run role:worktree`; it is idempotent and leaves existing worktrees untouched.
+
 Open `.worktrees/TASK-001` as that worker's workspace. In it, run:
 
 ```sh
