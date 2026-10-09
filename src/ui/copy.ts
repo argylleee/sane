@@ -77,6 +77,23 @@ type Copy = {
   modelTitle: string;
   modelRan: string;
   noModel: string;
+  llmTitle: string;
+  llmToggleLabel: string;
+  llmDescription: string;
+  llmPromptTitle: string;
+  llmPromptBody: (size: number) => string;
+  llmDownloadAction: string;
+  llmCancelAction: string;
+  llmProgress: (percent: number) => string;
+  llmProgressLabel: string;
+  llmReady: string;
+  llmError: string;
+  llmRetry: string;
+  llmUnavailable: string;
+  llmExplanationTitle: string;
+  llmDisclaimer: string;
+  llmModelRan: string;
+  llmModelNotRun: string;
   rulesTitle: string;
   noSignals: string;
   signalNote: string;
@@ -166,6 +183,24 @@ export const COPY: Record<Lang, Copy> = {
     modelTitle: 'Model assessment',
     modelRan: 'An on-device model ran for this check.',
     noModel: 'No AI model ran for this check. Accuracy is not validated.',
+    llmTitle: 'AI explanation (experimental)',
+    llmToggleLabel: 'Use an AI-written explanation',
+    llmDescription: 'Optional. It may be wrong. Rules still decide the risk level.',
+    llmPromptTitle: 'Download the explanation model?',
+    llmPromptBody: (size) =>
+      `About ${size} MB, plus supporting files. Use Wi-Fi if you can. Your message stays on this device.`,
+    llmDownloadAction: 'Download model',
+    llmCancelAction: 'Maybe later',
+    llmProgress: (percent) => `Downloading the AI model: ${percent}%`,
+    llmProgressLabel: 'AI model download progress',
+    llmReady: 'AI explanation is ready on this device.',
+    llmError: 'The model could not load. Checks still work without it.',
+    llmRetry: 'Try again',
+    llmUnavailable: 'AI explanation needs a browser with WebGPU. The regular check still works.',
+    llmExplanationTitle: 'AI explanation',
+    llmDisclaimer: 'AI-written, may be wrong. It cannot change the risk level.',
+    llmModelRan: 'The AI explanation model ran for this check.',
+    llmModelNotRun: 'The AI explanation model did not run for this check.',
     rulesTitle: 'Observed message details',
     noSignals: 'No specific warning signs were identified in the available text.',
     signalNote: 'A single word or link does not prove that a message is a scam.',
@@ -305,6 +340,26 @@ export const COPY: Record<Lang, Copy> = {
     modelTitle: 'Pagtatasa ng modelo',
     modelRan: 'May on-device model na tumakbo sa pagsusuring ito.',
     noModel: 'Walang AI model na ginamit. Hindi pa napatunayan ang accuracy.',
+    llmTitle: 'AI na paliwanag (eksperimental)',
+    llmToggleLabel: 'Gumamit ng AI na paliwanag',
+    llmDescription:
+      'Opsyonal ito at puwedeng magkamali. Rules pa rin ang nagtatakda ng risk level.',
+    llmPromptTitle: 'I-download ang model para sa paliwanag?',
+    llmPromptBody: (size) =>
+      `Mga ${size} MB ang model, bukod pa sa supporting files. Gumamit ng Wi-Fi kung kaya. Sa device mo mananatili ang mensahe.`,
+    llmDownloadAction: 'I-download ang model',
+    llmCancelAction: 'Mamaya na lang',
+    llmProgress: (percent) => `Dina-download ang AI model: ${percent}%`,
+    llmProgressLabel: 'Progress ng pag-download ng AI model',
+    llmReady: 'Handa na sa device ang AI na paliwanag.',
+    llmError: 'Hindi ma-load ang model. Gagana pa rin ang check kahit wala ito.',
+    llmRetry: 'Subukan ulit',
+    llmUnavailable:
+      'Kailangan ng WebGPU para sa AI na paliwanag. Gagana pa rin ang regular na check.',
+    llmExplanationTitle: 'AI na paliwanag',
+    llmDisclaimer: 'AI ang sumulat nito at puwedeng magkamali. Hindi nito mababago ang risk level.',
+    llmModelRan: 'Tumakbo ang AI explanation model para sa check na ito.',
+    llmModelNotRun: 'Hindi tumakbo ang AI explanation model para sa check na ito.',
     rulesTitle: 'Mga nakitang detalye',
     noSignals: 'Walang tiyak na babala na nakita sa nababasang text.',
     signalNote: 'Hindi sapat ang iisang salita o link para sabihing scam ang mensahe.',
@@ -441,6 +496,26 @@ export const COPY: Record<Lang, Copy> = {
     modelTitle: 'Model assessment',
     modelRan: 'May on-device model na tumakbo sa check na ito.',
     noModel: 'Walang AI model na tumakbo. Hindi pa validated ang accuracy.',
+    llmTitle: 'AI explanation (experimental)',
+    llmToggleLabel: 'Gumamit ng AI-written explanation',
+    llmDescription:
+      'Optional ito at puwedeng magkamali. Rules pa rin ang nagtatakda ng risk level.',
+    llmPromptTitle: 'I-download ang model para sa explanation?',
+    llmPromptBody: (size) =>
+      `Mga ${size} MB ang model, plus supporting files. Gumamit ng Wi-Fi kung kaya. Sa device mo mananatili ang message.`,
+    llmDownloadAction: 'I-download ang model',
+    llmCancelAction: 'Mamaya na lang',
+    llmProgress: (percent) => `Dina-download ang AI model: ${percent}%`,
+    llmProgressLabel: 'Progress ng pag-download ng AI model',
+    llmReady: 'Ready na sa device ang AI explanation.',
+    llmError: 'Hindi ma-load ang model. Gagana pa rin ang check kahit wala ito.',
+    llmRetry: 'Try ulit',
+    llmUnavailable:
+      'Kailangan ng WebGPU para sa AI explanation. Gagana pa rin ang regular na check.',
+    llmExplanationTitle: 'AI explanation',
+    llmDisclaimer: 'AI-written ito at puwedeng magkamali. Hindi nito mababago ang risk level.',
+    llmModelRan: 'Tumakbo ang AI explanation model para sa check na ito.',
+    llmModelNotRun: 'Hindi tumakbo ang AI explanation model para sa check na ito.',
     rulesTitle: 'Mga napansing detalye',
     noSignals: 'Walang partikular na warning signs sa nababasang text.',
     signalNote: 'Hindi proof ng scam ang isang word o link lang.',

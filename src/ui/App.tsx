@@ -1,9 +1,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { extractText, startEmbeddingsPreload } from '../ai';
+import {
+  detectCapabilities,
+  extractText,
+  getLlmStatus,
+  LLM_MODEL_BY_TIER,
+  loadLlm,
+  startEmbeddingsPreload,
+  subscribeLlm,
+} from '../ai';
 import { analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Lang, Level, Signal, Verdict } from '../types';
+import type { LlmStatus, Tier } from '../ai';
 import { copyFor } from './copy';
 
 const MAX_MESSAGE_LENGTH = 2_000;
@@ -236,12 +245,17 @@ export function App() {
   const [resultUsedOcr, setResultUsedOcr] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackKey | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [llmEnabled, setLlmEnabled] = useState(false);
+  const [llmPromptOpen, setLlmPromptOpen] = useState(false);
+  const [llmStatus, setLlmStatus] = useState<LlmStatus>(getLlmStatus);
   const [canInstall, setCanInstall] = useState(false);
   const installPrompt = useRef<InstallPromptEvent | null>(null);
   const ocrRequestId = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
   const copy = copyFor(lang);
+  const llmTier: Tier = detectCapabilities().tier;
+  const llmAvailable = LLM_MODEL_BY_TIER[llmTier] !== null;
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
   const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent);
   const isStandalone =
@@ -253,6 +267,8 @@ export function App() {
   useEffect(() => {
     void startEmbeddingsPreload();
   }, []);
+
+  useEffect(() => subscribeLlm(setLlmStatus), []);
 
   const clearScreenshot = useCallback(() => {
     ocrRequestId.current += 1;
@@ -417,6 +433,29 @@ export function App() {
     }
   }
 
+  function requestLlm(enabled: boolean) {
+    if (!enabled) {
+      setLlmEnabled(false);
+      setLlmPromptOpen(false);
+      return;
+    }
+    if (getLlmStatus().state === 'ready') {
+      setLlmEnabled(true);
+      return;
+    }
+    if (getLlmStatus().state !== 'loading') setLlmPromptOpen(true);
+  }
+
+  async function downloadLlm() {
+    setLlmPromptOpen(false);
+    try {
+      await loadLlm(llmTier);
+      setLlmEnabled(true);
+    } catch {
+      setLlmEnabled(false);
+    }
+  }
+
   async function runAnalysis(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (
@@ -436,7 +475,7 @@ export function App() {
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
         lang,
-        useLLM: false,
+        useLLM: llmEnabled && getLlmStatus().state === 'ready',
       });
       setVerdict(result);
       setResultMessage(sourceMessage);
@@ -623,6 +662,75 @@ export function App() {
                   />
                 </div>
 
+                {llmAvailable ? (
+                  <section className="llm-control" aria-labelledby="llm-control-title">
+                    <h2 id="llm-control-title">{copy.llmTitle}</h2>
+                    <label className="llm-toggle">
+                      <input
+                        type="checkbox"
+                        checked={llmEnabled}
+                        disabled={llmStatus.state === 'loading'}
+                        onChange={(event) => requestLlm(event.currentTarget.checked)}
+                      />
+                      <span>{copy.llmToggleLabel}</span>
+                    </label>
+                    <p className="supporting-copy">{copy.llmDescription}</p>
+
+                    {llmPromptOpen && (
+                      <div className="llm-download-prompt" aria-labelledby="llm-prompt-title">
+                        <h3 id="llm-prompt-title">{copy.llmPromptTitle}</h3>
+                        <p>{copy.llmPromptBody(llmTier === 'A' ? 880 : 290)}</p>
+                        <div className="llm-prompt-actions">
+                          <button
+                            className="button button--primary"
+                            type="button"
+                            onClick={() => void downloadLlm()}
+                          >
+                            {copy.llmDownloadAction}
+                          </button>
+                          <button
+                            className="button button--secondary"
+                            type="button"
+                            onClick={() => setLlmPromptOpen(false)}
+                          >
+                            {copy.llmCancelAction}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {llmStatus.state === 'loading' && (
+                      <div className="llm-load-status" role="status" aria-live="polite">
+                        <p>{copy.llmProgress(llmStatus.progress)}</p>
+                        <progress
+                          max="100"
+                          value={llmStatus.progress}
+                          aria-label={copy.llmProgressLabel}
+                        />
+                      </div>
+                    )}
+                    {llmStatus.state === 'ready' && (
+                      <p className="llm-load-status" role="status">
+                        {copy.llmReady}
+                      </p>
+                    )}
+                    {llmStatus.state === 'error' && (
+                      <div className="llm-load-error" role="alert">
+                        <p>{copy.llmError}</p>
+                        <button
+                          className="button button--secondary"
+                          type="button"
+                          onClick={() => requestLlm(true)}
+                        >
+                          {copy.llmRetry}
+                        </button>
+                      </div>
+                    )}
+                  </section>
+                ) : (
+                  <p className="llm-unavailable">{copy.llmUnavailable}</p>
+                )}
+
                 {feedbackText && (
                   <p className="field-error" role="alert">
                     {feedbackText}
@@ -699,6 +807,13 @@ export function App() {
                       : copy.coverageText}
                 </p>
                 <p className="assessment-summary">{copy.assessment[verdict.level].summary}</p>
+                {verdict.explanation.extra && (
+                  <section className="llm-explanation" aria-labelledby="llm-explanation-title">
+                    <h2 id="llm-explanation-title">{copy.llmExplanationTitle}</h2>
+                    <p className="llm-explanation-disclaimer">{copy.llmDisclaimer}</p>
+                    <p className="llm-explanation-text">{verdict.explanation.extra}</p>
+                  </section>
+                )}
                 <section className={`next-step next-step--${verdict.level}`}>
                   <h2 className="next-step-heading">
                     <StatusMark level="suspicious" />
@@ -719,6 +834,7 @@ export function App() {
                       ? copy.modelRan
                       : copy.noModel}
                   </p>
+                  <p>{verdict.usedModels.llm ? copy.llmModelRan : copy.llmModelNotRun}</p>
                   {resultUsedOcr && <p>{copy.ocrUsed}</p>}
                 </section>
 
