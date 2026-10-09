@@ -528,9 +528,10 @@ export function App() {
         <button
           className="brand"
           type="button"
+          aria-label="Sane home"
           onClick={() => setScreen(screen === 'welcome' ? 'welcome' : 'scan')}
         >
-          sane
+          <img src="/icons/sane-logo.svg" alt="" />
         </button>
         {(screen === 'scan' || screen === 'learn') && (
           <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />

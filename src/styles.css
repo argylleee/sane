@@ -108,16 +108,23 @@ button:disabled {
 }
 
 .brand {
+  display: flex;
+  flex: 0 0 auto;
   min-width: 3rem;
   min-height: 2.75rem;
+  align-items: center;
   padding: 0;
   border: 0;
-  color: var(--color-primary);
   background: transparent;
-  font-size: 1.125rem;
-  font-weight: 750;
-  letter-spacing: -0.025em;
-  text-align: left;
+}
+
+.brand img {
+  display: block;
+  width: auto;
+  max-width: min(7.5rem, 25vw);
+  height: 2.5rem;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .topbar-language {
