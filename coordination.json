@@ -264,7 +264,7 @@
     },
     {
       "id": "TASK-212",
-      "allocation": 1,
+      "allocation": 2,
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
