@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { defineConfig, type Plugin } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 
 // Serve and bundle the onnxruntime-web WASM files ourselves so no check or model load fetches a
 // public CDN (zero-network and offline requirement). The embedding code loads them from ort/.
@@ -41,6 +42,6 @@ function onnxRuntimeAssets(): Plugin {
 // base './' keeps the build portable across GitHub Pages, Netlify, and Cloudflare Pages.
 export default defineConfig({
   base: './',
-  plugins: [react(), onnxRuntimeAssets()],
+  plugins: [react(), tailwindcss(), onnxRuntimeAssets()],
   test: { environment: 'node', include: ['src/**/*.test.ts', 'eval/**/*.test.ts'] },
 });

@@ -4,16 +4,32 @@ import { extractText, startEmbeddingsPreload } from '../ai';
 import { analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Lang, Level, Signal, Verdict } from '../types';
-
 import { copyFor } from './copy';
+import { Button } from '@heroui/react';
+import { initButtonAnimations } from './buttonAnimations';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  Warning,
+  WarningCircle,
+  ShieldCheck,
+  MagnifyingGlass,
+  CaretLeft,
+  UploadSimple,
+  ClipboardText,
+  Scan,
+  Info,
+  GlobeSimple,
+  Sun,
+  Moon,
+  Desktop,
+} from '@phosphor-icons/react';
 
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const LANGUAGES: readonly Lang[] = ['en', 'fil', 'taglish'];
 const LANGUAGE_NAMES: Record<Lang, string> = { en: 'English', fil: 'Filipino', taglish: 'Taglish' };
-const THEMES = ['system', 'light', 'dark'] as const;
 type Screen = 'welcome' | 'scan' | 'result' | 'learn';
-type Theme = (typeof THEMES)[number];
+type Theme = 'system' | 'light' | 'dark';
 type OcrState = 'idle' | 'loading' | 'ready' | 'error';
 type FeedbackKey =
   | 'clipboardUnavailable'
@@ -36,48 +52,22 @@ type InstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 };
 
-function StatusMark({ level }: { level: Level }) {
-  if (level === 'likely_scam') {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-        <path d="M12 3.5 22 21H2L12 3.5Z" />
-        <path d="M12 9v5m0 3h.01" />
-      </svg>
-    );
-  }
-
-  if (level === 'suspicious') {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-        <circle cx="12" cy="12" r="9.5" />
-        <path d="M12 7v6m0 4h.01" />
-      </svg>
-    );
-  }
-
-  if (level === 'probably_fine') {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-        <circle cx="12" cy="12" r="9.5" />
-        <path d="m7.5 12.5 3 3 6-7" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-      <circle cx="12" cy="12" r="9.5" />
-      <path d="M9.7 9a2.4 2.4 0 1 1 4.3 1.5c-.8 1-2 1.2-2 2.8m0 3h.01" />
-    </svg>
-  );
-}
-
-function BackIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
-      <path d="m14.5 5-7 7 7 7M8 12h13" />
-    </svg>
-  );
+function StatusMark({
+  level,
+  size = 24,
+  className = '',
+}: {
+  level: Level;
+  size?: number;
+  className?: string;
+}) {
+  if (level === 'likely_scam')
+    return <Warning size={size} weight="fill" className={`text-high ${className}`} />;
+  if (level === 'suspicious')
+    return <WarningCircle size={size} weight="fill" className={`text-caution ${className}`} />;
+  if (level === 'probably_fine')
+    return <ShieldCheck size={size} weight="fill" className={`text-good ${className}`} />;
+  return <MagnifyingGlass size={size} weight="fill" className={`text-secondary ${className}`} />;
 }
 
 function InertMessage({ text }: { text: string }) {
@@ -88,7 +78,11 @@ function InertMessage({ text }: { text: string }) {
     <>
       {parts.map((part, index) =>
         /^https?:\/\//i.test(part) || /^www\./i.test(part) ? (
-          <code className="url-fragment" aria-label={part} key={`${part}-${index}`}>
+          <code
+            className="text-primary font-semibold break-all"
+            aria-label={part}
+            key={`${part}-${index}`}
+          >
             {part.replace(/^https:\/\//i, 'hxxps://').replace(/^http:\/\//i, 'hxxp://')}
           </code>
         ) : (
@@ -123,7 +117,10 @@ function HighlightedMessage({ text, signals }: { text: string; signals: Signal[]
       parts.push(<InertMessage key={`text-${cursor}`} text={normalized.slice(cursor, start)} />);
     }
     parts.push(
-      <mark className="signal-highlight" key={`signal-${start}-${end}`}>
+      <mark
+        className="bg-caution-surface text-text rounded px-1 -mx-1"
+        key={`signal-${start}-${end}`}
+      >
         <InertMessage text={normalized.slice(start, end)} />
       </mark>,
     );
@@ -146,28 +143,81 @@ function LanguagePicker({
   label: string;
   className?: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [open]);
+
   return (
-    <label className={`language-picker ${className}`}>
-      <span className="visually-hidden">{label}</span>
-      <select
+    <div className={`relative ${className}`} ref={containerRef}>
+      <Button
+        isIconOnly
+        variant="ghost"
+        size="sm"
         aria-label={label}
-        value={lang}
-        onChange={(event) => {
-          const selected = LANGUAGES.find((language) => language === event.currentTarget.value);
-          if (selected) onChange(selected);
-        }}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="h-9 w-9 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
+        onPress={() => setOpen((prev) => !prev)}
       >
-        {LANGUAGES.map((language) => (
-          <option key={language} value={language}>
-            {LANGUAGE_NAMES[language]}
-          </option>
-        ))}
-      </select>
-    </label>
+        <GlobeSimple
+          size={19}
+          weight="bold"
+          className="text-secondary hover:text-text transition-colors"
+        />
+      </Button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 mt-2 w-36 bg-surface/95 backdrop-blur-xl border border-border rounded-2xl shadow-xl p-1.5 z-50 overflow-hidden"
+            role="menu"
+            aria-label={label}
+          >
+            {LANGUAGES.map((item) => {
+              const isSelected = item === lang;
+              return (
+                <button
+                  key={item}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    onChange(item);
+                    setOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-primary-tonal text-primary font-bold'
+                      : 'text-text hover:bg-neutral'
+                  }`}
+                >
+                  <span>{LANGUAGE_NAMES[item]}</span>
+                  {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
-function ThemePicker({
+function ThemeToggle({
   theme,
   onChange,
   copy,
@@ -176,22 +226,113 @@ function ThemePicker({
   onChange: (theme: Theme) => void;
   copy: ReturnType<typeof copyFor>;
 }) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [open]);
+
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
+
   return (
-    <label className="theme-picker">
-      <span className="visually-hidden">{copy.themeLabel}</span>
-      <select
+    <div className="relative" ref={containerRef}>
+      <Button
+        isIconOnly
+        variant="ghost"
+        size="sm"
         aria-label={copy.themeLabel}
-        value={theme}
-        onChange={(event) => {
-          const selected = THEMES.find((option) => option === event.currentTarget.value);
-          if (selected) onChange(selected);
-        }}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="h-9 w-9 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
+        onPress={() => setOpen((prev) => !prev)}
       >
-        <option value="system">{copy.themeSystem}</option>
-        <option value="light">{copy.themeLight}</option>
-        <option value="dark">{copy.themeDark}</option>
-      </select>
-    </label>
+        <motion.div
+          key={isDark ? 'dark' : 'light'}
+          initial={{ rotate: -90, scale: 0.8, opacity: 0 }}
+          animate={{ rotate: 0, scale: 1, opacity: 1 }}
+          exit={{ rotate: 90, scale: 0.8, opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="flex items-center justify-center"
+        >
+          {theme === 'system' ? (
+            <Desktop
+              size={19}
+              weight="bold"
+              className="text-secondary hover:text-text transition-colors"
+            />
+          ) : isDark ? (
+            <Sun
+              size={19}
+              weight="bold"
+              className="text-caution hover:scale-110 transition-transform"
+            />
+          ) : (
+            <Moon
+              size={19}
+              weight="bold"
+              className="text-secondary hover:text-text transition-colors"
+            />
+          )}
+        </motion.div>
+      </Button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 mt-2 w-36 bg-surface/95 backdrop-blur-xl border border-border rounded-2xl shadow-xl p-1.5 z-50 overflow-hidden"
+            role="menu"
+            aria-label={copy.themeLabel}
+          >
+            {[
+              { id: 'light' as const, label: copy.themeLight, icon: Sun },
+              { id: 'dark' as const, label: copy.themeDark, icon: Moon },
+              { id: 'system' as const, label: copy.themeSystem, icon: Desktop },
+            ].map(({ id, label, icon: IconComponent }) => {
+              const isSelected = theme === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="menuitem"
+                  onClick={() => {
+                    onChange(id);
+                    setOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-primary-tonal text-primary font-bold'
+                      : 'text-text hover:bg-neutral'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <IconComponent size={15} weight={isSelected ? 'bold' : 'regular'} />
+                    {label}
+                  </span>
+                  {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -203,21 +344,37 @@ function MainNavigation({
   onNavigate: (screen: 'scan' | 'learn') => void;
 }) {
   return (
-    <nav className="main-navigation" aria-label="Main navigation">
-      <button
-        type="button"
-        aria-current={screen === 'scan' ? 'page' : undefined}
-        onClick={() => onNavigate('scan')}
-      >
-        Scan
-      </button>
-      <button
-        type="button"
-        aria-current={screen === 'learn' ? 'page' : undefined}
-        onClick={() => onNavigate('learn')}
-      >
-        Learn
-      </button>
+    <nav
+      className="inline-flex items-center bg-surface/80 border border-border/80 backdrop-blur-xl p-1 rounded-full shadow-xs"
+      role="tablist"
+      aria-orientation="horizontal"
+      aria-label="Main navigation"
+    >
+      {(['scan', 'learn'] as const).map((navScreen) => {
+        const isSelected = screen === navScreen;
+        return (
+          <button
+            key={navScreen}
+            type="button"
+            role="tab"
+            aria-selected={isSelected}
+            tabIndex={isSelected ? 0 : -1}
+            onClick={() => onNavigate(navScreen)}
+            className={`flex items-center justify-center gap-2 px-5 py-1.5 rounded-full text-sm font-semibold transition-all cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+              isSelected
+                ? 'bg-primary text-on-primary shadow-sm font-bold'
+                : 'text-secondary hover:text-text hover:bg-neutral/40'
+            }`}
+          >
+            {navScreen === 'scan' ? (
+              <Scan size={18} weight={isSelected ? 'bold' : 'regular'} />
+            ) : (
+              <Info size={18} weight={isSelected ? 'bold' : 'regular'} />
+            )}
+            <span className="capitalize">{navScreen}</span>
+          </button>
+        );
+      })}
     </nav>
   );
 }
@@ -250,9 +407,9 @@ export function App() {
     (navigator as Navigator & { standalone?: boolean }).standalone === true;
   const showIosInstallHint = isAppleMobile && !isStandalone;
 
-  // Keep the existing first-visit model preload, which skips Data Saver and 2G connections.
   useEffect(() => {
     void startEmbeddingsPreload();
+    return initButtonAnimations();
   }, []);
 
   const clearScreenshot = useCallback(() => {
@@ -379,9 +536,7 @@ export function App() {
       })
       .catch((error: unknown) => console.error('Service worker registration failed', error));
 
-    return () => {
-      navigator.serviceWorker.removeEventListener('message', onWorkerMessage);
-    };
+    return () => navigator.serviceWorker.removeEventListener('message', onWorkerMessage);
   }, [clearScreenshot, selectScreenshot]);
 
   useEffect(() => {
@@ -391,8 +546,9 @@ export function App() {
   useEffect(() => {
     const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
     const applyTheme = () => {
-      document.documentElement.dataset.theme =
-        theme === 'system' ? (colorScheme.matches ? 'dark' : 'light') : theme;
+      const resolved = theme === 'system' ? (colorScheme.matches ? 'dark' : 'light') : theme;
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.classList.toggle('dark', resolved === 'dark');
     };
 
     applyTheme();
@@ -475,359 +631,549 @@ export function App() {
   const feedbackText = feedback ? copy[feedback] : null;
 
   return (
-    <div className="app-shell">
-      <header className={`topbar${screen === 'result' ? ' topbar--result' : ''}`}>
+    <div className="min-h-[100dvh] flex flex-col selection:bg-primary selection:text-white">
+      <header
+        className={`sticky top-0 z-50 flex h-16 items-center px-4 md:px-8 gap-4 glass-panel border-b border-border transition-colors ${screen === 'result' ? 'bg-surface/90' : ''}`}
+      >
         {screen === 'result' ? (
-          <button
-            className="back-button"
-            type="button"
+          <Button
+            isIconOnly
+            variant="ghost"
+            size="sm"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface border border-border hover:bg-neutral active:scale-[0.98] transition-all text-text cursor-pointer"
             aria-label={copy.backToScan}
-            onClick={() => setScreen('scan')}
+            onPress={() => setScreen('scan')}
           >
-            <BackIcon />
-          </button>
+            <CaretLeft size={20} weight="bold" />
+          </Button>
         ) : null}
         <button
-          className="brand"
+          className="flex items-center shrink-0 hover:opacity-85 transition-opacity cursor-pointer focus:outline-none"
           type="button"
           aria-label="Sane home"
           onClick={() => setScreen(screen === 'welcome' ? 'welcome' : 'scan')}
         >
-          <img src="/icons/sane-logo.svg" alt="" />
+          <img src="/icons/sane-logo.svg" alt="Sane" className="h-8 sm:h-9 w-auto object-contain" />
         </button>
-        {(screen === 'scan' || screen === 'learn') && (
-          <MainNavigation screen={screen} onNavigate={setScreen} />
-        )}
-        <LanguagePicker
-          className="topbar-language"
-          label={copy.languageLabel}
-          lang={lang}
-          onChange={setLang}
-        />
-        <ThemePicker theme={theme} onChange={setTheme} copy={copy} />
+        <div className="flex-1 flex justify-center hidden sm:flex">
+          {(screen === 'scan' || screen === 'learn') && (
+            <MainNavigation screen={screen} onNavigate={setScreen} />
+          )}
+        </div>
+        <div className="flex items-center gap-2 ml-auto">
+          <LanguagePicker lang={lang} onChange={setLang} label={copy.languageLabel} />
+          <ThemeToggle theme={theme} onChange={setTheme} copy={copy} />
+        </div>
       </header>
 
-      <main key={screen} className={`page page--${screen}`}>
-        {screen === 'welcome' && (
-          <section className="welcome-layout" aria-labelledby="welcome-title">
-            <div className="welcome-content">
-              <h1 id="welcome-title">{copy.welcomeTitle}</h1>
-              <p className="page-intro">{copy.welcomeDescription}</p>
-              <fieldset className="language-choice">
-                <legend>{copy.languageLabel}</legend>
-                <div className="language-options">
-                  {LANGUAGES.map((language) => (
-                    <button
-                      key={language}
-                      type="button"
-                      aria-pressed={lang === language}
-                      onClick={() => setLang(language)}
-                    >
-                      {copyFor(language).languageName}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-              <button
-                className="button button--primary welcome-start"
-                type="button"
-                onClick={() => setScreen('scan')}
-              >
-                {copy.start}
-              </button>
-              <p className="supporting-copy">{copy.privacyFootnote}</p>
-            </div>
-            <div className="welcome-details">
-              <section className="detail-block">
-                <p className="detail-label">{copy.manualLabel}</p>
-                <h2>{copy.manualTitle}</h2>
-                <p>{copy.manualDescription}</p>
-              </section>
-              <section className="detail-block">
-                <p className="detail-label">{copy.localLabel}</p>
-                <h2>{copy.localTitle}</h2>
-                <p>{copy.localDescription}</p>
-              </section>
-            </div>
-          </section>
-        )}
+      {/* Mobile nav for smaller screens */}
+      {(screen === 'scan' || screen === 'learn') && (
+        <div className="sm:hidden flex justify-center items-center px-4 py-2 bg-surface/60 border-b border-border backdrop-blur-md sticky top-16 z-40">
+          <MainNavigation screen={screen} onNavigate={setScreen} />
+        </div>
+      )}
 
-        {screen === 'scan' && (
-          <>
-            <div className="page-heading">
-              <h1>{copy.scanTitle}</h1>
-              <p className="page-intro">{copy.scanDescription}</p>
-            </div>
-            <div className="scan-layout">
-              <form className="scan-form" onSubmit={runAnalysis}>
-                {image && (
-                  <div className="selected-image" aria-live="polite">
-                    <p>{copy.screenshotSelected(image.name)}</p>
-                    <button
-                      className="button button--quiet"
-                      type="button"
-                      onClick={clearScreenshot}
-                    >
-                      {copy.useText}
-                    </button>
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-16 flex flex-col relative overflow-hidden">
+        <AnimatePresence mode="wait">
+          {screen === 'welcome' && (
+            <motion.section
+              key="welcome"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid md:grid-cols-2 gap-12 md:gap-24 items-center flex-1 py-8"
+              aria-labelledby="welcome-title"
+            >
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <span className="text-xs font-mono tracking-widest uppercase text-primary font-bold">
+                    Local Web AI
+                  </span>
+                  <h1
+                    id="welcome-title"
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] text-text"
+                  >
+                    {copy.welcomeTitle}
+                  </h1>
+                  <p className="text-lg text-secondary leading-relaxed max-w-[40ch]">
+                    {copy.welcomeDescription}
+                  </p>
+                </div>
+
+                <div className="space-y-6 pt-4">
+                  <Button
+                    size="lg"
+                    variant="primary"
+                    className="w-full sm:w-auto px-8 py-4 bg-primary text-on-primary rounded-full font-bold text-lg hover:opacity-95 active:scale-95 transition-all duration-150 shadow-lg shadow-primary/20 cursor-pointer"
+                    onPress={() => setScreen('scan')}
+                  >
+                    {copy.start}
+                  </Button>
+                  <p className="text-sm text-secondary">{copy.privacyFootnote}</p>
+                </div>
+              </div>
+
+              <div className="grid gap-4 w-full max-w-md mx-auto md:ml-auto">
+                <div className="glass-panel rounded-2xl p-6 md:p-8 space-y-3">
+                  <div className="h-12 w-12 rounded-full bg-primary-tonal text-primary flex items-center justify-center mb-4">
+                    <ClipboardText size={24} weight="fill" />
                   </div>
-                )}
-
-                <label className="field-label" htmlFor="message-input">
-                  {image ? copy.extractedMessageLabel : copy.messageLabel}
-                </label>
-                <textarea
-                  ref={messageInput}
-                  id="message-input"
-                  rows={7}
-                  value={message}
-                  placeholder={copy.messagePlaceholder}
-                  aria-describedby="message-count"
-                  disabled={ocrState === 'loading'}
-                  onChange={(event) => {
-                    setMessage(event.currentTarget.value);
-                    setFeedback(null);
-                  }}
-                />
-                <div
-                  id="message-count"
-                  className={`character-count${overLimit ? ' character-count--error' : ''}`}
-                  aria-live="polite"
-                >
-                  {copy.characterCount(message.length, MAX_MESSAGE_LENGTH)}
+                  <h2 className="text-xl font-bold tracking-tight">{copy.manualTitle}</h2>
+                  <p className="text-sm text-secondary leading-relaxed">{copy.manualDescription}</p>
                 </div>
-                {overLimit && <p className="field-error">{copy.overLimit}</p>}
+                <div className="glass-panel rounded-2xl p-6 md:p-8 space-y-3">
+                  <div className="h-12 w-12 rounded-full bg-primary-tonal text-primary flex items-center justify-center mb-4">
+                    <ShieldCheck size={24} weight="fill" />
+                  </div>
+                  <h2 className="text-xl font-bold tracking-tight">{copy.localTitle}</h2>
+                  <p className="text-sm text-secondary leading-relaxed">{copy.localDescription}</p>
+                </div>
+              </div>
+            </motion.section>
+          )}
 
-                <div className="input-actions">
-                  <button
-                    className="button button--secondary"
-                    type="button"
-                    onClick={pasteFromClipboard}
+          {screen === 'scan' && (
+            <motion.div
+              key="scan"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid lg:grid-cols-[1fr_360px] gap-12 lg:gap-24"
+            >
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <h1 className="text-3xl md:text-5xl font-bold tracking-tighter leading-[1.1] text-text">
+                    {copy.scanTitle}
+                  </h1>
+                  <p className="text-lg text-secondary max-w-[45ch]">{copy.scanDescription}</p>
+                </div>
+
+                <form className="space-y-6" onSubmit={runAnalysis}>
+                  {image && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="glass-panel rounded-2xl p-4 flex items-center justify-between gap-4"
+                      aria-live="polite"
+                    >
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <div className="h-12 w-12 rounded-lg bg-neutral flex items-center justify-center shrink-0">
+                          <UploadSimple size={24} className="text-secondary" />
+                        </div>
+                        <p className="text-sm font-medium truncate text-text">
+                          {copy.screenshotSelected(image.name)}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-sm font-bold text-primary hover:text-text transition-colors px-3 py-1.5 rounded-full hover:bg-neutral shrink-0 cursor-pointer"
+                        onPress={clearScreenshot}
+                      >
+                        {copy.useText}
+                      </Button>
+                    </motion.div>
+                  )}
+
+                  <div className="space-y-2">
+                    <label
+                      className="text-sm font-bold text-text tracking-tight flex"
+                      htmlFor="message-input"
+                    >
+                      {image ? copy.extractedMessageLabel : copy.messageLabel}
+                    </label>
+                    <div className="relative">
+                      <textarea
+                        ref={messageInput}
+                        id="message-input"
+                        rows={6}
+                        value={message}
+                        placeholder={copy.messagePlaceholder}
+                        aria-describedby="message-count"
+                        disabled={ocrState === 'loading'}
+                        onChange={(event) => {
+                          setMessage(event.currentTarget.value);
+                          setFeedback(null);
+                        }}
+                        className="w-full bg-surface border border-border rounded-2xl p-5 pb-10 text-base text-text placeholder:text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-y min-h-[180px]"
+                      />
+                      <div
+                        id="message-count"
+                        className={`absolute bottom-4 right-4 text-xs font-mono font-medium ${overLimit ? 'text-high' : 'text-secondary/60'}`}
+                        aria-live="polite"
+                      >
+                        {copy.characterCount(message.length, MAX_MESSAGE_LENGTH)}
+                      </div>
+                    </div>
+                    {overLimit && (
+                      <p className="text-sm text-high font-medium flex items-center gap-1.5 mt-2">
+                        <WarningCircle size={16} />
+                        {copy.overLimit}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      variant="outline"
+                      size="md"
+                      fullWidth
+                      className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface border border-border hover:bg-neutral active:scale-95 transition-all duration-150 rounded-xl font-bold text-sm text-text shadow-xs cursor-pointer"
+                      onPress={pasteFromClipboard}
+                    >
+                      <ClipboardText size={18} /> {copy.paste}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="md"
+                      fullWidth
+                      className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface border border-border hover:bg-neutral active:scale-95 transition-all duration-150 rounded-xl font-bold text-sm text-text shadow-xs cursor-pointer"
+                      onPress={() => fileInput.current?.click()}
+                    >
+                      <UploadSimple size={18} /> {copy.upload}
+                    </Button>
+                    <input
+                      ref={fileInput}
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(event) => {
+                        selectScreenshot(event.currentTarget.files?.[0]);
+                        event.currentTarget.value = '';
+                      }}
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    className="w-full py-4.5 bg-primary text-on-primary rounded-xl font-bold text-lg hover:opacity-95 active:scale-[0.97] transition-all duration-150 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer disabled:bg-surface/60 disabled:border disabled:border-border disabled:text-secondary/50 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100"
+                    isDisabled={
+                      isAnalyzing ||
+                      ocrState === 'loading' ||
+                      (!image && !message.trim()) ||
+                      overLimit
+                    }
                   >
-                    {copy.paste}
-                  </button>
-                  <button
-                    className="button button--secondary"
-                    type="button"
-                    onClick={() => fileInput.current?.click()}
-                  >
-                    {copy.upload}
-                  </button>
-                  <input
-                    ref={fileInput}
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={(event) => {
-                      selectScreenshot(event.currentTarget.files?.[0]);
-                      event.currentTarget.value = '';
-                    }}
-                  />
+                    {isAnalyzing ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                        >
+                          <MagnifyingGlass size={20} />
+                        </motion.div>{' '}
+                        {copy.checking}
+                      </>
+                    ) : (
+                      <>
+                        <MagnifyingGlass size={20} /> {copy.analyze}
+                      </>
+                    )}
+                  </Button>
+
+                  <div className="space-y-2 mt-4">
+                    {feedbackText && (
+                      <p
+                        className="text-sm text-high font-medium flex items-center gap-1.5"
+                        role="alert"
+                      >
+                        <WarningCircle size={16} />
+                        {feedbackText}
+                      </p>
+                    )}
+                    {ocrState === 'loading' && (
+                      <p className="text-sm text-secondary font-medium" role="status">
+                        {copy.screenshotLoading}
+                      </p>
+                    )}
+                    {ocrState === 'ready' && (
+                      <p className="text-sm text-good font-medium flex items-center gap-1.5">
+                        <ShieldCheck size={16} />
+                        {copy.screenshotReady}
+                      </p>
+                    )}
+                    {ocrState === 'error' && (
+                      <p
+                        className="text-sm text-high font-medium flex items-center gap-1.5"
+                        role="status"
+                      >
+                        <WarningCircle size={16} />
+                        {copy.screenshotFailed}
+                      </p>
+                    )}
+                  </div>
+                  <p className="text-xs text-secondary text-center mt-6">{copy.pasteOnlyNotice}</p>
+                </form>
+              </div>
+
+              <aside className="space-y-6 lg:pt-16">
+                <div className="glass-panel rounded-2xl p-6">
+                  <h2 className="text-base font-bold text-text tracking-tight mb-2 flex items-center gap-2">
+                    <ShieldCheck size={18} className="text-good" /> {copy.readyTitle}
+                  </h2>
+                  <p className="text-sm text-secondary leading-relaxed">{copy.readyDescription}</p>
                 </div>
-
-                <button
-                  className="button button--primary analyze-button"
-                  type="submit"
-                  disabled={
-                    isAnalyzing ||
-                    ocrState === 'loading' ||
-                    (!image && !message.trim()) ||
-                    overLimit
-                  }
-                >
-                  {isAnalyzing ? copy.checking : copy.analyze}
-                </button>
-
-                {feedbackText && (
-                  <p className="field-error" role="alert">
-                    {feedbackText}
-                  </p>
-                )}
-                {ocrState === 'loading' && (
-                  <p className="loading-message" role="status">
-                    {copy.screenshotLoading}
-                  </p>
-                )}
-                {ocrState === 'ready' && <p className="supporting-copy">{copy.screenshotReady}</p>}
-                {ocrState === 'error' && (
-                  <p className="field-error" role="status">
-                    {copy.screenshotFailed}
-                  </p>
-                )}
-                {isAnalyzing && (
-                  <p className="loading-message" role="status">
-                    {copy.checking}
-                  </p>
-                )}
-
-                <p className="supporting-copy">{copy.pasteOnlyNotice}</p>
-              </form>
-
-              <aside className="scan-help">
-                <div className="notice notice--neutral">
-                  <h2>{copy.readyTitle}</h2>
-                  <p>{copy.readyDescription}</p>
-                </div>
-                <section className="how-to">
-                  <h2>{copy.howTitle}</h2>
-                  <ol>
-                    {copy.howSteps.map((step) => (
-                      <li key={step}>{step}</li>
+                <section className="px-2">
+                  <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4">
+                    {copy.howTitle}
+                  </h2>
+                  <ol className="space-y-4">
+                    {copy.howSteps.map((step, i) => (
+                      <li key={step} className="flex gap-4 text-sm text-text leading-relaxed">
+                        <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-primary-tonal text-primary font-bold text-xs">
+                          {i + 1}
+                        </span>
+                        {step}
+                      </li>
                     ))}
                   </ol>
                 </section>
-                {showIosInstallHint && <p className="supporting-copy">{copy.iosInstallHint}</p>}
+                {showIosInstallHint && (
+                  <p className="text-xs text-secondary px-2">{copy.iosInstallHint}</p>
+                )}
               </aside>
-            </div>
-          </>
-        )}
+            </motion.div>
+          )}
 
-        {screen === 'result' && verdict && (
-          <>
-            <div className="page-heading result-page-heading">
-              <h1>{copy.resultTitle}</h1>
-              <p className="page-intro">{copy.resultSubtitle}</p>
-            </div>
-            <div className="result-grid" aria-live="polite">
-              <section className="result-primary">
-                <div className={`verdict-strip verdict-strip--${verdict.level}`} role="status">
-                  <StatusMark level={verdict.level} />
-                  <h2>{copy.assessment[verdict.level].label}</h2>
-                </div>
-                <p className="coverage-label">
-                  {resultUsedOcr
-                    ? copy.coverageOcr
-                    : resultIsImage
-                      ? copy.coverageImage
-                      : copy.coverageText}
-                </p>
-                <p className="assessment-summary">{copy.assessment[verdict.level].summary}</p>
-                {verdict.explanation.extra && (
-                  <section className="llm-explanation" aria-labelledby="llm-explanation-title">
-                    <h2 id="llm-explanation-title">{copy.llmExplanationTitle}</h2>
-                    <p className="llm-explanation-disclaimer">{copy.llmDisclaimer}</p>
-                    <p className="llm-explanation-text">{verdict.explanation.extra}</p>
-                  </section>
-                )}
-                <section className={`next-step next-step--${verdict.level}`}>
-                  <h2 className="next-step-heading">
-                    <StatusMark level="suspicious" />
-                    <span>
-                      {copy.nextPrefix}: {copy.assessment[verdict.level].nextTitle}
-                    </span>
-                  </h2>
-                  <p>{copy.assessment[verdict.level].nextStep}</p>
-                </section>
+          {screen === 'result' && verdict && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-4xl mx-auto w-full space-y-8"
+            >
+              <div className="text-center space-y-3 mb-8">
+                <h1 className="text-3xl md:text-5xl font-bold tracking-tighter leading-[1.1] text-text mx-auto">
+                  {copy.resultTitle}
+                </h1>
+                <p className="text-lg text-secondary">{copy.resultSubtitle}</p>
+              </div>
 
-                <section className="result-section model-section">
-                  <h2>{copy.modelTitle}</h2>
-                  <p>
-                    {verdict.usedModels.embeddings ||
-                    verdict.usedModels.ocr ||
-                    verdict.usedModels.llm ||
-                    resultUsedOcr
-                      ? copy.modelRan
-                      : copy.noModel}
-                  </p>
-                  <p>{verdict.usedModels.llm ? copy.llmModelRan : copy.llmModelNotRun}</p>
-                  {resultUsedOcr && <p>{copy.ocrUsed}</p>}
-                </section>
-
-                <section className="result-section evidence-section">
-                  <h2>{copy.rulesTitle}</h2>
-                  {verdict.signals.length > 0 ? (
-                    <ul>
-                      {verdict.signals.map((signal, index) => (
-                        <li key={`${signal.id}-${index}`}>{signal.label}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>{copy.noSignals}</p>
-                  )}
-                  <p className="supporting-copy">{copy.signalNote}</p>
-                </section>
-
-                {verdict.level === 'probably_fine' && (
-                  <aside className="notice notice--neutral not-guarantee">
-                    <h2>{copy.notAGuaranteeTitle}</h2>
-                    <p>{copy.notAGuarantee}</p>
-                  </aside>
-                )}
-                {resultIsImage && !resultMessage && (
-                  <p className="field-error" role="status">
-                    {copy.screenshotFailed}
-                  </p>
-                )}
-              </section>
-
-              <aside className="result-secondary">
-                <section className="original-message">
-                  <h2>{copy.originalTitle}</h2>
-                  <p className="original-copy">
-                    {resultMessage ? (
-                      <HighlightedMessage text={resultMessage} signals={verdict.signals} />
-                    ) : (
-                      copy.imageOriginal
-                    )}
-                  </p>
-                  <p className="supporting-copy">{copy.originalNote}</p>
-                  {resultMessage && normalize(resultMessage) !== resultMessage && (
-                    <details className="original-source">
-                      <summary>{copy.viewOriginal}</summary>
-                      <p className="original-copy">
-                        <InertMessage text={resultMessage} />
-                      </p>
-                    </details>
-                  )}
-                </section>
-                <button
-                  className="button button--primary another-button"
-                  type="button"
-                  onClick={startAnotherCheck}
-                >
-                  {copy.another}
-                </button>
-                {canInstall && (
-                  <button
-                    className="button button--secondary install-button"
-                    type="button"
-                    onClick={promptInstall}
+              <div className="grid md:grid-cols-[2fr_1fr] gap-6" aria-live="polite">
+                <div className="space-y-6">
+                  {/* Verdict Badge */}
+                  <div
+                    className={`p-6 rounded-2xl flex items-center gap-4 ${verdict.level === 'likely_scam' ? 'bg-high-surface text-high' : verdict.level === 'suspicious' ? 'bg-caution-surface text-caution' : 'bg-good-surface text-good'}`}
+                    role="status"
                   >
-                    {copy.installApp}
-                  </button>
-                )}
-              </aside>
-            </div>
-          </>
-        )}
+                    <StatusMark level={verdict.level} size={32} />
+                    <div>
+                      <h2 className="text-2xl font-bold tracking-tight">
+                        {copy.assessment[verdict.level].label}
+                      </h2>
+                      <p className="text-sm opacity-90 mt-1">
+                        {resultUsedOcr
+                          ? copy.coverageOcr
+                          : resultIsImage
+                            ? copy.coverageImage
+                            : copy.coverageText}
+                      </p>
+                    </div>
+                  </div>
 
-        {screen === 'learn' && (
-          <>
-            <div className="page-heading">
-              <h1>{copy.learnTitle}</h1>
-              <p className="page-intro">{copy.learnDescription}</p>
-            </div>
-            <div className="learn-layout">
-              {copy.guides.map((guide) => (
-                <section className="guide" key={guide.title}>
-                  <h2>{guide.title}</h2>
-                  <p>{guide.body}</p>
-                </section>
-              ))}
-              <aside className="notice notice--neutral learn-notice">
-                <h2>{copy.learnDisclaimerTitle}</h2>
-                <p>{copy.learnDisclaimer}</p>
+                  {/* Summary & Next Step */}
+                  <div className="glass-panel rounded-2xl p-6 space-y-6">
+                    <p className="text-lg leading-relaxed text-text font-medium">
+                      {copy.assessment[verdict.level].summary}
+                    </p>
+
+                    <div
+                      className={`p-5 rounded-xl border ${verdict.level === 'likely_scam' ? 'bg-high-surface/50 border-high/20' : verdict.level === 'suspicious' ? 'bg-caution-surface/50 border-caution/20' : 'bg-neutral border-border'}`}
+                    >
+                      <h3 className="font-bold text-text flex items-center gap-2 mb-2">
+                        <StatusMark level="suspicious" size={18} />
+                        {copy.nextPrefix}: {copy.assessment[verdict.level].nextTitle}
+                      </h3>
+                      <p className="text-sm text-text/80 leading-relaxed">
+                        {copy.assessment[verdict.level].nextStep}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* LLM Explanation */}
+                  {verdict.explanation.extra && (
+                    <div className="glass-panel rounded-2xl p-6 space-y-3">
+                      <h3 className="font-bold text-text">{copy.llmExplanationTitle}</h3>
+                      <p className="text-sm text-text whitespace-pre-wrap leading-relaxed">
+                        {verdict.explanation.extra}
+                      </p>
+                      <p className="text-xs text-secondary italic mt-4">{copy.llmDisclaimer}</p>
+                    </div>
+                  )}
+
+                  {/* Evidence / Signals */}
+                  <div className="glass-panel rounded-2xl p-6 space-y-4">
+                    <h3 className="font-bold text-text">{copy.rulesTitle}</h3>
+                    {verdict.signals.length > 0 ? (
+                      <ul className="space-y-3">
+                        {verdict.signals.map((signal, index) => (
+                          <li
+                            key={`${signal.id}-${index}`}
+                            className="flex gap-3 text-sm text-text leading-relaxed bg-surface border border-border p-3 rounded-lg"
+                          >
+                            <WarningCircle size={18} className="shrink-0 text-caution mt-0.5" />
+                            {signal.label}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-secondary bg-neutral p-4 rounded-lg">
+                        {copy.noSignals}
+                      </p>
+                    )}
+                    <p className="text-xs text-secondary mt-2">{copy.signalNote}</p>
+                  </div>
+
+                  {verdict.level === 'probably_fine' && (
+                    <aside className="glass-panel bg-neutral/50 rounded-2xl p-6 space-y-2">
+                      <h3 className="font-bold text-text">{copy.notAGuaranteeTitle}</h3>
+                      <p className="text-sm text-secondary">{copy.notAGuarantee}</p>
+                    </aside>
+                  )}
+                  {resultIsImage && !resultMessage && (
+                    <p
+                      className="text-sm text-high font-medium flex items-center gap-1.5"
+                      role="status"
+                    >
+                      <WarningCircle size={16} />
+                      {copy.screenshotFailed}
+                    </p>
+                  )}
+                </div>
+
+                <aside className="space-y-6">
+                  {/* Original Message */}
+                  <div className="glass-panel rounded-2xl p-6 space-y-4">
+                    <h3 className="font-bold text-text">{copy.originalTitle}</h3>
+                    <div className="bg-surface border border-border rounded-xl p-4 text-sm text-text/90 leading-relaxed font-mono whitespace-pre-wrap max-h-64 overflow-y-auto shadow-inner">
+                      {resultMessage ? (
+                        <HighlightedMessage text={resultMessage} signals={verdict.signals} />
+                      ) : (
+                        copy.imageOriginal
+                      )}
+                    </div>
+                    <p className="text-xs text-secondary">{copy.originalNote}</p>
+
+                    {resultMessage && normalize(resultMessage) !== resultMessage && (
+                      <details className="text-sm group">
+                        <summary className="cursor-pointer font-medium text-primary hover:text-text transition-colors pb-2">
+                          {copy.viewOriginal}
+                        </summary>
+                        <div className="bg-neutral rounded-lg p-3 text-xs font-mono text-secondary whitespace-pre-wrap">
+                          <InertMessage text={resultMessage} />
+                        </div>
+                      </details>
+                    )}
+                  </div>
+
+                  {/* Tech stack transparency */}
+                  <div className="glass-panel rounded-2xl p-6 space-y-3">
+                    <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">
+                      {copy.modelTitle}
+                    </h3>
+                    <div className="text-sm text-text/80 space-y-2">
+                      <p>
+                        {verdict.usedModels.embeddings ||
+                        verdict.usedModels.ocr ||
+                        verdict.usedModels.llm ||
+                        resultUsedOcr
+                          ? copy.modelRan
+                          : copy.noModel}
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <span
+                          className={`h-2 w-2 rounded-full ${verdict.usedModels.llm ? 'bg-good' : 'bg-secondary'}`}
+                        />
+                        {verdict.usedModels.llm ? copy.llmModelRan : copy.llmModelNotRun}
+                      </p>
+                      {resultUsedOcr && (
+                        <p className="flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-good" />
+                          {copy.ocrUsed}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    className="w-full py-4 bg-primary text-on-primary rounded-xl font-bold text-base hover:opacity-95 active:scale-95 transition-all duration-150 shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer"
+                    onPress={startAnotherCheck}
+                  >
+                    {copy.another}
+                  </Button>
+
+                  {canInstall && (
+                    <Button
+                      variant="outline"
+                      size="md"
+                      fullWidth
+                      className="w-full py-3 bg-surface border border-border hover:bg-neutral text-primary font-bold text-sm rounded-xl active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
+                      onPress={promptInstall}
+                    >
+                      {copy.installApp}
+                    </Button>
+                  )}
+                </aside>
+              </div>
+            </motion.div>
+          )}
+
+          {screen === 'learn' && (
+            <motion.div
+              key="learn"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-3xl mx-auto w-full space-y-12"
+            >
+              <div className="text-center space-y-4 mb-12">
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter leading-[1.1] text-text mx-auto">
+                  {copy.learnTitle}
+                </h1>
+                <p className="text-lg text-secondary max-w-[50ch] mx-auto">
+                  {copy.learnDescription}
+                </p>
+              </div>
+
+              <div className="grid gap-6">
+                {copy.guides.map((guide) => (
+                  <div className="glass-panel rounded-2xl p-6 md:p-8 space-y-3" key={guide.title}>
+                    <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary-tonal text-primary flex items-center justify-center shrink-0">
+                        <Info size={20} weight="bold" />
+                      </div>
+                      {guide.title}
+                    </h2>
+                    <p className="text-text/80 leading-relaxed pl-11">{guide.body}</p>
+                  </div>
+                ))}
+              </div>
+
+              <aside className="glass-panel bg-neutral/50 rounded-2xl p-6 md:p-8 text-center space-y-3">
+                <h2 className="font-bold text-text">{copy.learnDisclaimerTitle}</h2>
+                <p className="text-sm text-secondary">{copy.learnDisclaimer}</p>
               </aside>
-              <button
-                className="button button--secondary learn-action"
-                type="button"
-                onClick={() => setScreen('scan')}
-              >
-                {copy.learnAction}
-              </button>
-            </div>
-          </>
-        )}
+
+              <div className="flex justify-center pt-8">
+                <Button
+                  size="lg"
+                  variant="primary"
+                  className="px-8 py-4 bg-primary text-on-primary rounded-full font-bold text-lg hover:opacity-95 active:scale-95 transition-all duration-150 shadow-lg shadow-primary/20 cursor-pointer"
+                  onPress={() => setScreen('scan')}
+                >
+                  {copy.learnAction}
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
     </div>
   );
