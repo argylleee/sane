@@ -12,6 +12,9 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     money_request: 'Asks for money or a fee',
     prize_or_job_bait: 'Promises a prize or easy income',
     relative_claims: 'Claims a relative has a new number',
+    personal_data_request: 'Asks for sensitive personal information',
+    link_action: 'Directs you to a link',
+    coercion: 'Threatens to contact your family or friends',
   },
   fil: {
     lookalike_domain: 'Link na kamukha ng kilalang brand pero iba ang domain',
@@ -23,6 +26,9 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     money_request: 'Humihingi ng pera o bayad',
     prize_or_job_bait: 'Nangangako ng premyo o madaling kita',
     relative_claims: 'Nagpapanggap na kamag-anak na may bagong numero',
+    personal_data_request: 'Humihingi ng sensitibong personal na impormasyon',
+    link_action: 'Pinapapunta ka sa isang link',
+    coercion: 'Nagbabantang kontakin ang pamilya o mga kaibigan mo',
   },
   taglish: {
     lookalike_domain: 'Mukhang brand link pero iba ang domain',
@@ -34,6 +40,9 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     money_request: 'Humihingi ng money o fee',
     prize_or_job_bait: 'May pangakong prize o easy income',
     relative_claims: 'Nagpapanggap na relative na may new number',
+    personal_data_request: 'Humihingi ng sensitive personal information',
+    link_action: 'Pinapapunta ka sa isang link',
+    coercion: 'Nagbabantang kontakin ang family o friends mo',
   },
 };
 

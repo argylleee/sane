@@ -4,6 +4,10 @@ import type { Signal } from '../types';
 
 const URL_TEXT = /https?:\/\/[^\s<>"']+|(?:[\p{L}\p{N}-]+\.)+[\p{L}]{2,}(?:\/[^\s<>"']*)?/giu;
 
+export function hasUrl(text: string): boolean {
+  return text.search(URL_TEXT) >= 0;
+}
+
 export function urlSignals(text: string): Signal[] {
   const signals: Signal[] = [];
   for (const match of text.matchAll(URL_TEXT)) {
