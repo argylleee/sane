@@ -10,7 +10,8 @@
     "ngayon din",
     "agad",
     "madalian",
-    "sa loob ng 24 oras"
+    "sa loob ng 24 oras",
+    "right now"
   ],
   "account_threat": [
     "suspended",
@@ -22,7 +23,10 @@
     "ma-block",
     "na-lock",
     "ma-suspend",
-    "ipapasara"
+    "ipapasara",
+    "put on hold",
+    "isasara ang",
+    "lose your balance"
   ],
   "money_request": [
     "processing fee",
@@ -34,7 +38,14 @@
     "bayaran",
     "magpadala ng pera",
     "mag-load",
-    "pa-gcash"
+    "pa-gcash",
+    "settle the",
+    "pay the",
+    "mag-pay",
+    "pa-load",
+    "mag-deposit",
+    "mag-invest",
+    "magpadala ng"
   ],
   "prize_or_job_bait": [
     "you won",
@@ -46,7 +57,12 @@
     "i-claim ang premyo",
     "madaling trabaho",
     "garantisadong tubo",
-    "earn ka daily"
+    "earn ka daily",
+    "lucky winner",
+    "lucky winners",
+    "panalo",
+    "guaranteed profit",
+    "dodoble ang pera"
   ],
   "relative_claims": [
     "new number ko",
