@@ -16,7 +16,7 @@ import {
 import type { EmbeddingsStatus, LlmStatus, Tier } from '../ai';
 import { analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
-import type { Lang, Level, Signal, Verdict } from '../types';
+import type { Level, Signal, Verdict } from '../types';
 import { copyFor } from './copy';
 import { Button } from '@heroui/react';
 import { initButtonAnimations } from './buttonAnimations';
@@ -31,14 +31,14 @@ import {
   ClipboardText,
   Scan,
   Info,
-  GlobeSimple,
+  Sun,
+  Moon,
 } from '@phosphor-icons/react';
 
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
-const LANGUAGES: readonly Lang[] = ['en', 'fil', 'taglish'];
-const LANGUAGE_NAMES: Record<Lang, string> = { en: 'English', fil: 'Filipino', taglish: 'Taglish' };
 type Screen = 'welcome' | 'scan' | 'result' | 'learn';
+type Theme = 'system' | 'light' | 'dark';
 
 type OcrState = 'idle' | 'loading' | 'ready' | 'error';
 type FeedbackKey =
@@ -142,100 +142,57 @@ function HighlightedMessage({ text, signals }: { text: string; signals: Signal[]
   return <>{parts}</>;
 }
 
-function LanguagePicker({
-  lang,
+function ThemeToggle({
+  theme,
   onChange,
-  label,
-  className = '',
+  copy,
 }: {
-  lang: Lang;
-  onChange: (lang: Lang) => void;
-  label: string;
-  className?: string;
+  theme: Theme;
+  onChange: (theme: Theme) => void;
+  copy: ReturnType<typeof copyFor>;
 }) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const isDark =
+    theme === 'dark' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (!open) return;
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') {
-        setOpen(false);
-        triggerRef.current?.focus();
-      }
-    }
-    document.addEventListener('pointerdown', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [open]);
+  const toggleTheme = () => {
+    onChange(isDark ? 'light' : 'dark');
+  };
 
   return (
-    <div className={`relative ${className}`} ref={containerRef}>
-      <Button
-        ref={triggerRef}
-        isIconOnly
-        variant="ghost"
-        size="sm"
-        aria-label={`${label}: ${LANGUAGE_NAMES[lang]}`}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className="h-9 w-9 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
-        onPress={() => setOpen((prev) => !prev)}
+    <Button
+      isIconOnly
+      variant="ghost"
+      size="sm"
+      aria-label={isDark ? copy.themeLight : copy.themeDark}
+      className="h-9 w-9 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
+      onPress={toggleTheme}
+    >
+      <motion.div
+        key={isDark ? 'dark' : 'light'}
+        initial={{ rotate: -90, scale: 0.8, opacity: 0 }}
+        animate={{ rotate: 0, scale: 1, opacity: 1 }}
+        exit={{ rotate: 90, scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="flex items-center justify-center"
       >
-        <GlobeSimple
-          size={19}
-          weight="bold"
-          className="text-secondary hover:text-text transition-colors"
-        />
-      </Button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -4 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -4 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-36 bg-surface/95 backdrop-blur-xl border border-border rounded-2xl shadow-xl p-1.5 z-50 overflow-hidden"
-            role="menu"
-            aria-label={label}
-          >
-            {LANGUAGES.map((item) => {
-              const isSelected = item === lang;
-              return (
-                <button
-                  key={item}
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    onChange(item);
-                    setOpen(false);
-                    triggerRef.current?.focus();
-                  }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
-                    isSelected
-                      ? 'bg-primary-tonal text-primary font-bold'
-                      : 'text-text hover:bg-neutral'
-                  }`}
-                >
-                  <span>{LANGUAGE_NAMES[item]}</span>
-                  {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
-                </button>
-              );
-            })}
-          </motion.div>
+        {isDark ? (
+          <Sun
+            size={20}
+            weight="bold"
+            className="text-caution hover:scale-110 transition-transform"
+          />
+        ) : (
+          <Moon
+            size={20}
+            weight="bold"
+            className="text-secondary hover:text-text transition-colors"
+          />
         )}
-      </AnimatePresence>
-    </div>
+      </motion.div>
+    </Button>
   );
 }
 
@@ -251,7 +208,7 @@ function MainNavigation({
       className="inline-flex items-center bg-highlight border border-border/80 backdrop-blur-xl p-1 rounded-full shadow-xs"
       aria-label="Main navigation"
     >
-      {(['scan', 'learn'] as const).map((navScreen) => {
+      {(['learn', 'scan'] as const).map((navScreen) => {
         const isSelected = screen === navScreen || (navScreen === 'scan' && screen === 'result');
         return (
           <button
@@ -280,7 +237,7 @@ function MainNavigation({
 
 export function App() {
   const [screen, setScreen] = useState<Screen>('welcome');
-  const [lang, setLang] = useState<Lang>('en');
+  const [theme, setTheme] = useState<Theme>('system');
 
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<File | null>(null);
@@ -304,7 +261,7 @@ export function App() {
   const [llmStatus, setLlmStatus] = useState<LlmStatus>(getLlmStatus);
   const llmTier: Tier = detectCapabilities().tier;
   const llmAvailable = LLM_MODEL_BY_TIER[llmTier] !== null;
-  const copy = copyFor(lang);
+  const copy = copyFor('en');
 
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
   const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -469,8 +426,23 @@ export function App() {
   }, [clearScreenshot, selectScreenshot]);
 
   useEffect(() => {
-    document.documentElement.lang = lang === 'taglish' ? 'en-PH' : lang;
-  }, [lang]);
+    document.documentElement.lang = 'en';
+  }, []);
+
+  useEffect(() => {
+    const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    const applyTheme = () => {
+      const resolved = theme === 'system' ? (colorScheme.matches ? 'dark' : 'light') : theme;
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.classList.toggle('dark', resolved === 'dark');
+    };
+
+    applyTheme();
+    if (theme !== 'system') return;
+
+    colorScheme.addEventListener('change', applyTheme);
+    return () => colorScheme.removeEventListener('change', applyTheme);
+  }, [theme]);
 
   async function pasteFromClipboard() {
     setFeedback(null);
@@ -507,7 +479,7 @@ export function App() {
 
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
-        lang,
+        lang: 'en',
         useLLM: llmEnabled && getLlmStatus().state === 'ready',
       });
       setVerdict(result);
@@ -564,18 +536,22 @@ export function App() {
           </Button>
         ) : null}
         <button
-          className="flex items-center shrink-0 hover:opacity-85 transition-opacity cursor-pointer focus:outline-none"
+          className="brand-action flex items-center shrink-0 hover:opacity-85 transition-opacity cursor-pointer"
           type="button"
           aria-label="Sane home"
-          onClick={() => setScreen(screen === 'welcome' ? 'welcome' : 'scan')}
+          onClick={() => setScreen('welcome')}
         >
-          <img src="/icons/sane-logo.svg" alt="Sane" className="h-8 sm:h-9 w-auto object-contain" />
+          <img
+            src={`${import.meta.env.BASE_URL}icons/sane-logo.png`}
+            alt="Sane"
+            className="h-8 sm:h-9 w-auto object-contain"
+          />
         </button>
         <div className="flex-1 flex justify-center hidden sm:flex">
           <MainNavigation screen={screen} onNavigate={setScreen} />
         </div>
         <div className="flex items-center gap-2 ml-auto">
-          <LanguagePicker lang={lang} onChange={setLang} label={copy.languageLabel} />
+          <ThemeToggle theme={theme} onChange={setTheme} copy={copy} />
         </div>
       </header>
 
@@ -592,30 +568,33 @@ export function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="grid md:grid-cols-2 gap-12 md:gap-24 items-center flex-1 py-8"
+              className="flex-1 grid lg:grid-cols-[minmax(0,1fr)_minmax(280px,420px)] items-center gap-10 lg:gap-16 py-10 md:py-16 max-w-6xl mx-auto w-full"
               aria-labelledby="welcome-title"
             >
-              <div className="space-y-8">
+              <div className="space-y-6 flex flex-col items-center text-center lg:items-start lg:text-left">
                 <div className="space-y-4">
-                  <span className="text-xs font-mono tracking-widest uppercase text-primary font-bold">
-                    Local Web AI
-                  </span>
                   <h1
                     id="welcome-title"
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] text-text"
+                    className="home-headline text-text mx-auto lg:mx-0"
+                    lang="fil"
                   >
-                    {copy.welcomeTitle}
+                    {copy.welcomeTitle.split('? ').map((line, index) => (
+                      <span className="block whitespace-nowrap" key={line}>
+                        {line}
+                        {index === 0 ? '? ' : ''}
+                      </span>
+                    ))}
                   </h1>
-                  <p className="text-lg text-secondary leading-relaxed max-w-[40ch]">
+                  <p className="text-lg md:text-xl text-secondary leading-relaxed max-w-[34ch] mx-auto lg:mx-0">
                     {copy.welcomeDescription}
                   </p>
                 </div>
 
-                <div className="space-y-6 pt-4">
+                <div className="space-y-4 pt-4 flex flex-col items-center lg:items-start">
                   <Button
                     size="lg"
                     variant="primary"
-                    className="w-full sm:w-auto px-8 py-4 bg-primary text-on-primary rounded-full font-bold text-lg hover:opacity-95 active:scale-95 transition-all duration-150 shadow-lg shadow-primary/20 cursor-pointer"
+                    className="home-start px-8 py-4 bg-primary text-on-primary rounded-full font-semibold text-lg hover:opacity-95 active:scale-95 transition-all duration-150 shadow-lg shadow-primary/20 cursor-pointer"
                     onPress={() => setScreen('scan')}
                   >
                     {copy.start}
@@ -624,22 +603,23 @@ export function App() {
                 </div>
               </div>
 
-              <div className="grid gap-4 w-full max-w-md mx-auto md:ml-auto">
-                <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3">
-                  <div className="h-12 w-12 rounded-full bg-primary-tonal text-primary flex items-center justify-center mb-4">
-                    <ClipboardText size={24} weight="fill" />
-                  </div>
-                  <h2 className="text-xl font-bold tracking-tight">{copy.manualTitle}</h2>
-                  <p className="text-sm text-secondary leading-relaxed">{copy.manualDescription}</p>
-                </div>
-                <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3">
-                  <div className="h-12 w-12 rounded-full bg-primary-tonal text-primary flex items-center justify-center mb-4">
-                    <ShieldCheck size={24} weight="fill" />
-                  </div>
-                  <h2 className="text-xl font-bold tracking-tight">{copy.localTitle}</h2>
-                  <p className="text-sm text-secondary leading-relaxed">{copy.localDescription}</p>
-                </div>
-              </div>
+              <motion.div
+                className="home-mascot-wrap order-last lg:order-none"
+                initial={{ opacity: 0, scale: 0.94, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: 0.08, ease: 'easeOut' }}
+                aria-hidden="true"
+              >
+                <span className="mascot-orbit" />
+                <span className="mascot-petal" />
+                <span className="mascot-pebble" />
+                <span className="mascot-spark" />
+                <img
+                  src={`${import.meta.env.BASE_URL}icons/sane-mascot.png`}
+                  alt=""
+                  className="home-mascot"
+                />
+              </motion.div>
             </motion.section>
           )}
 
@@ -1220,11 +1200,32 @@ export function App() {
           )}
         </AnimatePresence>
       </main>
-      <footer className="border-t border-border px-4 py-8 text-center text-sm text-secondary">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2">
-          <img src="/icons/sane-logo.svg" alt="Sane" className="h-8 w-auto" />
-          <p>When in doubt, sane it out.</p>
-          <p className="text-xs">What If I Call</p>
+      <footer className="w-full border-t border-border bg-surface/30 mt-auto">
+        <div className="mx-auto flex max-w-6xl flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 md:px-8 py-8 text-sm text-secondary">
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setScreen('welcome')}
+              className="brand-action flex items-center gap-2 hover:opacity-85 transition-opacity cursor-pointer"
+              aria-label="Sane home"
+            >
+              <img
+                src={`${import.meta.env.BASE_URL}icons/sane-logo.png`}
+                alt="Sane"
+                className="h-6 w-auto opacity-70"
+              />
+            </button>
+            <p className="font-medium text-text/80">When in doubt, sane it out.</p>
+          </div>
+          <div className="flex items-center gap-6 text-xs font-semibold">
+            <button type="button" className="hover:text-text transition-colors cursor-pointer">
+              Privacy Policy
+            </button>
+            <button type="button" className="hover:text-text transition-colors cursor-pointer">
+              Terms of Service
+            </button>
+            <span>&copy; {new Date().getFullYear()} Sane</span>
+          </div>
         </div>
       </footer>
     </div>
