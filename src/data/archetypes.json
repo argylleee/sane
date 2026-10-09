@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "note": "AI-drafted seeds. Review with a native Filipino speaker and add real phrasings before use. Human-authored reference data, not training data. The benign list holds hand-written examples of ordinary messages, used to compare against scam similarity (no training).",
   "archetypes": [
     {
@@ -11,8 +11,6 @@
       },
       "defaultWeight": 40,
       "phrases": [
-        "Your GCash account has been limited. Verify your details within 24 hours to avoid permanent suspension.",
-        "Na-limit ang iyong GCash account. I-verify ang iyong detalye sa loob ng 24 oras para hindi tuluyang ma-suspend.",
         "Na-lock na GCash mo. I-verify mo na agad ang account mo sa link para hindi ma-suspend.",
         "Hello po, na-restrict ang GCash ninyo dahil sa kulang na detalye. Paki-update po agad sa link para hindi ma-deactivate.",
         "Na-flag ang Maya mo, i-verify mo na ngayon or mawawala yung access mo sa account.",
@@ -164,7 +162,6 @@
       },
       "defaultWeight": 35,
       "phrases": [
-        "Final notice: your electricity will be disconnected today due to unpaid bill. Call this number now.",
         "Huling abiso: puputulin ang inyong kuryente ngayon dahil sa hindi nabayarang bill. Tumawag sa numerong ito ngayon.",
         "Final notice, puputulin na kuryente mo today dahil unpaid ang bill. Tawag ka agad sa number na 'to.",
         "Final notice po: puputulin ang kuryente ninyo ngayong araw dahil sa hindi nabayarang bill. Tumawag agad sa numerong ito para maayos.",
