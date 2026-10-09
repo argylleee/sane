@@ -79,12 +79,24 @@ Import from `src/ai/index.ts`.
 3. The scan screen is where the matching panel lives today; it should disappear once the
    download is automatic.
 
-## Review of TASK-205 (backend embedding scoring)
+## Review of TASK-205 (backend embedding scoring), corrected
 
-`score()` requires evidence level strong or moderate AND best similarity >= 0.90. On a fresh
-30-message set that gives supporting evidence for 3/16 scams, versus 10/16 with the evidence level
-alone (0 legit either way, pilot data). Recommend dropping the `similarity >= SIMILARITY_FLOOR`
-condition.
+Earlier note (superseded): it suggested dropping the `similarity >= SIMILARITY_FLOOR` condition in
+`score()`. A larger test shows that would be unsafe. Do NOT drop it.
+
+Evidence: 1,200 ordinary English messages from a public SMS dataset (run locally, not committed;
+English only, no Filipino or Taglish):
+
+| Embedding rule                                 | Ordinary messages flagged | Fresh held-out scams flagged |
+| ---------------------------------------------- | ------------------------- | ---------------------------- |
+| margin > 0.01 only                             | 252/1200 (21%)            | 13/16                        |
+| margin > 0.02 only                             | 89/1200 (7.4%)            | 10/16                        |
+| margin > 0.01 AND similarity >= 0.90 (current) | 0/1200                    | 3/16                         |
+
+The current rule is the safe one: no false alarms on ordinary messages, at the cost of low embedding
+recall. Recall must come from the rules (TASK-207). Rules-only on the same 1,200 messages flagged
+1/1200. These are English-only numbers from one dataset of UK-style texts, not a Philippine
+validation.
 
 ## Not done yet
 
