@@ -27,6 +27,7 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     advance_fee: 'Requires payment before a promised benefit',
     marketplace_deposit: 'Asks for a deposit before you can inspect an item',
     relative_emergency: 'Uses a family emergency to request money',
+    gambling_bait: 'Promotes online gambling with free spins or bonus money',
   },
   fil: {
     lookalike_domain: 'Link na kamukha ng kilalang brand pero iba ang domain',
@@ -51,6 +52,7 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     advance_fee: 'Humihingi ng paunang bayad bago ibigay ang ipinangakong benepisyo',
     marketplace_deposit: 'Humihingi ng deposito bago mo makita ang gamit',
     relative_emergency: 'Gumagamit ng emergency ng kamag-anak para humingi ng pera',
+    gambling_bait: 'Nag-aalok ng online sugal gamit ang libreng spin o bonus na pera',
   },
   taglish: {
     lookalike_domain: 'Mukhang brand link pero iba ang domain',
@@ -75,6 +77,7 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     advance_fee: 'Humihingi ng payment bago ibigay ang promised benefit',
     marketplace_deposit: 'Humihingi ng deposit bago mo ma-inspect ang item',
     relative_emergency: 'Ginagamit ang family emergency para humingi ng money',
+    gambling_bait: 'Nag-o-offer ng online gambling gamit ang free spin o bonus money',
   },
 };
 
@@ -204,6 +207,15 @@ const ADVICE: [string[], Advice][] = [
       en: 'Do not send IDs, selfies or account numbers to someone who messaged you first.',
       fil: 'Huwag magpadala ng ID, selfie o account number sa taong unang nag-message sa iyo.',
       taglish: 'Huwag mag-send ng ID, selfie o account number sa nag-message sa iyo nang biglaan.',
+    },
+  ],
+  [
+    ['gambling_bait'],
+    {
+      en: 'Free spins and bonus money are bait for unlicensed online casinos. Do not log in, register or deposit.',
+      fil: 'Pain ng ilegal na online casino ang libreng spin at bonus. Huwag mag-login, mag-register o magdeposito.',
+      taglish:
+        'Pain ng illegal na online casino ang free spin at bonus. Huwag mag-login, mag-register o mag-deposit.',
     },
   ],
   [

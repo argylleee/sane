@@ -53,6 +53,11 @@ const GOVERNMENT_CONTEXT =
   /\b(?:government|gobyerno|ayuda|benefit|subsidy|grant|relief|dswd|sss|philhealth|pag-ibig|bir)\b/iu;
 const GOVERNMENT_ACTION =
   /\b(?:claim|release|register|verify|confirm|link|click|pindutin|ibigay|send|share|account number|bank account|magpadala)\b/iu;
+// Online casino and betting spam: free spins or bonus money plus a push to log in, sign up or claim.
+const GAMBLING_CONTEXT =
+  /\b(?:free\s*spins?|libreng\s+spin|spin\s+the\s+wheel|jackpot|casino|slot\s+(?:machines?|games?)|e-?sabong|online\s+sabong|betting|welcome\s+bonus|free\s+(?:bonus|credits?)|free\s+\d{2,4}\b(?!\s*(?:texts?|sms|mb|gb|mins?|minutes|calls?|load))|bonus\s+credits?|susunod\s+na\s+maswerte|lucky\s+(?:player|spin))\b/iu;
+const GAMBLING_ACTION =
+  /\b(?:log\s?in|mag-?login|i-?login|sign\s?up|mag-?sign\s?up|register|mag-?register|join|sumali|maglaro|play|claim|i-?claim|withdraw|i-?withdraw|deposit|mag-?deposit|nakakuha|makukuha|makakuha|nanalo|panalo|manalo|won|win|ikaw na ang susunod|you(?:'re| are| could be) next)\b/iu;
 const ROMANCE_CONTEXT =
   /\b(?:sweetheart|honey|darling|love|romance|dating|relationship|mahal|sinta|nakilala|girlfriend|boyfriend)\b/iu;
 const ROMANCE_ACTION =
@@ -309,6 +314,13 @@ export function runRules(text: string): Signal[] {
     'Uses a government benefit to request details or payment',
     15,
     contextualSpan(text, GOVERNMENT_CONTEXT, GOVERNMENT_ACTION),
+  );
+  pushSignal(
+    signals,
+    'gambling_bait',
+    'Promotes online gambling with free spins or bonus money',
+    30,
+    contextualSpan(text, GAMBLING_CONTEXT, GAMBLING_ACTION),
   );
   pushSignal(
     signals,

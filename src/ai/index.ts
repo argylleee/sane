@@ -6,7 +6,12 @@ export {
   subscribeEmbeddings,
   type EmbeddingsStatus,
 } from './embedClient';
-export { shouldAutoPreload, startEmbeddingsPreload } from './preload';
+export {
+  shouldAutoPreload,
+  shouldAutoPreloadLlm,
+  startEmbeddingsPreload,
+  startLlmPreload,
+} from './preload';
 export {
   evidenceLevel,
   matchArchetypes,
@@ -23,6 +28,7 @@ export {
   getLlmStatus,
   loadLlm,
   subscribeLlm,
+  LLM_DOWNLOAD_MB,
   LLM_MODEL_BY_TIER,
   type LlmStatus,
 } from './llm';

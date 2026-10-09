@@ -138,3 +138,27 @@ describe('new multilingual development regressions', () => {
     expect(legit.filter((row) => flagged(row.actual))).toEqual([]);
   });
 });
+
+describe('online casino and free-spin bait', () => {
+  it.each([
+    'Login at may 2 FREE Spin! Marami na ang nakakuha ng P789 7,890. Ikaw na ang susunod na maswerte!',
+    'Claim your free spins now! 5,000 players already won. You could be next!',
+    'Mag-register ngayon at makakuha ng FREE 100 bonus! Withdraw agad sa GCash.',
+    'Jackpot hanggang P50,000! Mag-login na sa casino app, ikaw na ang susunod.',
+    'Welcome bonus para sa new members, deposit 100 get 300. Sign up na!',
+  ])('flags casino bait as likely_scam: %s', (text) => {
+    const signals = runRules(text);
+    expect(signals.map(({ id }) => id)).toContain('gambling_bait');
+    expect(score(signals, []).level).toBe('likely_scam');
+  });
+
+  it.each([
+    'Swerte mo naman, nanalo ka sa raffle ng office kanina!',
+    'May slots pa sa seminar bukas, register na kayo.',
+    'Register to the promo and get free 100 texts to all networks.',
+    'Tara laro tayo mamaya sa park, ikaw ang taya.',
+    'You can cash out at any partner outlet using the app.',
+  ])('does not flag ordinary messages: %s', (text) => {
+    expect(['suspicious', 'likely_scam']).not.toContain(score(runRules(text), []).level);
+  });
+});

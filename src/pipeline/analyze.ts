@@ -73,37 +73,48 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
       explanation: explain(level, opts.lang, signals),
       usedModels: { ocr, embeddings: evidence !== null, llm: false },
     };
-    if (opts.useLLM) {
-      let timer: ReturnType<typeof setTimeout> | undefined;
-      try {
-        const extra = await Promise.race([
-          (async () => {
-            const { explainWithLlm, archetypes } = await import('../ai');
-            return explainWithLlm({
-              level,
-              lang: opts.lang,
-              archetypeName: archetypes.find(({ id }) => id === archetypeId)?.name[opts.lang],
-              signals: verdict.signals.filter(({ weight }) => weight > 0).map(({ label }) => label),
-              advice: verdict.explanation.steps,
-              text,
-            });
-          })(),
-          new Promise<null>((resolve) => {
-            timer = setTimeout(() => resolve(null), 15000);
-          }),
-        ]);
-        if (extra !== null) {
-          verdict.explanation.extra = extra;
-          verdict.usedModels.llm = true;
-        }
-      } catch {
-        // The optional explanation must never replace the computed verdict.
-      } finally {
-        clearTimeout(timer);
-      }
-    }
-    return verdict;
+    return opts.useLLM ? await addLlmExplanation(verdict, text) : verdict;
   } catch {
     return fallback(opts, 'image' in input); // Fallback 4: never show a blank screen.
+  }
+}
+
+/**
+ * Adds the on-device LLM explanation to a finished verdict. The UI calls this after showing the
+ * verdict so the result never waits for the model. Returns the same verdict when the model is not
+ * ready, too slow, fails, or writes something unsafe; the level and steps never change.
+ */
+export async function addLlmExplanation(verdict: Verdict, text: string): Promise<Verdict> {
+  if (!text) return verdict;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const extra = await Promise.race([
+      (async () => {
+        const { explainWithLlm, archetypes } = await import('../ai');
+        return explainWithLlm({
+          level: verdict.level,
+          lang: verdict.lang,
+          archetypeName: archetypes.find(({ id }) => id === verdict.archetypeId)?.name[
+            verdict.lang
+          ],
+          signals: verdict.signals.filter(({ weight }) => weight > 0).map(({ label }) => label),
+          advice: verdict.explanation.steps,
+          text,
+        });
+      })(),
+      new Promise<null>((resolve) => {
+        timer = setTimeout(() => resolve(null), 15000);
+      }),
+    ]);
+    if (extra === null) return verdict;
+    return {
+      ...verdict,
+      explanation: { ...verdict.explanation, extra },
+      usedModels: { ...verdict.usedModels, llm: true },
+    };
+  } catch {
+    return verdict; // The explanation must never replace the computed verdict.
+  } finally {
+    clearTimeout(timer);
   }
 }

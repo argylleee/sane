@@ -1,7 +1,35 @@
 // OWNER: model. Automatic model download on first visit, with polite guards.
+import { refineCapabilities } from './capabilities';
 import { loadEmbeddings } from './embedClient';
+import { getLlmStatus, isLlmCached, loadLlm } from './llm';
 
-type NetworkInformation = { saveData?: boolean; effectiveType?: string };
+type NetworkInformation = { saveData?: boolean; effectiveType?: string; type?: string };
+
+/**
+ * The explanation model is larger, so it downloads by itself only on Wi-Fi or a wired connection.
+ * Browsers that do not report the connection type (Safari, Firefox) count as not on mobile data
+ * only on desktop; phones then wait for the user to start it.
+ */
+export function shouldAutoPreloadLlm(): boolean {
+  if (!shouldAutoPreload()) return false;
+  const connection = (navigator as Navigator & { connection?: NetworkInformation }).connection;
+  if (connection?.type) return connection.type === 'wifi' || connection.type === 'ethernet';
+  if (connection?.effectiveType === '3g') return false;
+  return !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+/**
+ * Loads the explanation model on WebGPU devices: always when it is already cached (no download),
+ * otherwise only when shouldAutoPreloadLlm() allows the download. Never throws: without the model
+ * the fixed explanation is used.
+ */
+export async function startLlmPreload(): Promise<void> {
+  if (getLlmStatus().state !== 'idle') return;
+  const { tier } = await refineCapabilities();
+  if (tier === 'C') return;
+  if (!shouldAutoPreloadLlm() && !(await isLlmCached(tier))) return;
+  await loadLlm(tier).catch(() => undefined);
+}
 
 /** False when the user asked to save data or is on a very slow connection. */
 export function shouldAutoPreload(): boolean {

@@ -86,6 +86,23 @@
       ]
     },
     {
+      "id": "online_casino_bonus",
+      "name": {
+        "en": "Online casino free spin or bonus bait",
+        "fil": "Pain na libreng spin o bonus ng online casino",
+        "taglish": "Online casino free spin bait"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Register now and get a FREE 100 bonus! Thousands of players already won big. You could be next!",
+        "Mag-login ngayon at makakuha ng libreng spin! Marami nang nanalo ng libo-libong piso, ikaw na ang susunod.",
+        "Free spins pag nag-sign up ka today! Jackpot hanggang P50,000, withdraw agad sa GCash.",
+        "Swerte mo ngayon! May naghihintay na bonus sa account mo, mag-login lang para ma-claim.",
+        "Daily free spin para sa new members. Deposit 100, get 300. Cash out anytime!",
+        "Ikaw na ang susunod na milyonaryo! Maglaro na at i-claim ang welcome bonus mo."
+      ]
+    },
+    {
       "id": "relative_emergency",
       "name": {
         "en": "Fake relative in emergency",

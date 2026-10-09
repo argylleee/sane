@@ -54,7 +54,8 @@ export function score(
   const combined =
     ([...ids].some((id) => STRONG_ASK.has(id)) && ids.size >= 2) ||
     ids.size >= 3 ||
-    (ids.has('money_request') && [...ids].some((id) => MONEY_HOOK.has(id)));
+    (ids.has('money_request') && [...ids].some((id) => MONEY_HOOK.has(id))) ||
+    (ids.has('gambling_bait') && ids.size >= 2); // casino spam plus a prize or pressure cue
   if (combined) ruleScore = Math.max(ruleScore, LIKELY);
 
   // Keep the established no-share guardrail. Similarity is not a credential request.

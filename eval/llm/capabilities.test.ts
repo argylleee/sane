@@ -40,7 +40,7 @@ describe('device capabilities and LLM model choice', () => {
     expect(result.tier).toBe('A');
     expect(result.shaderF16).toBe(false);
     expect(llm.pickLlmModel(result.tier, result.shaderF16)).toBe(
-      'Qwen2.5-1.5B-Instruct-q4f32_1-MLC',
+      'Qwen2.5-0.5B-Instruct-q4f32_1-MLC',
     );
   });
 

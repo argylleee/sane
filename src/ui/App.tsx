@@ -5,16 +5,18 @@ import {
   extractText,
   getEmbeddingsStatus,
   getLlmStatus,
+  LLM_DOWNLOAD_MB,
   LLM_MODEL_BY_TIER,
   loadEmbeddings,
   loadLlm,
   shouldAutoPreload,
   startEmbeddingsPreload,
+  startLlmPreload,
   subscribeEmbeddings,
   subscribeLlm,
 } from '../ai';
 import type { EmbeddingsStatus, LlmStatus, Tier } from '../ai';
-import { analyze } from '../pipeline/analyze';
+import { addLlmExplanation, analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Level, Signal, Verdict } from '../types';
 import { copyFor } from './copy';
@@ -256,9 +258,8 @@ export function App() {
   const messageInput = useRef<HTMLTextAreaElement>(null);
   const [embeddingStatus, setEmbeddingStatus] = useState<EmbeddingsStatus>(getEmbeddingsStatus);
   const [modelAtScan, setModelAtScan] = useState<EmbeddingsStatus['state']>('idle');
-  const [llmEnabled, setLlmEnabled] = useState(false);
-  const [llmPromptOpen, setLlmPromptOpen] = useState(false);
   const [llmStatus, setLlmStatus] = useState<LlmStatus>(getLlmStatus);
+  const [llmWriting, setLlmWriting] = useState(false);
   const llmTier: Tier = detectCapabilities().tier;
   const llmAvailable = LLM_MODEL_BY_TIER[llmTier] !== null;
   const copy = copyFor('en');
@@ -271,31 +272,16 @@ export function App() {
   const showIosInstallHint = isAppleMobile && !isStandalone;
 
   useEffect(() => {
-    void startEmbeddingsPreload();
+    // The explanation model follows the embedding model so the two downloads do not compete.
+    void (startEmbeddingsPreload() ?? Promise.resolve()).finally(() => void startLlmPreload());
     return initButtonAnimations();
   }, []);
 
   useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
   useEffect(() => subscribeLlm(setLlmStatus), []);
 
-  function requestLlm(enabled: boolean) {
-    if (!enabled) {
-      setLlmEnabled(false);
-      setLlmPromptOpen(false);
-      return;
-    }
-    if (getLlmStatus().state === 'ready') setLlmEnabled(true);
-    else if (getLlmStatus().state !== 'loading') setLlmPromptOpen(true);
-  }
-
-  async function downloadLlm() {
-    setLlmPromptOpen(false);
-    try {
-      await loadLlm(llmTier);
-      setLlmEnabled(true);
-    } catch {
-      setLlmEnabled(false);
-    }
+  function downloadLlm() {
+    void loadLlm(llmTier).catch(() => undefined);
   }
 
   const clearScreenshot = useCallback(() => {
@@ -480,9 +466,16 @@ export function App() {
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
         lang: 'en',
-        useLLM: llmEnabled && getLlmStatus().state === 'ready',
+        useLLM: false,
       });
       setVerdict(result);
+      if (getLlmStatus().state === 'ready' && sourceMessage.trim()) {
+        // Show the verdict now; the on-device explanation fills in when it is written.
+        setLlmWriting(true);
+        void addLlmExplanation(result, normalize(sourceMessage))
+          .then((explained) => setVerdict((current) => (current === result ? explained : current)))
+          .finally(() => setLlmWriting(false));
+      }
       setModelAtScan(modelStateAtScan);
       setResultMessage(sourceMessage);
       setResultIsImage(Boolean(image));
@@ -857,43 +850,17 @@ export function App() {
                   </h2>
                   {llmAvailable ? (
                     <>
-                      <label className="flex items-center gap-3 text-sm font-semibold text-text cursor-pointer">
-                        <input
-                          type="checkbox"
-                          className="h-5 w-5 accent-primary cursor-pointer"
-                          checked={llmEnabled}
-                          disabled={llmStatus.state === 'loading'}
-                          onChange={(event) => requestLlm(event.currentTarget.checked)}
-                        />
-                        {copy.llmToggleLabel}
-                      </label>
                       <p className="text-xs text-secondary leading-relaxed">
                         {copy.llmDescription}
                       </p>
-                      {llmPromptOpen && (
-                        <div
-                          className="bg-neutral rounded-xl p-4 space-y-3"
-                          role="dialog"
-                          aria-labelledby="llm-prompt-title"
-                        >
-                          <h3 id="llm-prompt-title" className="text-sm font-bold text-text">
-                            {copy.llmPromptTitle}
-                          </h3>
+                      {llmStatus.state === 'idle' && (
+                        <div className="space-y-2">
                           <p className="text-xs text-secondary">
-                            {copy.llmPromptBody(llmTier === 'A' ? 880 : 290)}
+                            {copy.llmPromptBody(LLM_DOWNLOAD_MB)}
                           </p>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="primary" onPress={() => void downloadLlm()}>
-                              {copy.llmDownloadAction}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onPress={() => setLlmPromptOpen(false)}
-                            >
-                              {copy.llmCancelAction}
-                            </Button>
-                          </div>
+                          <Button size="sm" variant="outline" onPress={downloadLlm}>
+                            {copy.llmDownloadAction}
+                          </Button>
                         </div>
                       )}
                       {llmStatus.state === 'loading' && (
@@ -917,7 +884,7 @@ export function App() {
                       {llmStatus.state === 'error' && (
                         <div className="space-y-2" role="alert">
                           <p className="text-xs text-high font-medium">{copy.llmError}</p>
-                          <Button size="sm" variant="outline" onPress={() => requestLlm(true)}>
+                          <Button size="sm" variant="outline" onPress={downloadLlm}>
                             {copy.llmRetry}
                           </Button>
                         </div>
@@ -1014,6 +981,11 @@ export function App() {
                   </div>
 
                   {/* LLM Explanation */}
+                  {llmWriting && !verdict.explanation.extra && (
+                    <p className="clay-panel rounded-2xl p-6 text-sm text-secondary" role="status">
+                      {copy.llmWriting}
+                    </p>
+                  )}
                   {verdict.explanation.extra && (
                     <div className="clay-panel rounded-2xl p-6 space-y-3">
                       <h3 className="font-bold text-text">{copy.llmExplanationTitle}</h3>

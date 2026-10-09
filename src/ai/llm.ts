@@ -3,12 +3,17 @@
 import { refineCapabilities, type Tier } from './capabilities';
 import { buildMessages, validateLlmOutput, type LlmFacts } from './llmPrompt';
 
-// Ids verified against WebLLM's prebuilt model list (@mlc-ai/web-llm 0.2.85).
+// Ids verified against WebLLM's prebuilt model list (@mlc-ai/web-llm 0.2.85). One small model for
+// every WebGPU device: Qwen2.5-0.5B 4-bit is 276 MB in 8 cached shards, against 840 MB for the 1.5B.
+// The explanation is grounded in fixed advice and validated, so the smaller model is enough.
 export const LLM_MODEL_BY_TIER: Record<Tier, string | null> = {
-  A: 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC',
+  A: 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',
   B: 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC',
-  C: null, // no WebGPU: hide the toggle
+  C: null, // no usable WebGPU: template explanations only
 };
+
+/** Download size in MB, measured from the Hugging Face repository file list. */
+export const LLM_DOWNLOAD_MB = 276;
 
 const LLM_TIMEOUT_MS = 15000;
 
@@ -46,7 +51,7 @@ export function subscribeLlm(listener: (status: LlmStatus) => void): () => void 
 
 /** Same models without 16-bit shader math, for GPUs that lack `shader-f16` (many phones). */
 export const LLM_MODEL_F32_BY_TIER: Record<Tier, string | null> = {
-  A: 'Qwen2.5-1.5B-Instruct-q4f32_1-MLC',
+  A: 'Qwen2.5-0.5B-Instruct-q4f32_1-MLC',
   B: 'Qwen2.5-0.5B-Instruct-q4f32_1-MLC',
   C: null,
 };
@@ -56,7 +61,20 @@ export function pickLlmModel(tier: Tier, shaderF16: boolean | null): string | nu
   return (shaderF16 === true ? LLM_MODEL_BY_TIER : LLM_MODEL_F32_BY_TIER)[tier];
 }
 
-/** Explicit, user-initiated download and load. Throws if the device cannot run a model. */
+/** True when this device's model is already in the browser cache, so loading needs no download. */
+export async function isLlmCached(tier: Tier): Promise<boolean> {
+  try {
+    const capabilities = await refineCapabilities();
+    const modelId = pickLlmModel(tier, capabilities.shaderF16);
+    if (!modelId) return false;
+    const { hasModelInCache } = await import('@mlc-ai/web-llm');
+    return await hasModelInCache(modelId);
+  } catch {
+    return false;
+  }
+}
+
+/** Downloads (first time) and loads the model. Throws if the device cannot run a model. */
 export function loadLlm(requestedTier: Tier): Promise<void> {
   if (!LLM_MODEL_BY_TIER[requestedTier])
     return Promise.reject(new Error('This device cannot run the language model.'));

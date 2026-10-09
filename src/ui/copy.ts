@@ -90,6 +90,7 @@ type Copy = {
   llmDescription: string;
   llmPromptTitle: string;
   llmPromptBody: (size: number) => string;
+  llmWriting: string;
   llmDownloadAction: string;
   llmCancelAction: string;
   llmProgress: (percent: number) => string;
@@ -203,12 +204,14 @@ export const COPY: Record<Lang, Copy> = {
     modelFailedAtScan:
       'The AI check could not run, so this used rules only. You can try preparing it again.',
     modelSkippedAtScan: 'The AI check is paused to save data, so this used rules only.',
-    llmTitle: 'AI explanation (experimental)',
+    llmTitle: 'AI explanation',
     llmToggleLabel: 'Use an AI-written explanation',
-    llmDescription: 'Optional. It may be wrong. Rules still decide the risk level.',
+    llmDescription:
+      'A small on-device model explains each result in plain words. Rules still decide the risk level.',
     llmPromptTitle: 'Download the explanation model?',
     llmPromptBody: (size) =>
-      `About ${size} MB, plus supporting files. Use Wi-Fi if you can. Your message stays on this device.`,
+      `Paused to save mobile data. About ${size} MB, downloaded once. Your message stays on this device.`,
+    llmWriting: 'Writing a short explanation on this device…',
     llmDownloadAction: 'Download model',
     llmCancelAction: 'Maybe later',
     llmProgress: (percent) => `Downloading the AI model: ${percent}%`,
@@ -374,13 +377,14 @@ export const COPY: Record<Lang, Copy> = {
       'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Maaari mong subukang ihanda itong muli.',
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
-    llmTitle: 'AI na paliwanag (eksperimental)',
+    llmTitle: 'AI na paliwanag',
     llmToggleLabel: 'Gumamit ng AI na paliwanag',
     llmDescription:
-      'Opsyonal ito at puwedeng magkamali. Rules pa rin ang nagtatakda ng risk level.',
+      'Isang maliit na model sa device ang nagpapaliwanag ng bawat resulta. Rules pa rin ang nagtatakda ng risk level.',
     llmPromptTitle: 'I-download ang model para sa paliwanag?',
     llmPromptBody: (size) =>
-      `Mga ${size} MB ang model, bukod pa sa supporting files. Gumamit ng Wi-Fi kung kaya. Sa device mo mananatili ang mensahe.`,
+      `Naka-pause para makatipid ng mobile data. Mga ${size} MB, isang beses lang ida-download. Sa device mo mananatili ang mensahe.`,
+    llmWriting: 'Isinusulat ang maikling paliwanag sa device na ito…',
     llmDownloadAction: 'I-download ang model',
     llmCancelAction: 'Mamaya na lang',
     llmProgress: (percent) => `Dina-download ang AI model: ${percent}%`,
@@ -544,13 +548,14 @@ export const COPY: Record<Lang, Copy> = {
       'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Pwede mong subukang i-prepare ulit.',
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
-    llmTitle: 'AI explanation (experimental)',
+    llmTitle: 'AI explanation',
     llmToggleLabel: 'Gumamit ng AI-written explanation',
     llmDescription:
-      'Optional ito at puwedeng magkamali. Rules pa rin ang nagtatakda ng risk level.',
+      'May maliit na on-device model na nag-e-explain ng bawat result. Rules pa rin ang nagde-decide ng risk level.',
     llmPromptTitle: 'I-download ang model para sa explanation?',
     llmPromptBody: (size) =>
-      `Mga ${size} MB ang model, plus supporting files. Gumamit ng Wi-Fi kung kaya. Sa device mo mananatili ang message.`,
+      `Naka-pause para makatipid sa mobile data. Mga ${size} MB, one-time download lang. Sa device mo lang ang message.`,
+    llmWriting: 'Sinusulat ang maikling explanation sa device na ito…',
     llmDownloadAction: 'I-download ang model',
     llmCancelAction: 'Mamaya na lang',
     llmProgress: (percent) => `Dina-download ang AI model: ${percent}%`,
