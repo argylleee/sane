@@ -242,7 +242,7 @@
     },
     {
       "id": "TASK-211",
-      "allocation": 1,
+      "allocation": 2,
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
@@ -251,6 +251,7 @@
         "src/ai/llm.ts",
         "src/ai/llmPrompt.ts",
         "src/ai/llmPrompt.test.ts",
+        "src/ai/capabilities.ts",
         "eval/llm/",
         "docs/tasks/TASK-211.md",
         "docs/tasks/TASK-211-handoff.md"
@@ -299,6 +300,27 @@
       "branch": "codex/feat/task-213-embedding-measurement",
       "worktree": "task-213",
       "baseRevision": "cc62e4f6f55eb72db86f441fc3b01ad028766a1d"
+    },
+    {
+      "id": "TASK-214",
+      "allocation": 1,
+      "role": "model",
+      "owner": "model-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ai/ocr.ts",
+        "src/ai/ocrPreprocess.ts",
+        "src/ai/ocrPreprocess.test.ts",
+        "eval/ocr/",
+        "docs/tasks/TASK-214.md",
+        "docs/tasks/TASK-214-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-202"],
+      "branch": "codex/feat/task-214-ocr-quality",
+      "worktree": "task-214",
+      "baseRevision": "9b85eaf2ddd89ddf4b30cd179e71183bd4aeacfa"
     }
   ]
 }
