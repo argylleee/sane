@@ -1,10 +1,11 @@
 // OWNER: model. Main-thread client for the embedding worker, with load status for the UI.
 // The model is never downloaded implicitly: call loadEmbeddings() from an explicit user action
 // (or automatically on desktop). Until it is ready, matchArchetypes() returns no matches.
-import type { EmbedKind } from './embedder';
+import type { EmbedKind, ModelSource } from './embedder';
 import type { WorkerRequest, WorkerResponse } from './embed.worker';
 
-type RequestBody = { type: 'init' } | { type: 'embed'; texts: string[]; kind: EmbedKind };
+type RequestBody =
+  { type: 'init'; source?: ModelSource } | { type: 'embed'; texts: string[]; kind: EmbedKind };
 
 export type EmbeddingsStatus = {
   state: 'idle' | 'loading' | 'ready' | 'error';
@@ -86,13 +87,21 @@ function request(body: RequestBody, timeoutMs?: number): Promise<WorkerResponse>
   });
 }
 
-/** Idempotent. Downloads (first time) and loads the model; resolves when ready. */
-export function loadEmbeddings(): Promise<void> {
+const envSource: ModelSource = {
+  modelBaseUrl: import.meta.env.VITE_MODEL_BASE_URL || undefined,
+  wasmBaseUrl: import.meta.env.VITE_WASM_BASE_URL || undefined,
+};
+
+/**
+ * Idempotent. Downloads (first time) and loads the model; resolves when ready. Pass a source to
+ * self-host the model or the WASM runtime; defaults come from VITE_MODEL_BASE_URL / VITE_WASM_BASE_URL.
+ */
+export function loadEmbeddings(source: ModelSource = envSource): Promise<void> {
   if (status.state === 'ready') return Promise.resolve();
   loading ??= (async () => {
     setStatus({ state: 'loading', progress: 0 });
     try {
-      const response = await request({ type: 'init' });
+      const response = await request({ type: 'init', source });
       if (response.type === 'error') throw new Error(response.message);
       setStatus({ state: 'ready', progress: 100 });
     } catch (error) {
