@@ -282,7 +282,7 @@ function MainNavigation({
     <nav className="main-navigation" aria-label="Main navigation">
       <button
         type="button"
-        aria-current={screen === 'scan' ? 'page' : undefined}
+        aria-current={screen === 'scan' || screen === 'result' ? 'page' : undefined}
         onClick={() => onNavigate('scan')}
       >
         Scan
@@ -571,9 +571,7 @@ export function App() {
         >
           <img src="/icons/sane-logo.svg" alt="" />
         </button>
-        {(screen === 'scan' || screen === 'learn') && (
-          <MainNavigation screen={screen} onNavigate={setScreen} />
-        )}
+        <MainNavigation screen={screen} onNavigate={setScreen} />
         <LanguagePicker
           className="topbar-language"
           label={copy.languageLabel}
