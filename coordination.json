@@ -51,7 +51,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/pipeline/",
         "src/rules/",
@@ -74,7 +74,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ai/",
         "src/data/archetypes.json",
@@ -94,7 +94,7 @@
       "role": "frontend",
       "owner": "frontend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ui/",
         "src/main.tsx",
@@ -109,6 +109,52 @@
       "branch": "codex/feat/task-203-mobile-ui-pwa",
       "worktree": "task-203",
       "baseRevision": "924fe03b7b4cc2dab50cb54731e1ca80cc07cc26"
+    },
+    {
+      "id": "TASK-204",
+      "allocation": 1,
+      "role": "frontend",
+      "owner": "frontend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ui/",
+        "src/main.tsx",
+        "src/styles.css",
+        "src/sw.ts",
+        "public/",
+        "specs/task-204-offline-pwa/",
+        "docs/tasks/TASK-204.md",
+        "docs/tasks/TASK-204-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-203"],
+      "branch": "codex/feat/task-204-offline-pwa-share",
+      "worktree": "task-204",
+      "baseRevision": "17734982c8a67f525136463a16cd569b532132e6"
+    },
+    {
+      "id": "TASK-205",
+      "allocation": 1,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/pipeline/",
+        "src/rules/",
+        "src/score/",
+        "src/explain/",
+        "src/data/keywords.json",
+        "src/data/brands.json",
+        "docs/tasks/TASK-205.md",
+        "docs/tasks/TASK-205-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-201", "TASK-202"],
+      "branch": "codex/feat/task-205-embedding-scoring",
+      "worktree": "task-205",
+      "baseRevision": "17734982c8a67f525136463a16cd569b532132e6"
     }
   ]
 }
