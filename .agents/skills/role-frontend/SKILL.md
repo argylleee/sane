@@ -10,6 +10,25 @@ session key/epoch, then retain it through ordinary turns and compaction without 
 On implicit loading for one task, do not create a sticky role. Restore only this same chat/checkout;
 new/cleared/forked chats and other worktrees activate afresh. Task ownership is checked separately.
 
+## Automatic task worktrees
+
+Right after explicit activation (and whenever the user says a new allocation landed), start every task
+allocated to this role without being asked, from any checkout of this repo:
+
+```sh
+npm run task:start -- --role frontend
+```
+
+This reads `origin/main`'s `coordination.json`, and for each active write task of this role creates (or reuses)
+`.worktrees/<worktree>` on the allocated branch at its base revision, installs dependencies, runs `npm run setup`,
+saves a registry snapshot and runs `npm run check:task`. Then work in that worktree for the task using its
+printed path; do not edit the checkout the chat was opened in. This worktree belongs to the already-activated
+role session and does not need a second activation; do not infer or change role from it.
+If several tasks are listed, do them in dependency order and one at a time unless the user parallelizes workers.
+Never allocate, re-scope or bump an allocation yourself: if no task is listed, or the check rejects the scope,
+tell the user and stop. A dirty or foreign checkout stops the start; report it instead of resetting anything.
+For one task use `npm run task:start -- --task TASK-ID`.
+
 Read `RULES.md`, the task, its allocation receipt for parallel work, and only the relevant interface/design
 references (`design-ux` for the mobile-first PWA and three-language copy). Follow `docs/coordination.md` for scope checks. A role tag is not permission to edit all UI.
 

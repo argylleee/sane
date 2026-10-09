@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { matchWithEvidence, type MatchWithEvidence } from '../ai/match';
-import archetypeData from '../data/archetypes.json';
 import developmentSet from '../../eval/testset.json';
 import type { Lang } from '../types';
 import { analyze } from './analyze';
@@ -31,18 +30,15 @@ beforeEach(() => {
 
 describe('embedding evidence in analyze()', () => {
   it.each(['en', 'fil', 'taglish'] as const)(
-    'raises a rules-only abstention to suspicious with a %s pattern explanation',
+    'raises a rules-only abstention to suspicious with a %s pattern match',
     async (lang) => {
       match.mockResolvedValue(evidence());
       const verdict = await analyze({ text: 'Can you help me out?' }, { ...opts, lang });
-      const name = archetypeData.archetypes.find(({ id }) => id === 'relative_emergency')!.name[
-        lang
-      ];
       expect(verdict.level).toBe('suspicious');
       expect(verdict.score).toBeGreaterThanOrEqual(30);
       expect(verdict.score).toBeLessThan(60);
       expect(verdict.archetypeId).toBe('relative_emergency');
-      expect(verdict.explanation.extra).toContain(name);
+      expect(verdict.explanation.extra).toBeUndefined();
       expect(verdict.signals).toEqual([]);
       expect(verdict.usedModels).toEqual({ ocr: false, embeddings: true, llm: false });
       expect(match).toHaveBeenCalledExactlyOnceWith('Can you help me out?');

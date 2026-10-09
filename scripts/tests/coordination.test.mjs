@@ -152,3 +152,22 @@ test('worker checks reject stale receipts and additions/deletions outside owners
   assert.throws(() => assertTaskScope(config, 'TASK-001', 1, ['src/api/old.ts']), /Outside/);
   assert.throws(() => assertTaskScope(config, 'TASK-404', 1, []), /not an active/);
 });
+
+test('task start selects only active write allocations for a role or ID', async () => {
+  const { selectTasks } = await import('../lib/task-start.mjs');
+  const config = registry(
+    task('TASK-001', ['src/ui/']),
+    task('TASK-002', ['src/api/'], { role: 'backend' }),
+    task('TASK-003', ['src/x/'], { status: 'integrated' }),
+  );
+  assert.deepEqual(
+    selectTasks(config, { role: 'frontend' }).map((t) => t.id),
+    ['TASK-001'],
+  );
+  assert.deepEqual(
+    selectTasks(config, { id: 'TASK-002' }).map((t) => t.id),
+    ['TASK-002'],
+  );
+  assert.throws(() => selectTasks(config, { id: 'TASK-003' }), /not an active write allocation/);
+  assert.throws(() => selectTasks(config, {}), /--task ID or --role/);
+});

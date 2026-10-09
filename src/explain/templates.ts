@@ -1,6 +1,5 @@
 // OWNER: backend. Fixed advice remains available without any model.
 import type { Lang, Level, Signal, Verdict } from '../types';
-import archetypeData from '../data/archetypes.json';
 
 const signalLabels: Record<Lang, Record<string, string>> = {
   en: {
@@ -137,19 +136,8 @@ const templates: Record<Lang, Record<Level, Verdict['explanation']>> = {
   },
 };
 
-export function explain(level: Level, lang: Lang, archetypeId?: string): Verdict['explanation'] {
-  const template = templates[lang][level];
-  const archetype = archetypeData.archetypes.find(({ id }) => id === archetypeId);
-  if (!archetype) return template;
-  const name = archetype.name[lang];
-  return {
-    ...template,
-    extra: {
-      en: `This resembles the "${name}" scam pattern. Similarity is a warning sign, not proof.`,
-      fil: `Kahawig ito ng padron na "${name}". Babala ang pagkakatulad, hindi patunay.`,
-      taglish: `Kahawig ito ng "${name}" scam pattern. Warning sign ito, hindi proof.`,
-    }[lang],
-  };
+export function explain(level: Level, lang: Lang): Verdict['explanation'] {
+  return templates[lang][level];
 }
 
 export function localizeSignals(signals: Signal[], lang: Lang): Signal[] {

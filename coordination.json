@@ -42,7 +42,8 @@
     "tsconfig.json",
     "vite.config.ts",
     "index.html",
-    "src/types.ts"
+    "src/types.ts",
+    "docs/design/"
   ],
   "tasks": [
     {
@@ -51,7 +52,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/pipeline/",
         "src/rules/",
@@ -74,7 +75,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ai/",
         "src/data/archetypes.json",
@@ -94,7 +95,7 @@
       "role": "frontend",
       "owner": "frontend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ui/",
         "src/main.tsx",
@@ -109,6 +110,87 @@
       "branch": "codex/feat/task-203-mobile-ui-pwa",
       "worktree": "task-203",
       "baseRevision": "924fe03b7b4cc2dab50cb54731e1ca80cc07cc26"
+    },
+    {
+      "id": "TASK-204",
+      "allocation": 2,
+      "role": "frontend",
+      "owner": "frontend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/sw.ts",
+        "src/main.tsx",
+        "public/",
+        "specs/task-204-offline-pwa/",
+        "docs/tasks/TASK-204.md",
+        "docs/tasks/TASK-204-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-203"],
+      "branch": "codex/feat/task-204-offline-pwa-share",
+      "worktree": "task-204",
+      "baseRevision": "17734982c8a67f525136463a16cd569b532132e6"
+    },
+    {
+      "id": "TASK-205",
+      "allocation": 2,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/pipeline/",
+        "src/score/",
+        "docs/tasks/TASK-205.md",
+        "docs/tasks/TASK-205-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-201", "TASK-202"],
+      "branch": "codex/feat/task-205-embedding-scoring",
+      "worktree": "task-205",
+      "baseRevision": "17734982c8a67f525136463a16cd569b532132e6"
+    },
+    {
+      "id": "TASK-206",
+      "allocation": 1,
+      "role": "frontend",
+      "owner": "frontend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ui/",
+        "src/styles.css",
+        "specs/task-206-figma-ui/",
+        "docs/tasks/TASK-206.md",
+        "docs/tasks/TASK-206-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-203"],
+      "branch": "codex/feat/task-206-figma-ui",
+      "worktree": "task-206",
+      "baseRevision": "89e07691359b2a2a5f4440dd89d618d483be8754"
+    },
+    {
+      "id": "TASK-207",
+      "allocation": 1,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/rules/",
+        "src/explain/",
+        "src/data/keywords.json",
+        "src/data/brands.json",
+        "docs/tasks/TASK-207.md",
+        "docs/tasks/TASK-207-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-201"],
+      "branch": "codex/feat/task-207-rules-explanations",
+      "worktree": "task-207",
+      "baseRevision": "89e07691359b2a2a5f4440dd89d618d483be8754"
     }
   ]
 }

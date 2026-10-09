@@ -62,7 +62,7 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
       matches,
       archetypeId,
       lang: opts.lang,
-      explanation: explain(level, opts.lang, archetypeId),
+      explanation: explain(level, opts.lang),
       usedModels: { ocr, embeddings: evidence !== null, llm: false },
     };
   } catch {

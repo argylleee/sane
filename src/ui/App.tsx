@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
+import { getEmbeddingsStatus, loadEmbeddings, subscribeEmbeddings } from '../ai';
+import type { EmbeddingsStatus } from '../ai';
 import { analyze } from '../pipeline/analyze';
 import type { Lang, Level, Verdict } from '../types';
 import { copyFor } from './copy';
@@ -7,15 +9,27 @@ import { copyFor } from './copy';
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const LANGUAGES: readonly Lang[] = ['en', 'fil', 'taglish'];
-const THEMES = ['system', 'light', 'dark'] as const;
 type Screen = 'welcome' | 'scan' | 'result' | 'learn';
-type Theme = (typeof THEMES)[number];
 type FeedbackKey =
   | 'clipboardUnavailable'
   | 'clipboardError'
   | 'screenshotTypeError'
   | 'screenshotLimitError'
-  | 'analysisError';
+  | 'analysisError'
+  | 'sharedLimitError'
+  | 'shareEmpty';
+
+type SharedPayload = {
+  text?: unknown;
+  textTooLong?: unknown;
+  image?: unknown;
+  imageRejected?: unknown;
+};
+
+type InstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
+};
 
 function StatusMark({ level }: { level: Level }) {
   if (level === 'likely_scam') {
@@ -112,34 +126,6 @@ function LanguagePicker({
   );
 }
 
-function ThemePicker({
-  theme,
-  onChange,
-  copy,
-}: {
-  theme: Theme;
-  onChange: (theme: Theme) => void;
-  copy: ReturnType<typeof copyFor>;
-}) {
-  return (
-    <label className="theme-picker">
-      <span>{copy.themeLabel}</span>
-      <select
-        aria-label={copy.themeLabel}
-        value={theme}
-        onChange={(event) => {
-          const selected = THEMES.find((option) => option === event.currentTarget.value);
-          if (selected) onChange(selected);
-        }}
-      >
-        <option value="system">{copy.themeSystem}</option>
-        <option value="light">{copy.themeLight}</option>
-        <option value="dark">{copy.themeDark}</option>
-      </select>
-    </label>
-  );
-}
-
 function MainNavigation({
   screen,
   copy,
@@ -172,7 +158,6 @@ function MainNavigation({
 export function App() {
   const [screen, setScreen] = useState<Screen>('welcome');
   const [lang, setLang] = useState<Lang>('en');
-  const [theme, setTheme] = useState<Theme>('system');
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
@@ -180,10 +165,146 @@ export function App() {
   const [resultIsImage, setResultIsImage] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackKey | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [offlineReady, setOfflineReady] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [scanRequestCount, setScanRequestCount] = useState(0);
+  const [embeddingStatus, setEmbeddingStatus] = useState<EmbeddingsStatus>(getEmbeddingsStatus);
+  const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);
+  const installPrompt = useRef<InstallPromptEvent | null>(null);
+  const scanStartedAt = useRef<number | null>(null);
+  const scanResourceKeys = useRef(new Set<string>());
   const fileInput = useRef<HTMLInputElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
   const copy = copyFor(lang);
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
+  const isSmallScreen =
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches;
+  const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  const showIosInstallHint = isAppleMobile && !isStandalone;
+
+  useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
+
+  useEffect(() => {
+    const onInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      installPrompt.current = event as InstallPromptEvent;
+      setCanInstall(true);
+    };
+    const onInstalled = () => {
+      installPrompt.current = null;
+      setCanInstall(false);
+    };
+    window.addEventListener('beforeinstallprompt', onInstallPrompt);
+    window.addEventListener('appinstalled', onInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onInstallPrompt);
+      window.removeEventListener('appinstalled', onInstalled);
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateOnline = () => setIsOnline(navigator.onLine);
+    window.addEventListener('online', updateOnline);
+    window.addEventListener('offline', updateOnline);
+    if (!('serviceWorker' in navigator)) {
+      return () => {
+        window.removeEventListener('online', updateOnline);
+        window.removeEventListener('offline', updateOnline);
+      };
+    }
+
+    const appRoot = new URL('./', document.baseURI);
+    const onWorkerMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'offline-ready') setOfflineReady(event.data.ready === true);
+      if (event.data?.type !== 'shared') return;
+
+      const payload = event.data.payload as SharedPayload | null;
+      setScreen('scan');
+      setFeedback(null);
+      if (!payload) {
+        setFeedback('shareEmpty');
+        return;
+      }
+
+      const hasText = typeof payload.text === 'string' && payload.text.length > 0;
+      const hasImage = payload.image instanceof File;
+      if (!hasText && !hasImage && payload.imageRejected !== true) {
+        setFeedback('shareEmpty');
+        return;
+      }
+
+      if (
+        payload.textTooLong === true ||
+        (typeof payload.text === 'string' && payload.text.length > MAX_MESSAGE_LENGTH)
+      ) {
+        setMessage('');
+        setFeedback('sharedLimitError');
+      } else if (typeof payload.text === 'string') {
+        setImage(null);
+        setMessage(payload.text);
+      }
+
+      if (payload.image instanceof File) {
+        selectScreenshot(payload.image);
+      } else if (payload.imageRejected === true) {
+        setFeedback('screenshotLimitError');
+      }
+    };
+
+    navigator.serviceWorker.addEventListener('message', onWorkerMessage);
+    void navigator.serviceWorker
+      .register(new URL('sw.js', appRoot), { scope: appRoot.pathname })
+      .then(async (registration) => {
+        const ready = await navigator.serviceWorker.ready;
+        const worker = registration.active ?? ready.active;
+        if (!worker) return;
+        const resources = performance
+          .getEntriesByType('resource')
+          .map((entry) => entry.name)
+          .filter((name) => {
+            try {
+              return new URL(name).origin === appRoot.origin;
+            } catch {
+              return false;
+            }
+          });
+        worker.postMessage({ type: 'cache-shell', resources });
+
+        const currentUrl = new URL(window.location.href);
+        if (currentUrl.searchParams.has('shared')) {
+          window.history.replaceState({}, '', appRoot.pathname);
+          worker.postMessage({ type: 'get-shared' });
+        }
+      })
+      .catch(() => setOfflineReady(false));
+
+    return () => {
+      window.removeEventListener('online', updateOnline);
+      window.removeEventListener('offline', updateOnline);
+      navigator.serviceWorker.removeEventListener('message', onWorkerMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof PerformanceObserver === 'undefined') return;
+    const observer = new PerformanceObserver((list) => {
+      if (scanStartedAt.current === null) return;
+      for (const entry of list.getEntries()) {
+        if (entry.startTime < scanStartedAt.current) continue;
+        const resource = entry as PerformanceResourceTiming;
+        if (resource.transferSize > 0) {
+          scanResourceKeys.current.add(`${resource.name}:${resource.startTime}`);
+        }
+      }
+      setScanRequestCount(scanResourceKeys.current.size);
+    });
+    observer.observe({ type: 'resource', buffered: true });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = lang === 'taglish' ? 'en-PH' : lang;
@@ -192,16 +313,13 @@ export function App() {
   useEffect(() => {
     const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
     const applyTheme = () => {
-      document.documentElement.dataset.theme =
-        theme === 'system' ? (colorScheme.matches ? 'dark' : 'light') : theme;
+      document.documentElement.dataset.theme = colorScheme.matches ? 'dark' : 'light';
     };
 
     applyTheme();
-    if (theme !== 'system') return;
-
     colorScheme.addEventListener('change', applyTheme);
     return () => colorScheme.removeEventListener('change', applyTheme);
-  }, [theme]);
+  }, []);
 
   async function pasteFromClipboard() {
     setFeedback(null);
@@ -241,6 +359,9 @@ export function App() {
 
     setFeedback(null);
     setIsAnalyzing(true);
+    scanResourceKeys.current.clear();
+    setScanRequestCount(0);
+    scanStartedAt.current = performance.now();
     const sourceImage = image;
     const sourceMessage = sourceImage ? '' : message;
 
@@ -256,8 +377,36 @@ export function App() {
     } catch {
       setFeedback('analysisError');
     } finally {
+      scanStartedAt.current = null;
       setIsAnalyzing(false);
     }
+  }
+
+  async function startEmbeddingLoad() {
+    setShowDownloadPrompt(false);
+    try {
+      await loadEmbeddings();
+    } catch {
+      // The UI keeps the rules-only path available when the optional model fails.
+    }
+  }
+
+  function requestEmbeddingLoad() {
+    if (embeddingStatus.state === 'ready' || embeddingStatus.state === 'loading') return;
+    if (isSmallScreen) {
+      setShowDownloadPrompt(true);
+      return;
+    }
+    void startEmbeddingLoad();
+  }
+
+  async function promptInstall() {
+    const prompt = installPrompt.current;
+    if (!prompt) return;
+    await prompt.prompt();
+    await prompt.userChoice;
+    installPrompt.current = null;
+    setCanInstall(false);
   }
 
   function startAnotherCheck() {
@@ -293,7 +442,7 @@ export function App() {
         >
           sane
         </button>
-        {(screen === 'scan' || screen === 'learn') && (
+        {screen !== 'result' && (
           <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />
         )}
         <LanguagePicker
@@ -302,7 +451,6 @@ export function App() {
           lang={lang}
           onChange={setLang}
         />
-        <ThemePicker theme={theme} onChange={setTheme} copy={copy} />
       </header>
 
       <main className={`page page--${screen}`}>
@@ -355,6 +503,12 @@ export function App() {
             <div className="page-heading">
               <h1>{copy.scanTitle}</h1>
               <p className="page-intro">{copy.scanDescription}</p>
+            </div>
+            <div className="offline-status" aria-live="polite">
+              <span className={`offline-badge${offlineReady ? ' offline-badge--ready' : ''}`}>
+                {offlineReady ? copy.offlineReady : copy.offlinePreparing}
+              </span>
+              <span className="connection-label">{isOnline ? copy.online : copy.offline}</span>
             </div>
             <div className="scan-layout">
               <form className="scan-form" onSubmit={runAnalysis}>
@@ -459,6 +613,39 @@ export function App() {
                     ))}
                   </ol>
                 </section>
+                <section className="embedding-panel" aria-labelledby="embedding-title">
+                  <h2 id="embedding-title">{copy.embeddingTitle}</h2>
+                  {embeddingStatus.state === 'ready' ? (
+                    <p>{copy.embeddingReady}</p>
+                  ) : embeddingStatus.state === 'loading' ? (
+                    <div>
+                      <p className="loading-message" role="status">
+                        {copy.embeddingProgress(embeddingStatus.progress)}
+                      </p>
+                      <progress max="100" value={embeddingStatus.progress} />
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        className="button button--secondary"
+                        type="button"
+                        disabled={!isOnline}
+                        onClick={requestEmbeddingLoad}
+                      >
+                        {copy.embeddingAction}
+                      </button>
+                      {embeddingStatus.state === 'error' && (
+                        <p className="field-error" role="status">
+                          {copy.embeddingUnavailable}
+                        </p>
+                      )}
+                    </>
+                  )}
+                </section>
+                <p className="network-proof" aria-live="polite">
+                  {copy.networkRequests(scanRequestCount)}
+                </p>
+                {showIosInstallHint && <p className="supporting-copy">{copy.iosInstallHint}</p>}
               </aside>
             </div>
           </>
@@ -469,6 +656,9 @@ export function App() {
             <div className="page-heading result-page-heading">
               <h1>{copy.resultTitle}</h1>
               <p className="page-intro">{copy.resultSubtitle}</p>
+              <p className="network-proof" aria-live="polite">
+                {copy.networkRequests(scanRequestCount)}
+              </p>
             </div>
             <div className="result-grid" aria-live="polite">
               <section className="result-primary">
@@ -541,6 +731,15 @@ export function App() {
                 >
                   {copy.another}
                 </button>
+                {canInstall && (
+                  <button
+                    className="button button--secondary another-button"
+                    type="button"
+                    onClick={promptInstall}
+                  >
+                    {copy.installApp}
+                  </button>
+                )}
               </aside>
             </div>
           </>
@@ -575,7 +774,33 @@ export function App() {
         )}
       </main>
 
-      {(screen === 'scan' || screen === 'learn') && (
+      {showDownloadPrompt && (
+        <div className="dialog-backdrop">
+          <section
+            className="download-prompt"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="download-prompt-title"
+          >
+            <h2 id="download-prompt-title">{copy.downloadPromptTitle}</h2>
+            <p>{copy.downloadPromptBody}</p>
+            <div className="download-prompt-actions">
+              <button className="button button--primary" type="button" onClick={startEmbeddingLoad}>
+                {copy.downloadContinue}
+              </button>
+              <button
+                className="button button--secondary"
+                type="button"
+                onClick={() => setShowDownloadPrompt(false)}
+              >
+                {copy.downloadCancel}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {screen !== 'result' && (
         <nav className="mobile-navigation" aria-label="Main navigation">
           <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />
         </nav>
