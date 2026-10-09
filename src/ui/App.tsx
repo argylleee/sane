@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { extractText, startEmbeddingsPreload } from '../ai';
+import {
+  extractText,
+  getEmbeddingsStatus,
+  loadEmbeddings,
+  shouldAutoPreload,
+  startEmbeddingsPreload,
+  subscribeEmbeddings,
+} from '../ai';
+import type { EmbeddingsStatus } from '../ai';
 import { analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Lang, Level, Signal, Verdict } from '../types';
@@ -142,6 +150,7 @@ function LanguagePicker({
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -149,19 +158,29 @@ function LanguagePicker({
         setOpen(false);
       }
     }
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+    if (!open) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     }
+    document.addEventListener('pointerdown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [open]);
 
   return (
     <div className={`relative ${className}`} ref={containerRef}>
       <Button
+        ref={triggerRef}
         isIconOnly
         variant="ghost"
         size="sm"
-        aria-label={label}
+        aria-label={`${label}: ${LANGUAGE_NAMES[lang]}`}
         aria-haspopup="menu"
         aria-expanded={open}
         className="h-9 w-9 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
@@ -195,6 +214,7 @@ function LanguagePicker({
                   onClick={() => {
                     onChange(item);
                     setOpen(false);
+                    triggerRef.current?.focus();
                   }}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
                     isSelected
@@ -224,19 +244,15 @@ function MainNavigation({
   return (
     <nav
       className="inline-flex items-center bg-highlight border border-border/80 backdrop-blur-xl p-1 rounded-full shadow-xs"
-      role="tablist"
-      aria-orientation="horizontal"
       aria-label="Main navigation"
     >
       {(['scan', 'learn'] as const).map((navScreen) => {
-        const isSelected = screen === navScreen;
+        const isSelected = screen === navScreen || (navScreen === 'scan' && screen === 'result');
         return (
           <button
             key={navScreen}
             type="button"
-            role="tab"
-            aria-selected={isSelected}
-            tabIndex={isSelected ? 0 : -1}
+            aria-current={isSelected ? 'page' : undefined}
             onClick={() => onNavigate(navScreen)}
             className={`flex items-center justify-center gap-2 px-5 py-1.5 rounded-full text-sm font-semibold transition-all cursor-pointer select-none outline-none focus-visible:ring-2 focus-visible:ring-primary ${
               isSelected
@@ -276,6 +292,8 @@ export function App() {
   const ocrRequestId = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
+  const [embeddingStatus, setEmbeddingStatus] = useState<EmbeddingsStatus>(getEmbeddingsStatus);
+  const [modelAtScan, setModelAtScan] = useState<EmbeddingsStatus['state']>('idle');
   const copy = copyFor(lang);
 
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
@@ -289,6 +307,8 @@ export function App() {
     void startEmbeddingsPreload();
     return initButtonAnimations();
   }, []);
+
+  useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
 
   const clearScreenshot = useCallback(() => {
     ocrRequestId.current += 1;
@@ -452,6 +472,7 @@ export function App() {
     setIsAnalyzing(true);
     const sourceImage = image && !message.trim() ? image : null;
     const sourceMessage = message;
+    const modelStateAtScan = getEmbeddingsStatus().state;
 
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
@@ -459,6 +480,7 @@ export function App() {
         useLLM: false,
       });
       setVerdict(result);
+      setModelAtScan(modelStateAtScan);
       setResultMessage(sourceMessage);
       setResultIsImage(Boolean(image));
       setResultUsedOcr(Boolean(image && sourceMessage.trim() && ocrState === 'ready'));
@@ -519,9 +541,7 @@ export function App() {
           <img src="/icons/sane-logo.svg" alt="Sane" className="h-8 sm:h-9 w-auto object-contain" />
         </button>
         <div className="flex-1 flex justify-center hidden sm:flex">
-          {(screen === 'scan' || screen === 'learn') && (
-            <MainNavigation screen={screen} onNavigate={setScreen} />
-          )}
+          <MainNavigation screen={screen} onNavigate={setScreen} />
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <LanguagePicker lang={lang} onChange={setLang} label={copy.languageLabel} />
@@ -529,11 +549,9 @@ export function App() {
       </header>
 
       {/* Mobile nav for smaller screens */}
-      {(screen === 'scan' || screen === 'learn') && (
-        <div className="sm:hidden flex justify-center items-center px-4 py-2 bg-surface/60 border-b border-border backdrop-blur-md sticky top-16 z-40">
-          <MainNavigation screen={screen} onNavigate={setScreen} />
-        </div>
-      )}
+      <div className="sm:hidden flex justify-center items-center px-4 py-2 bg-surface/60 border-b border-border backdrop-blur-md sticky top-16 z-40">
+        <MainNavigation screen={screen} onNavigate={setScreen} />
+      </div>
 
       <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-16 flex flex-col relative overflow-hidden">
         <AnimatePresence mode="wait">
@@ -672,6 +690,47 @@ export function App() {
                         <WarningCircle size={16} />
                         {copy.overLimit}
                       </p>
+                    )}
+                  </div>
+
+                  <div
+                    className="space-y-2 text-sm text-secondary"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {embeddingStatus.state === 'loading' && (
+                      <p>{copy.modelPreparing(embeddingStatus.progress)}</p>
+                    )}
+                    {embeddingStatus.state === 'ready' && <p>{copy.modelReadyStatus}</p>}
+                    {embeddingStatus.state === 'idle' && !shouldAutoPreload() && (
+                      <>
+                        <p>{copy.modelPausedStatus}</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onPress={() => void loadEmbeddings().catch(() => undefined)}
+                        >
+                          {copy.modelPrepare}
+                        </Button>
+                      </>
+                    )}
+                    {embeddingStatus.state === 'error' && (
+                      <>
+                        <p>{copy.modelFailedStatus}</p>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onPress={() => void loadEmbeddings().catch(() => undefined)}
+                        >
+                          {copy.modelRetry}
+                        </Button>
+                        {embeddingStatus.message && (
+                          <details>
+                            <summary>{copy.modelDetails}</summary>
+                            <p>{embeddingStatus.message}</p>
+                          </details>
+                        )}
+                      </>
                     )}
                   </div>
 
@@ -819,7 +878,7 @@ export function App() {
                 <div className="space-y-6">
                   {/* Verdict Badge */}
                   <div
-                    className={`p-6 rounded-2xl flex items-center gap-4 ${verdict.level === 'likely_scam' ? 'bg-high-surface text-high' : verdict.level === 'suspicious' ? 'bg-caution-surface text-caution' : 'bg-good-surface text-good'}`}
+                    className={`p-6 rounded-2xl flex items-center gap-4 ${verdict.level === 'likely_scam' ? 'bg-high-surface text-high' : verdict.level === 'suspicious' ? 'bg-caution-surface text-caution' : verdict.level === 'probably_fine' ? 'bg-good-surface text-good' : 'bg-surface text-secondary'}`}
                     role="status"
                   >
                     <StatusMark level={verdict.level} size={32} />
@@ -944,7 +1003,13 @@ export function App() {
                         verdict.usedModels.llm ||
                         resultUsedOcr
                           ? copy.modelRan
-                          : copy.noModel}
+                          : modelAtScan === 'loading'
+                            ? copy.modelNotReadyAtScan
+                            : modelAtScan === 'error'
+                              ? copy.modelFailedAtScan
+                              : modelAtScan === 'idle' && !shouldAutoPreload()
+                                ? copy.modelSkippedAtScan
+                                : copy.noModel}
                       </p>
                       <p className="flex items-center gap-2">
                         <span
@@ -1037,6 +1102,13 @@ export function App() {
           )}
         </AnimatePresence>
       </main>
+      <footer className="border-t border-border px-4 py-8 text-center text-sm text-secondary">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2">
+          <img src="/icons/sane-logo.svg" alt="Sane" className="h-8 w-auto" />
+          <p>When in doubt, sane it out.</p>
+          <p className="text-xs">What If I Call</p>
+        </div>
+      </footer>
     </div>
   );
 }

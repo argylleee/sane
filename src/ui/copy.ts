@@ -75,6 +75,16 @@ type Copy = {
   modelTitle: string;
   modelRan: string;
   noModel: string;
+  modelPreparing: (percent: number) => string;
+  modelReadyStatus: string;
+  modelFailedStatus: string;
+  modelPausedStatus: string;
+  modelRetry: string;
+  modelPrepare: string;
+  modelDetails: string;
+  modelNotReadyAtScan: string;
+  modelFailedAtScan: string;
+  modelSkippedAtScan: string;
   llmTitle: string;
   llmToggleLabel: string;
   llmDescription: string;
@@ -179,6 +189,19 @@ export const COPY: Record<Lang, Copy> = {
     modelTitle: 'Model assessment',
     modelRan: 'An on-device model ran for this check.',
     noModel: 'No AI model ran for this check. Accuracy is not validated.',
+    modelPreparing: (percent) =>
+      `Preparing the AI check: ${percent}%. You can still check a message; it will use rules only until this is ready.`,
+    modelReadyStatus: 'AI check ready.',
+    modelFailedStatus: 'The AI check could not be prepared. Checks use rules only.',
+    modelPausedStatus: 'The AI check is paused to save data. Checks use rules only.',
+    modelRetry: 'Try again',
+    modelPrepare: 'Prepare the AI check',
+    modelDetails: 'Details for troubleshooting',
+    modelNotReadyAtScan:
+      'The AI check was not ready yet, so this used rules only. Check again once it is ready.',
+    modelFailedAtScan:
+      'The AI check could not run, so this used rules only. You can try preparing it again.',
+    modelSkippedAtScan: 'The AI check is paused to save data, so this used rules only.',
     llmTitle: 'AI explanation (experimental)',
     llmToggleLabel: 'Use an AI-written explanation',
     llmDescription: 'Optional. It may be wrong. Rules still decide the risk level.',
@@ -334,6 +357,21 @@ export const COPY: Record<Lang, Copy> = {
     modelTitle: 'Pagtatasa ng modelo',
     modelRan: 'May on-device model na tumakbo sa pagsusuring ito.',
     noModel: 'Walang AI model na ginamit. Hindi pa napatunayan ang accuracy.',
+    modelPreparing: (percent) =>
+      `Inihahanda ang AI check: ${percent}%. Maaari ka pa ring mag-check ng mensahe; rules lang ang gagamitin hanggang handa na ito.`,
+    modelReadyStatus: 'Handa na ang AI check.',
+    modelFailedStatus: 'Hindi nahanda ang AI check. Rules lang ang gamit ng mga check.',
+    modelPausedStatus:
+      'Naka-pause ang AI check para makatipid ng data. Rules lang ang gamit ng mga check.',
+    modelRetry: 'Subukan muli',
+    modelPrepare: 'Ihanda ang AI check',
+    modelDetails: 'Detalye para sa pag-aayos',
+    modelNotReadyAtScan:
+      'Hindi pa handa ang AI check, kaya rules lang ang ginamit dito. Mag-check muli kapag handa na ito.',
+    modelFailedAtScan:
+      'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Maaari mong subukang ihanda itong muli.',
+    modelSkippedAtScan:
+      'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
     llmTitle: 'AI na paliwanag (eksperimental)',
     llmToggleLabel: 'Gumamit ng AI na paliwanag',
     llmDescription:
@@ -488,6 +526,21 @@ export const COPY: Record<Lang, Copy> = {
     modelTitle: 'Model assessment',
     modelRan: 'May on-device model na tumakbo sa check na ito.',
     noModel: 'Walang AI model na tumakbo. Hindi pa validated ang accuracy.',
+    modelPreparing: (percent) =>
+      `Inihahanda ang AI check: ${percent}%. Pwede ka pa ring mag-check ng message; rules lang ang gagamitin hangga't hindi pa ready.`,
+    modelReadyStatus: 'Ready na ang AI check.',
+    modelFailedStatus: 'Hindi na-prepare ang AI check. Rules lang ang gamit ng mga check.',
+    modelPausedStatus:
+      'Naka-pause ang AI check para makatipid ng data. Rules lang ang gamit ng mga check.',
+    modelRetry: 'Subukan ulit',
+    modelPrepare: 'I-prepare ang AI check',
+    modelDetails: 'Details para sa troubleshooting',
+    modelNotReadyAtScan:
+      'Hindi pa ready ang AI check, kaya rules lang ang ginamit dito. I-check ulit kapag ready na.',
+    modelFailedAtScan:
+      'Hindi tumakbo ang AI check, kaya rules lang ang ginamit dito. Pwede mong subukang i-prepare ulit.',
+    modelSkippedAtScan:
+      'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
     llmTitle: 'AI explanation (experimental)',
     llmToggleLabel: 'Gumamit ng AI-written explanation',
     llmDescription:
