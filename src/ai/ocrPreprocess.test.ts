@@ -83,4 +83,52 @@ describe('cleanOcrText', () => {
     const text = 'Hindi mo kailangang magbayad. Bayad na ang shipping.';
     expect(cleanOcrText(text)).toBe(text);
   });
+
+  it('turns a messy chat screenshot read into clean message text', () => {
+    const raw = [
+      '9:41 al 5G 87%',
+      '< Back',
+      'Text Message • Today 9:38 AM',
+      '| Your parcel is on hold due to',
+      'an unpaid customs fee. Pay',
+      'within 24 hours at https ://jnt-',
+      'delivery . top/pay to avoid',
+      'return. 9:38 AM',
+      'Read 9:40 AM',
+      '',
+      '| ® a e |',
+      'Text Message',
+    ].join('\n');
+    expect(cleanOcrText(raw)).toBe(
+      'Your parcel is on hold due to an unpaid customs fee. Pay within 24 hours at ' +
+        'https://jnt-delivery.top/pay to avoid return.',
+    );
+  });
+
+  it('repairs broken links, codes and smart punctuation without merging normal words', () => {
+    expect(cleanOcrText('Visit gcash. com/verify now')).toBe('Visit gcash.com/verify now');
+    expect(cleanOcrText('Go to www . bdo-secure .xyz / login')).toBe(
+      'Go to www.bdo-secure.xyz/login',
+    );
+    expect(cleanOcrText('Send the 0TP and MP1N now')).toBe('Send the OTP and MPIN now');
+    expect(cleanOcrText('Don\u2019t pay \u2014 it\u2019s a scam')).toBe("Don't pay - it's a scam");
+    expect(cleanOcrText('I am done. shop is closed, see you at home in a bit')).toBe(
+      'I am done. shop is closed, see you at home in a bit',
+    );
+    expect(cleanOcrText('Dial *143# to check')).toBe('Dial *143# to check');
+  });
+
+  it('rejoins words that the bubble split, keeping Filipino prefixes', () => {
+    expect(cleanOcrText('Paki i-\nclick ang link para ma-\nverify ang account')).toBe(
+      'Paki i-click ang link para ma-verify ang account',
+    );
+    expect(cleanOcrText('Please veri-\nfy your account')).toBe('Please verify your account');
+  });
+
+  it('keeps sentence and paragraph breaks and drops a repeated read', () => {
+    expect(cleanOcrText('Hi po.\nAko si Ana.\n\nHi po.\nAko si Ana.')).toBe(
+      'Hi po.\nAko si Ana.\nHi po.\nAko si Ana.',
+    );
+    expect(cleanOcrText('Same line\nSame line')).toBe('Same line Same line');
+  });
 });

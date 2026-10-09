@@ -115,9 +115,12 @@ self.addEventListener('fetch', (event) => {
     (requestUrl.hostname === 'tessdata.projectnaptha.com' &&
       /\.traineddata(?:\.gz)?$/i.test(requestUrl.pathname)) ||
     (requestUrl.hostname === 'cdn.jsdelivr.net' &&
-      /\/npm\/(?:onnxruntime-web|tesseract\.js-core)@[^/]+\/.*\.(?:js|mjs|wasm)$/i.test(
+      (/\/npm\/(?:onnxruntime-web|tesseract\.js-core|tesseract\.js)@[^/]+\/.*\.(?:js|mjs|wasm)$/i.test(
         requestUrl.pathname,
-      ));
+      ) ||
+        /\/npm\/@tesseract\.js-data\/[a-z_]+\/[^/]+\/[a-z_]+\.traineddata(?:\.gz)?$/i.test(
+          requestUrl.pathname,
+        )));
   if (!isNavigation && !isStaticAsset && !isModelAsset) return;
 
   event.respondWith(

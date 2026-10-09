@@ -39,9 +39,44 @@ function onnxRuntimeAssets(): Plugin {
   };
 }
 
+// Tesseract's worker and LSTM WASM cores, served from our origin instead of jsDelivr so screenshot
+// reading works offline after first use. The browser picks one core variant at runtime.
+const TESSERACT_FILES: Record<string, string> = {
+  'worker.min.js': 'tesseract.js/dist/worker.min.js',
+  'tesseract-core-lstm.wasm.js': 'tesseract.js-core/tesseract-core-lstm.wasm.js',
+  'tesseract-core-simd-lstm.wasm.js': 'tesseract.js-core/tesseract-core-simd-lstm.wasm.js',
+  'tesseract-core-relaxedsimd-lstm.wasm.js':
+    'tesseract.js-core/tesseract-core-relaxedsimd-lstm.wasm.js',
+};
+
+function tesseractAssets(): Plugin {
+  const require = createRequire(import.meta.url);
+  const resolve = (name: string) => require.resolve(TESSERACT_FILES[name]);
+  return {
+    name: 'sane-tesseract-assets',
+    configureServer(server) {
+      server.middlewares.use('/tesseract/', (req, res, next) => {
+        const name = (req.url ?? '').split('?')[0].replace(/^\//, '');
+        if (!TESSERACT_FILES[name]) return next();
+        res.setHeader('Content-Type', 'text/javascript');
+        res.end(readFileSync(resolve(name)));
+      });
+    },
+    generateBundle() {
+      for (const name of Object.keys(TESSERACT_FILES)) {
+        this.emitFile({
+          type: 'asset',
+          fileName: `tesseract/${name}`,
+          source: readFileSync(resolve(name)),
+        });
+      }
+    },
+  };
+}
+
 // base './' keeps the build portable across GitHub Pages, Netlify, and Cloudflare Pages.
 export default defineConfig({
   base: './',
-  plugins: [react(), tailwindcss(), onnxRuntimeAssets()],
+  plugins: [react(), tailwindcss(), onnxRuntimeAssets(), tesseractAssets()],
   test: { environment: 'node', include: ['src/**/*.test.ts', 'eval/**/*.test.ts'] },
 });
