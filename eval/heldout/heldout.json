@@ -1,0 +1,338 @@
+[
+  {
+    "id": "h01",
+    "lang": "en",
+    "expected": "likely_scam",
+    "pattern": "wallet lockout",
+    "text": "Your GCash wallet will be disabled tonight. Restore access at https://gcash-restore.example and send your MPIN to our agent.",
+    "provenance": "AI-authored synthetic wallet phishing scenario; no real message or identity."
+  },
+  {
+    "id": "h02",
+    "lang": "en",
+    "expected": "likely_scam",
+    "pattern": "parcel fee",
+    "text": "Your parcel is held at the warehouse. Pay the clearance charge now at https://parcel-clearance.example or your delivery will be cancelled.",
+    "provenance": "AI-authored synthetic delivery payment trap; no real shipment."
+  },
+  {
+    "id": "h03",
+    "lang": "en",
+    "expected": "suspicious",
+    "pattern": "prize fee",
+    "text": "Your raffle entry was selected for a phone prize. A processing fee must be paid before we release the item.",
+    "provenance": "AI-authored synthetic advance-fee prize scenario."
+  },
+  {
+    "id": "h04",
+    "lang": "en",
+    "expected": "suspicious",
+    "pattern": "task job",
+    "text": "We hire remote reviewers to rate products. Deposit a starter balance to unlock paid assignments; your deposit comes back with your salary.",
+    "provenance": "AI-authored synthetic job deposit scenario."
+  },
+  {
+    "id": "h05",
+    "lang": "en",
+    "expected": "suspicious",
+    "pattern": "relative emergency",
+    "text": "Dad, my old phone fell in the river. This is my replacement contact. Could you cover the clinic bill through my friend's wallet?",
+    "provenance": "AI-authored synthetic relative impersonation scenario; no real family."
+  },
+  {
+    "id": "h06",
+    "lang": "en",
+    "expected": "suspicious",
+    "pattern": "investment",
+    "text": "Our private trading pool guarantees that your savings double in a week. Transfer your contribution to the organizer to reserve a slot.",
+    "provenance": "AI-authored synthetic guaranteed investment scenario."
+  },
+  {
+    "id": "h07",
+    "lang": "en",
+    "expected": "likely_scam",
+    "pattern": "bank credential request",
+    "text": "BDO security team: your account is suspended. Reply with your password and OTP immediately so we can reopen it.",
+    "provenance": "AI-authored synthetic bank impersonation scenario."
+  },
+  {
+    "id": "h08",
+    "lang": "en",
+    "expected": "probably_fine",
+    "pattern": "OTP safety",
+    "text": "Your login code is 000000. Do not share this code with anyone, including people who claim to work for the bank. If you did not sign in, open the app yourself.",
+    "provenance": "AI-authored synthetic safety notice; code is a dummy placeholder."
+  },
+  {
+    "id": "h09",
+    "lang": "en",
+    "expected": "probably_fine",
+    "pattern": "delivery update",
+    "text": "Your package is on the delivery vehicle. Keep your original receipt handy. The rider will call when they reach the gate; no extra charge is due.",
+    "provenance": "AI-authored synthetic ordinary delivery notice."
+  },
+  {
+    "id": "h10",
+    "lang": "en",
+    "expected": "probably_fine",
+    "pattern": "official bank notice",
+    "text": "BDO maintenance is scheduled this Sunday. You can read the service notice on https://bdo.com.ph. We will never ask for your password in a message.",
+    "provenance": "AI-authored synthetic notice using a public brand domain, not a quoted bank advisory."
+  },
+  {
+    "id": "h11",
+    "lang": "en",
+    "expected": "probably_fine",
+    "pattern": "group chat link",
+    "text": "For the class project, join the discussion through this invite: https://chat.whatsapp.com/EXAMPLEINVITE. The teacher shared the same link in class.",
+    "provenance": "AI-authored synthetic school group invitation with dummy path."
+  },
+  {
+    "id": "h12",
+    "lang": "en",
+    "expected": "probably_fine",
+    "pattern": "safety education",
+    "text": "Reminder from our office: never send money to an unknown recruiter. Requests for job application fees should be reported to the personnel desk.",
+    "provenance": "AI-authored synthetic workplace safety reminder."
+  },
+  {
+    "id": "h13",
+    "lang": "en",
+    "expected": "probably_fine",
+    "pattern": "ordinary bill",
+    "text": "The electricity bill for our shared apartment is ready. Please pay your usual share when we meet on Saturday; the receipt is on the kitchen table.",
+    "provenance": "AI-authored synthetic household conversation."
+  },
+  {
+    "id": "h14",
+    "lang": "en",
+    "expected": "probably_fine",
+    "pattern": "ordinary urgency",
+    "text": "Please submit the meeting notes before lunch today. The manager needs them for the afternoon presentation.",
+    "provenance": "AI-authored synthetic work deadline."
+  },
+  {
+    "id": "h15",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "pattern": "SIM registration",
+    "text": "Mapuputol na ang iyong SIM ngayong gabi. Ipadala agad ang iyong OTP sa tagapag-asikaso upang matapos ang muling pagpaparehistro.",
+    "provenance": "AI-authored synthetic SIM credential trap; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h16",
+    "lang": "fil",
+    "expected": "suspicious",
+    "pattern": "government aid",
+    "text": "Napili ka para sa ayuda. Magbayad muna ng singil sa pagproseso bago ilabas ang iyong benepisyo.",
+    "provenance": "AI-authored synthetic aid advance-fee scenario; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h17",
+    "lang": "fil",
+    "expected": "suspicious",
+    "pattern": "loan fee",
+    "text": "Aprubado na ang iyong pautang kahit wala kang ipinasa. Magpadala ng paunang bayad para maipadala namin ang buong halaga.",
+    "provenance": "AI-authored synthetic unsolicited loan scenario; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h18",
+    "lang": "fil",
+    "expected": "suspicious",
+    "pattern": "romance emergency",
+    "text": "Mahal, hindi pa tayo nagkikita pero ikaw lang ang maaasahan ko. Kailangan ko ng pera para makalabas sa ospital. Ipadala mo sa pitaka ng kaibigan ko.",
+    "provenance": "AI-authored synthetic romance payment scenario; no real relationship."
+  },
+  {
+    "id": "h19",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "pattern": "refund credentials",
+    "text": "May ibabalik na bayad sa iyong account. Ibigay ang password at PIN sa kinatawan namin ngayon upang hindi mawala ang refund.",
+    "provenance": "AI-authored synthetic refund credential trap; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h20",
+    "lang": "fil",
+    "expected": "suspicious",
+    "pattern": "marketplace deposit",
+    "text": "May bibili na ng telepono kaya maghulog ka muna ng reserbasyon sa aking pitaka. Hindi puwedeng makita ang gamit o magkita bago ka magbayad.",
+    "provenance": "AI-authored synthetic marketplace deposit trap; no real sale."
+  },
+  {
+    "id": "h21",
+    "lang": "fil",
+    "expected": "suspicious",
+    "pattern": "investment",
+    "text": "Tiyak na magiging tatlong beses ang puhunan mo sa loob ng dalawang araw. Magpadala ng pera sa aming tagapamahala para makasali.",
+    "provenance": "AI-authored synthetic guaranteed investment scenario; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h22",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "pattern": "OTP safety",
+    "text": "Ang pansamantalang code mo ay 000000. Huwag ibigay ang OTP kaninuman. Kung hindi ikaw ang pumasok, buksan mismo ang aplikasyon at suriin ang iyong account.",
+    "provenance": "AI-authored synthetic safety notice with dummy code; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h23",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "pattern": "delivery update",
+    "text": "Nasa sasakyan na ang iyong padala at darating bukas. Ihanda ang resibo. Wala kang kailangang bayaran sa tumatanggap ng mensaheng ito.",
+    "provenance": "AI-authored synthetic delivery notice; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h24",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "pattern": "bank safety",
+    "text": "Paalala: huwag ibigay ang password o PIN sa sinumang tumatawag. Hindi hihingin ng bangko ang mga ito. Tumawag sa numerong nasa likod ng iyong card kung may problema.",
+    "provenance": "AI-authored synthetic bank safety education; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h25",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "pattern": "group chat link",
+    "text": "Ito ang pangkat para sa pulong ng mga magulang: https://chat.whatsapp.com/PARENTSEXAMPLE. Ipinakita na rin ito ng guro sa pisara.",
+    "provenance": "AI-authored synthetic school invitation with dummy path; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h26",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "pattern": "ordinary payment",
+    "text": "Nabili ko na ang bigas para sa bahay. Puwede mong ibigay ang bahagi mo sa bayad pag-uwi mo mamaya. Nasa mesa ang resibo.",
+    "provenance": "AI-authored synthetic household cost sharing; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h27",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "pattern": "ordinary urgency",
+    "text": "Pakidala agad ang payong bago umulan. Nasa labas pa ang mga sinampay at kailangan nating ilipat ang mga ito.",
+    "provenance": "AI-authored synthetic household urgency; Filipino not yet speaker-reviewed."
+  },
+  {
+    "id": "h28",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "pattern": "official public information",
+    "text": "Makikita ang talaan ng mga serbisyo ng pamahalaan sa https://gov.ph. Basahin muna ang mga kailangan bago pumunta sa tanggapan.",
+    "provenance": "AI-authored synthetic public-information notice, not a government quotation."
+  },
+  {
+    "id": "h29",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "pattern": "wallet lockout",
+    "text": "Maya account mo naka-hold na. Send your OTP and password ngayon sa support agent para ma-lift ang restriction.",
+    "provenance": "AI-authored synthetic wallet credential trap; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h30",
+    "lang": "taglish",
+    "expected": "suspicious",
+    "pattern": "parcel fee",
+    "text": "May parcel ka from overseas. Kailangan ng release fee bago namin ma-deliver; transfer mo sa personal wallet ng dispatcher.",
+    "provenance": "AI-authored synthetic parcel payment trap; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h31",
+    "lang": "taglish",
+    "expected": "suspicious",
+    "pattern": "task job",
+    "text": "Part-time work ito: like videos, then cash out. Top up ka muna ng working balance bago lumabas ang next batch of tasks.",
+    "provenance": "AI-authored synthetic task job trap; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h32",
+    "lang": "taglish",
+    "expected": "suspicious",
+    "pattern": "relative emergency",
+    "text": "Ma, sira phone ko kaya ibang contact gamit ko. Nasa clinic ako, please settle the bill sa wallet ng kasama ko. Hindi ako makatawag right now.",
+    "provenance": "AI-authored synthetic family impersonation; no real family."
+  },
+  {
+    "id": "h33",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "pattern": "prize fee",
+    "text": "Congrats, nanalo ka ng gadget! Claim within one hour or forfeited. Pay the processing fee now para ma-release ang prize.",
+    "provenance": "AI-authored synthetic urgent prize fee trap; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h34",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "pattern": "account phishing",
+    "text": "Final warning: locked na bank account mo. Open https://bpi-recover.example and enter your password now para ma-verify.",
+    "provenance": "AI-authored synthetic bank phishing with reserved example domain."
+  },
+  {
+    "id": "h35",
+    "lang": "taglish",
+    "expected": "suspicious",
+    "pattern": "aid fee",
+    "text": "Qualified ka sa relief allowance. Send muna ng verification payment sa coordinator, saka namin ire-release ang assistance.",
+    "provenance": "AI-authored synthetic aid payment trap; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h36",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "pattern": "OTP safety",
+    "text": "Login OTP mo: 000000. Do not share this code, kahit support pa ang kausap. Kung hindi ikaw ito, check mo mismo sa app.",
+    "provenance": "AI-authored synthetic OTP safety notice with dummy code."
+  },
+  {
+    "id": "h37",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "pattern": "delivery update",
+    "text": "Out for delivery na ang order mo. Paid na ito, so wala nang extra fee. Hintayin lang ang rider sa lobby.",
+    "provenance": "AI-authored synthetic paid delivery notice; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h38",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "pattern": "group chat link",
+    "text": "Team, ito ang GC para sa volunteer cleanup: https://chat.whatsapp.com/CLEANUPEXAMPLE. Confirm niyo sa meeting tomorrow kung nakapasok kayo.",
+    "provenance": "AI-authored synthetic volunteer invitation with dummy path."
+  },
+  {
+    "id": "h39",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "pattern": "ordinary payment",
+    "text": "Bayad na ang lunch natin. Send your share later when convenient, nasa group album ang receipt para ma-check niyo.",
+    "provenance": "AI-authored synthetic shared lunch cost; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h40",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "pattern": "safety education",
+    "text": "Reminder sa workshop: never pay a recruitment fee sa random contact. Kahit may promise of easy income, verify muna sa company office.",
+    "provenance": "AI-authored synthetic recruitment safety education; Taglish not yet speaker-reviewed."
+  },
+  {
+    "id": "h41",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "pattern": "ordinary account notice",
+    "text": "Na-lock ang school portal after several wrong passwords. Visit the registrar in person bukas with your student ID para ma-reset.",
+    "provenance": "AI-authored synthetic legitimate account recovery instruction."
+  },
+  {
+    "id": "h42",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "pattern": "official wallet information",
+    "text": "May scheduled maintenance ang GCash app sa weekend. Read the announcement sa https://gcash.com, then plan your regular payments ahead.",
+    "provenance": "AI-authored synthetic brand information, not a quoted advisory."
+  }
+]

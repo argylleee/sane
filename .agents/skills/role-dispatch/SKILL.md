@@ -27,10 +27,18 @@ named teammates or spawn every role merely because roles exist. Integration is r
 5. Require the worker to check its receipt and current scope before edits and before handoff.
    Read-only review/research may use a shared checkout but cannot write task reports there;
    return a compact result for the coordinator to persist. No recursive fan-out by default.
-6. Reuse workers and wait for milestones. Integrate one completed slice at a time, validate
+6. Every role gets its own branch and worktree automatically. Run
+   `npm run role:worktree -- [--base REF] [frontend|backend|model|integration]` (no role = all four).
+   It creates `codex/chore/role-<role>` at `.worktrees/role-<role>` from `main`, skips existing
+   worktrees untouched, and never resets or deletes. For allocated tasks, role skills use `npm run task:start -- --role <role>` instead,
+   which creates the task branch and worktree from `coordination.json`. Task work inside a role worktree still follows
+   `docs/git-conventions.md` task branches once a task is allocated.
+7. Reuse workers and wait for milestones. Integrate one completed slice at a time, validate
    combined behavior, then release its claim. Blocked/ready work retains ownership until explicitly released.
 
 For a small serial maintenance task, the user's narrow scope can suffice without parallel allocation
 paperwork. For cross-machine agents, one designated coordinator serializes allocations; independent
 registry copies are snapshots, not distributed locks. If freshness cannot be confirmed, continue
 read-only/independent work and defer contested writes. Load `resolve-conflict` only when needed.
+
+When a slice is committed and checked, land it with `npm run task:land` (direct to `main`, no PR). Resolve any merge conflict yourself via `resolve-conflict`, keeping both sides; never force-push.

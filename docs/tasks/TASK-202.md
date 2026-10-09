@@ -50,6 +50,42 @@ Import from `src/ai/index.ts`.
   0/14 legit, and abstained on 27/30, versus 14/15 on the development set it was tuned on. The
   rules need broader coverage; embeddings are the planned complement.
 
+## Browser evidence (headless Chrome via DevTools protocol, not a phone)
+
+- The embedding worker loads and answers in a real Chrome: status `ready`, warm match about
+  90 ms, first match about 6 to 7 s (it builds the 54-phrase archetype index, then caches it).
+- With the model served from a local host and the app's own `/ort/` runtime files, the page made
+  zero non-local requests. The library's default fetches its WASM runtime from a public CDN, so
+  `vite.config.ts` now serves it in dev and bundles it into `dist/ort/` (about 39 MB, 10 MB
+  gzipped) and `loadEmbeddings()` points at it by default.
+- The model itself still downloads from Hugging Face on the first load unless
+  `VITE_MODEL_BASE_URL` points at our own host. After that the browser caches it for offline use.
+  Not yet tested: offline relaunch, installed-PWA mode, and any phone.
+- A Taglish OTP request matched `otp_request` but its margin (0.006) fell under the 0.01
+  "moderate" cutoff, so embedding evidence was `none`. Rules must still catch such cases.
+
+## Requests for the frontend owner (TASK-206)
+
+1. Auto-download on first visit, no button (team decision). Call `startEmbeddingsPreload()` from
+   `src/ai` once when the app mounts. It skips Data Saver and 2G, asks the browser to keep the
+   cache, never throws, and resolves when the model is ready. Keep the progress bar from
+   `subscribeEmbeddings` (progress is now one overall percentage across all files, not per file)
+   and show the status message if `state === 'error'`.
+2. `public/sw.js` caches huggingface.co model files in its own cache AND transformers.js keeps
+   its own cache, so a 118 MB model may be stored twice (about 236 MB), which can exceed storage
+   quotas on phones and in private windows. Prefer dropping the model rules from the service
+   worker and letting the library cache. Also `.mjs` is missing from the static-asset pattern, so
+   `ort/*.mjs` (needed to start the runtime) is not cached for offline use. Add `mjs`.
+3. The scan screen is where the matching panel lives today; it should disappear once the
+   download is automatic.
+
+## Review of TASK-205 (backend embedding scoring)
+
+`score()` requires evidence level strong or moderate AND best similarity >= 0.90. On a fresh
+30-message set that gives supporting evidence for 3/16 scams, versus 10/16 with the evidence level
+alone (0 legit either way, pilot data). Recommend dropping the `similarity >= SIMILARITY_FLOOR`
+condition.
+
 ## Not done yet
 
 OCR worker (Tesseract eng + fil), WebLLM wrapper behind a toggle, the 30-message verdict test

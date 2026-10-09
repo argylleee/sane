@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { extractText } from '../ai';
+import { extractText, startEmbeddingsPreload } from '../ai';
 import { analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Lang, Level, Signal, Verdict } from '../types';
@@ -248,6 +248,11 @@ export function App() {
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as Navigator & { standalone?: boolean }).standalone === true;
   const showIosInstallHint = isAppleMobile && !isStandalone;
+
+  // Keep the existing first-visit model preload, which skips Data Saver and 2G connections.
+  useEffect(() => {
+    void startEmbeddingsPreload();
+  }, []);
 
   const clearScreenshot = useCallback(() => {
     ocrRequestId.current += 1;

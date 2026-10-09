@@ -56,7 +56,11 @@ git log -1 --oneline main
 git worktree add .worktrees/TASK-001 -b codex/feat/task-001-demo-screen main
 ```
 
-Open `.worktrees/TASK-001` as that worker's workspace. In it, run:
+For one branch and worktree per role (`codex/chore/role-<role>` in `.worktrees/role-<role>`), run
+`npm run role:worktree`; it is idempotent and leaves existing worktrees untouched.
+
+Role skills do the following automatically for allocated tasks via `npm run task:start -- --role <role>` (or `--task ID`).
+Otherwise, open `.worktrees/TASK-001` as that worker's workspace. In it, run:
 
 ```sh
 npm ci --ignore-scripts
@@ -70,7 +74,7 @@ Managed worktrees supplied by a host are also suitable; follow that host's lifec
 
 Workers own their assigned paths. The coordinator edits shared dependencies/lockfiles/config,
 schemas, route registration, and planning summaries. Integrate small changes in dependency order
-using the authorized PR/merge or commit workflow. Revalidate on the combined revision.
+using `npm run task:land` (direct to main, no PR; see git-conventions). Revalidate on the combined revision.
 This scaffold does not authorize merging, pushing, deployment, or deleting other workers' state.
 
 Retain dirty/unpushed worktrees. Remove a worktree only after verifying its exact path, ownership,

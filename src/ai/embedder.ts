@@ -6,7 +6,13 @@ export const EMBEDDING_MODEL_ID = 'Xenova/multilingual-e5-small';
 
 export type EmbedKind = 'query' | 'passage';
 
-export type LoadProgress = { status: string; file?: string; progress?: number };
+export type LoadProgress = {
+  status: string;
+  file?: string;
+  progress?: number;
+  loaded?: number;
+  total?: number;
+};
 
 /** Optional self-hosting. Without it the model loads from Hugging Face and the browser caches it. */
 export type ModelSource = {
@@ -29,15 +35,29 @@ export async function createEmbedder(
   source: ModelSource = {},
 ): Promise<Embed> {
   if (source.modelBaseUrl) {
-    env.allowRemoteModels = false;
-    env.allowLocalModels = true;
-    env.localModelPath = source.modelBaseUrl.endsWith('/')
+    // Route "remote" fetches to our own host: <base>/<modelId>/<file>. Works for absolute URLs
+    // and same-origin paths like /models/. (env.localModelPath only suits same-origin paths.)
+    env.allowLocalModels = false;
+    env.allowRemoteModels = true;
+    env.remoteHost = source.modelBaseUrl.endsWith('/')
       ? source.modelBaseUrl
       : `${source.modelBaseUrl}/`;
+    env.remotePathTemplate = '{model}/';
   }
   if (source.wasmBaseUrl) {
-    (env.backends as { onnx: { wasm: { wasmPaths: string } } }).onnx.wasm.wasmPaths =
-      source.wasmBaseUrl;
+    // Same variant choice as the library's CDN default: "asyncify", or the plain build on older
+    // Safari. Both files must be served from wasmBaseUrl (see vite.config.ts).
+    const base = source.wasmBaseUrl.endsWith('/') ? source.wasmBaseUrl : `${source.wasmBaseUrl}/`;
+    const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
+    const olderSafari =
+      /Safari\//.test(ua) && !/(Chrome|Chromium|CriOS|Edg)\//.test(ua) && !('gpu' in navigator);
+    const suffix = olderSafari ? '' : '.asyncify';
+    (
+      env.backends as { onnx: { wasm: { wasmPaths: { mjs: string; wasm: string } } } }
+    ).onnx.wasm.wasmPaths = {
+      mjs: `${base}ort-wasm-simd-threaded${suffix}.mjs`,
+      wasm: `${base}ort-wasm-simd-threaded${suffix}.wasm`,
+    };
   }
   const extractor = (await pipeline('feature-extraction', EMBEDDING_MODEL_ID, {
     dtype: 'q8',
