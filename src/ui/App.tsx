@@ -1,15 +1,20 @@
-import { useEffect, useRef, useState } from 'react';
-import type { FormEvent } from 'react';
-import { getEmbeddingsStatus, loadEmbeddings, subscribeEmbeddings } from '../ai';
-import type { EmbeddingsStatus } from '../ai';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FormEvent, ReactNode } from 'react';
+import { extractText, startEmbeddingsPreload } from '../ai';
 import { analyze } from '../pipeline/analyze';
-import type { Lang, Level, Verdict } from '../types';
+import { normalize } from '../pipeline/normalize';
+import type { Lang, Level, Signal, Verdict } from '../types';
+
 import { copyFor } from './copy';
 
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const LANGUAGES: readonly Lang[] = ['en', 'fil', 'taglish'];
+const LANGUAGE_NAMES: Record<Lang, string> = { en: 'English', fil: 'Filipino', taglish: 'Taglish' };
+const THEMES = ['system', 'light', 'dark'] as const;
 type Screen = 'welcome' | 'scan' | 'result' | 'learn';
+type Theme = (typeof THEMES)[number];
+type OcrState = 'idle' | 'loading' | 'ready' | 'error';
 type FeedbackKey =
   | 'clipboardUnavailable'
   | 'clipboardError'
@@ -94,17 +99,43 @@ function InertMessage({ text }: { text: string }) {
   );
 }
 
-function LanguagePicker({
-  lang,
-  onChange,
-  label,
-  className = '',
-}: {
-  lang: Lang;
-  onChange: (lang: Lang) => void;
-  label: string;
-  className?: string;
-}) {
+function HighlightedMessage({ text, signals }: { text: string; signals: Signal[] }) {
+  const normalized = normalize(text);
+  const spans = signals
+    .flatMap((signal) => (signal.span ? [signal.span] : []))
+    .map(([start, end]) => [Math.max(0, start), Math.min(normalized.length, end)] as const)
+    .filter(([start, end]) => end > start)
+    .sort(([left], [right]) => left - right);
+  const merged: [number, number][] = [];
+
+  for (const [start, end] of spans) {
+    const previous = merged.at(-1);
+    if (previous && start <= previous[1]) previous[1] = Math.max(previous[1], end);
+    else merged.push([start, end]);
+  }
+
+  if (merged.length === 0) return <InertMessage text={normalized} />;
+
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+  for (const [start, end] of merged) {
+    if (start > cursor) {
+      parts.push(<InertMessage key={`text-${cursor}`} text={normalized.slice(cursor, start)} />);
+    }
+    parts.push(
+      <mark className="signal-highlight" key={`signal-${start}-${end}`}>
+        <InertMessage text={normalized.slice(start, end)} />
+      </mark>,
+    );
+    cursor = end;
+  }
+  if (cursor < normalized.length) {
+    parts.push(<InertMessage key={`text-${cursor}`} text={normalized.slice(cursor)} />);
+  }
+  return <>{parts}</>;
+}
+
+function useMenu() {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -128,18 +159,34 @@ function LanguagePicker({
     };
   }, [open]);
 
+  return { open, setOpen, root, trigger };
+}
+
+function LanguagePicker({
+  lang,
+  onChange,
+  label,
+  className = '',
+}: {
+  lang: Lang;
+  onChange: (lang: Lang) => void;
+  label: string;
+  className?: string;
+}) {
+  const { open, setOpen, root, trigger } = useMenu();
+
   return (
     <div className={`language-picker ${className}`} ref={root} data-open={open}>
       <button
         ref={trigger}
         type="button"
         className="language-trigger"
-        aria-label={`${label}: ${copyFor(lang).languageName}`}
+        aria-label={`${label}: ${LANGUAGE_NAMES[lang]}`}
         aria-haspopup="true"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
       >
-        <span>{copyFor(lang).languageName}</span>
+        <span>{LANGUAGE_NAMES[lang]}</span>
         <svg viewBox="0 0 20 20" aria-hidden="true" className="language-chevron">
           <path d="m5 8 5 5 5-5" />
         </svg>
@@ -156,7 +203,63 @@ function LanguagePicker({
                 trigger.current?.focus();
               }}
             >
-              <span>{copyFor(language).languageName}</span>
+              <span>{LANGUAGE_NAMES[language]}</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true" className="language-check">
+                <path d="m4.5 10.5 3.5 3.5 7.5-8" />
+              </svg>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ThemePicker({
+  theme,
+  onChange,
+  copy,
+}: {
+  theme: Theme;
+  onChange: (theme: Theme) => void;
+  copy: ReturnType<typeof copyFor>;
+}) {
+  const { open, setOpen, root, trigger } = useMenu();
+  const names: Record<Theme, string> = {
+    system: copy.themeSystem,
+    light: copy.themeLight,
+    dark: copy.themeDark,
+  };
+
+  return (
+    <div className="language-picker theme-picker" ref={root} data-open={open}>
+      <button
+        ref={trigger}
+        type="button"
+        className="language-trigger"
+        aria-label={`${copy.themeLabel}: ${names[theme]}`}
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
+      >
+        <span>{names[theme]}</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true" className="language-chevron">
+          <path d="m5 8 5 5 5-5" />
+        </svg>
+      </button>
+      <ul className="language-menu" aria-label={copy.themeLabel}>
+        {THEMES.map((option) => (
+          <li key={option}>
+            <button
+              type="button"
+              aria-pressed={theme === option}
+              onClick={() => {
+                onChange(option);
+                setOpen(false);
+                trigger.current?.focus();
+              }}
+            >
+              <span>{names[option]}</span>
               <svg viewBox="0 0 20 20" aria-hidden="true" className="language-check">
                 <path d="m4.5 10.5 3.5 3.5 7.5-8" />
               </svg>
@@ -170,11 +273,9 @@ function LanguagePicker({
 
 function MainNavigation({
   screen,
-  copy,
   onNavigate,
 }: {
   screen: Screen;
-  copy: ReturnType<typeof copyFor>;
   onNavigate: (screen: 'scan' | 'learn') => void;
 }) {
   return (
@@ -184,14 +285,14 @@ function MainNavigation({
         aria-current={screen === 'scan' ? 'page' : undefined}
         onClick={() => onNavigate('scan')}
       >
-        {copy.scanNav}
+        Scan
       </button>
       <button
         type="button"
         aria-current={screen === 'learn' ? 'page' : undefined}
         onClick={() => onNavigate('learn')}
       >
-        {copy.learnNav}
+        Learn
       </button>
     </nav>
   );
@@ -200,35 +301,74 @@ function MainNavigation({
 export function App() {
   const [screen, setScreen] = useState<Screen>('welcome');
   const [lang, setLang] = useState<Lang>('en');
+  const [theme, setTheme] = useState<Theme>('system');
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<File | null>(null);
+  const [ocrState, setOcrState] = useState<OcrState>('idle');
   const [verdict, setVerdict] = useState<Verdict | null>(null);
   const [resultMessage, setResultMessage] = useState('');
   const [resultIsImage, setResultIsImage] = useState(false);
+  const [resultUsedOcr, setResultUsedOcr] = useState(false);
   const [feedback, setFeedback] = useState<FeedbackKey | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [offlineReady, setOfflineReady] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [scanRequestCount, setScanRequestCount] = useState(0);
-  const [embeddingStatus, setEmbeddingStatus] = useState<EmbeddingsStatus>(getEmbeddingsStatus);
-  const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
+
   const [canInstall, setCanInstall] = useState(false);
   const installPrompt = useRef<InstallPromptEvent | null>(null);
-  const scanStartedAt = useRef<number | null>(null);
-  const scanResourceKeys = useRef(new Set<string>());
+  const ocrRequestId = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
   const copy = copyFor(lang);
+
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
-  const isSmallScreen =
-    typeof window !== 'undefined' && window.matchMedia('(max-width: 700px)').matches;
   const isAppleMobile = /iPhone|iPad|iPod/.test(navigator.userAgent);
   const isStandalone =
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as Navigator & { standalone?: boolean }).standalone === true;
   const showIosInstallHint = isAppleMobile && !isStandalone;
 
-  useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
+  // Keep the existing first-visit model preload, which skips Data Saver and 2G connections.
+  useEffect(() => {
+    void startEmbeddingsPreload();
+  }, []);
+
+  const clearScreenshot = useCallback(() => {
+    ocrRequestId.current += 1;
+    setImage(null);
+    setOcrState('idle');
+  }, []);
+
+  const selectScreenshot = useCallback(
+    (file: File | undefined) => {
+      setFeedback(null);
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        clearScreenshot();
+        setFeedback('screenshotTypeError');
+        return;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        clearScreenshot();
+        setFeedback('screenshotLimitError');
+        return;
+      }
+      setImage(file);
+      setMessage('');
+      setScreen('scan');
+      setOcrState('loading');
+      const requestId = ++ocrRequestId.current;
+      void extractText(file)
+        .then((text) => {
+          if (requestId !== ocrRequestId.current) return;
+          setMessage(text);
+          setOcrState('ready');
+        })
+        .catch(() => {
+          if (requestId !== ocrRequestId.current) return;
+          setOcrState('error');
+        });
+    },
+    [clearScreenshot],
+  );
 
   useEffect(() => {
     const onInstallPrompt = (event: Event) => {
@@ -249,19 +389,10 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    const updateOnline = () => setIsOnline(navigator.onLine);
-    window.addEventListener('online', updateOnline);
-    window.addEventListener('offline', updateOnline);
-    if (!('serviceWorker' in navigator)) {
-      return () => {
-        window.removeEventListener('online', updateOnline);
-        window.removeEventListener('offline', updateOnline);
-      };
-    }
+    if (!('serviceWorker' in navigator)) return;
 
     const appRoot = new URL('./', document.baseURI);
     const onWorkerMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'offline-ready') setOfflineReady(event.data.ready === true);
       if (event.data?.type !== 'shared') return;
 
       const payload = event.data.payload as SharedPayload | null;
@@ -286,7 +417,7 @@ export function App() {
         setMessage('');
         setFeedback('sharedLimitError');
       } else if (typeof payload.text === 'string') {
-        setImage(null);
+        clearScreenshot();
         setMessage(payload.text);
       }
 
@@ -322,31 +453,12 @@ export function App() {
           worker.postMessage({ type: 'get-shared' });
         }
       })
-      .catch(() => setOfflineReady(false));
+      .catch((error: unknown) => console.error('Service worker registration failed', error));
 
     return () => {
-      window.removeEventListener('online', updateOnline);
-      window.removeEventListener('offline', updateOnline);
       navigator.serviceWorker.removeEventListener('message', onWorkerMessage);
     };
-  }, []);
-
-  useEffect(() => {
-    if (typeof PerformanceObserver === 'undefined') return;
-    const observer = new PerformanceObserver((list) => {
-      if (scanStartedAt.current === null) return;
-      for (const entry of list.getEntries()) {
-        if (entry.startTime < scanStartedAt.current) continue;
-        const resource = entry as PerformanceResourceTiming;
-        if (resource.transferSize > 0) {
-          scanResourceKeys.current.add(`${resource.name}:${resource.startTime}`);
-        }
-      }
-      setScanRequestCount(scanResourceKeys.current.size);
-    });
-    observer.observe({ type: 'resource', buffered: true });
-    return () => observer.disconnect();
-  }, []);
+  }, [clearScreenshot, selectScreenshot]);
 
   useEffect(() => {
     document.documentElement.lang = lang === 'taglish' ? 'en-PH' : lang;
@@ -355,13 +467,16 @@ export function App() {
   useEffect(() => {
     const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
     const applyTheme = () => {
-      document.documentElement.dataset.theme = colorScheme.matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme =
+        theme === 'system' ? (colorScheme.matches ? 'dark' : 'light') : theme;
     };
 
     applyTheme();
+    if (theme !== 'system') return;
+
     colorScheme.addEventListener('change', applyTheme);
     return () => colorScheme.removeEventListener('change', applyTheme);
-  }, []);
+  }, [theme]);
 
   async function pasteFromClipboard() {
     setFeedback(null);
@@ -372,40 +487,28 @@ export function App() {
 
     try {
       const clipboardText = await navigator.clipboard.readText();
-      setImage(null);
+      clearScreenshot();
       setMessage(clipboardText);
     } catch {
       setFeedback('clipboardError');
     }
   }
 
-  function selectScreenshot(file: File | undefined) {
-    setFeedback(null);
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setImage(null);
-      setFeedback('screenshotTypeError');
-      return;
-    }
-    if (file.size > MAX_IMAGE_BYTES) {
-      setImage(null);
-      setFeedback('screenshotLimitError');
-      return;
-    }
-    setImage(file);
-  }
-
   async function runAnalysis(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (isAnalyzing || (!image && !message.trim()) || (!image && overLimit)) return;
+    if (
+      isAnalyzing ||
+      ocrState === 'loading' ||
+      (!image && !message.trim()) ||
+      (!message.trim() && !image) ||
+      overLimit
+    )
+      return;
 
     setFeedback(null);
     setIsAnalyzing(true);
-    scanResourceKeys.current.clear();
-    setScanRequestCount(0);
-    scanStartedAt.current = performance.now();
-    const sourceImage = image;
-    const sourceMessage = sourceImage ? '' : message;
+    const sourceImage = image && !message.trim() ? image : null;
+    const sourceMessage = message;
 
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
@@ -414,32 +517,14 @@ export function App() {
       });
       setVerdict(result);
       setResultMessage(sourceMessage);
-      setResultIsImage(Boolean(sourceImage));
+      setResultIsImage(Boolean(image));
+      setResultUsedOcr(Boolean(image && sourceMessage.trim() && ocrState === 'ready'));
       setScreen('result');
     } catch {
       setFeedback('analysisError');
     } finally {
-      scanStartedAt.current = null;
       setIsAnalyzing(false);
     }
-  }
-
-  async function startEmbeddingLoad() {
-    setShowDownloadPrompt(false);
-    try {
-      await loadEmbeddings();
-    } catch {
-      // The UI keeps the rules-only path available when the optional model fails.
-    }
-  }
-
-  function requestEmbeddingLoad() {
-    if (embeddingStatus.state === 'ready' || embeddingStatus.state === 'loading') return;
-    if (isSmallScreen) {
-      setShowDownloadPrompt(true);
-      return;
-    }
-    void startEmbeddingLoad();
   }
 
   async function promptInstall() {
@@ -453,10 +538,11 @@ export function App() {
 
   function startAnotherCheck() {
     setMessage('');
-    setImage(null);
+    clearScreenshot();
     setVerdict(null);
     setResultMessage('');
     setResultIsImage(false);
+    setResultUsedOcr(false);
     setFeedback(null);
     setScreen('scan');
     window.requestAnimationFrame(() => messageInput.current?.focus());
@@ -480,12 +566,13 @@ export function App() {
         <button
           className="brand"
           type="button"
+          aria-label="Sane home"
           onClick={() => setScreen(screen === 'welcome' ? 'welcome' : 'scan')}
         >
-          sane
+          <img src="/icons/sane-logo.svg" alt="" />
         </button>
-        {screen !== 'result' && (
-          <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />
+        {(screen === 'scan' || screen === 'learn') && (
+          <MainNavigation screen={screen} onNavigate={setScreen} />
         )}
         <LanguagePicker
           className="topbar-language"
@@ -493,9 +580,10 @@ export function App() {
           lang={lang}
           onChange={setLang}
         />
+        <ThemePicker theme={theme} onChange={setTheme} copy={copy} />
       </header>
 
-      <main className={`page page--${screen}`}>
+      <main key={screen} className={`page page--${screen}`}>
         {screen === 'welcome' && (
           <section className="welcome-layout" aria-labelledby="welcome-title">
             <div className="welcome-content">
@@ -523,7 +611,7 @@ export function App() {
               >
                 {copy.start}
               </button>
-              <p className="supporting-copy">{copy.localDescription}</p>
+              <p className="supporting-copy">{copy.privacyFootnote}</p>
             </div>
             <div className="welcome-details">
               <section className="detail-block">
@@ -546,52 +634,45 @@ export function App() {
               <h1>{copy.scanTitle}</h1>
               <p className="page-intro">{copy.scanDescription}</p>
             </div>
-            <div className="offline-status" aria-live="polite">
-              <span className={`offline-badge${offlineReady ? ' offline-badge--ready' : ''}`}>
-                {offlineReady ? copy.offlineReady : copy.offlinePreparing}
-              </span>
-              <span className="connection-label">{isOnline ? copy.online : copy.offline}</span>
-            </div>
             <div className="scan-layout">
               <form className="scan-form" onSubmit={runAnalysis}>
-                {image ? (
+                {image && (
                   <div className="selected-image" aria-live="polite">
                     <p>{copy.screenshotSelected(image.name)}</p>
                     <button
                       className="button button--quiet"
                       type="button"
-                      onClick={() => setImage(null)}
+                      onClick={clearScreenshot}
                     >
                       {copy.useText}
                     </button>
                   </div>
-                ) : (
-                  <>
-                    <label className="field-label" htmlFor="message-input">
-                      {copy.messageLabel}
-                    </label>
-                    <textarea
-                      ref={messageInput}
-                      id="message-input"
-                      rows={7}
-                      value={message}
-                      placeholder={copy.messagePlaceholder}
-                      aria-describedby="message-count"
-                      onChange={(event) => {
-                        setMessage(event.currentTarget.value);
-                        setFeedback(null);
-                      }}
-                    />
-                    <div
-                      id="message-count"
-                      className={`character-count${overLimit ? ' character-count--error' : ''}`}
-                      aria-live="polite"
-                    >
-                      {copy.characterCount(message.length, MAX_MESSAGE_LENGTH)}
-                    </div>
-                    {overLimit && <p className="field-error">{copy.overLimit}</p>}
-                  </>
                 )}
+
+                <label className="field-label" htmlFor="message-input">
+                  {image ? copy.extractedMessageLabel : copy.messageLabel}
+                </label>
+                <textarea
+                  ref={messageInput}
+                  id="message-input"
+                  rows={7}
+                  value={message}
+                  placeholder={copy.messagePlaceholder}
+                  aria-describedby="message-count"
+                  disabled={ocrState === 'loading'}
+                  onChange={(event) => {
+                    setMessage(event.currentTarget.value);
+                    setFeedback(null);
+                  }}
+                />
+                <div
+                  id="message-count"
+                  className={`character-count${overLimit ? ' character-count--error' : ''}`}
+                  aria-live="polite"
+                >
+                  {copy.characterCount(message.length, MAX_MESSAGE_LENGTH)}
+                </div>
+                {overLimit && <p className="field-error">{copy.overLimit}</p>}
 
                 <div className="input-actions">
                   <button
@@ -620,25 +701,41 @@ export function App() {
                   />
                 </div>
 
+                <button
+                  className="button button--primary analyze-button"
+                  type="submit"
+                  disabled={
+                    isAnalyzing ||
+                    ocrState === 'loading' ||
+                    (!image && !message.trim()) ||
+                    overLimit
+                  }
+                >
+                  {isAnalyzing ? copy.checking : copy.analyze}
+                </button>
+
                 {feedbackText && (
                   <p className="field-error" role="alert">
                     {feedbackText}
                   </p>
                 )}
-                {image && <p className="supporting-copy">{copy.screenshotUnavailable}</p>}
+                {ocrState === 'loading' && (
+                  <p className="loading-message" role="status">
+                    {copy.screenshotLoading}
+                  </p>
+                )}
+                {ocrState === 'ready' && <p className="supporting-copy">{copy.screenshotReady}</p>}
+                {ocrState === 'error' && (
+                  <p className="field-error" role="status">
+                    {copy.screenshotFailed}
+                  </p>
+                )}
                 {isAnalyzing && (
                   <p className="loading-message" role="status">
                     {copy.checking}
                   </p>
                 )}
 
-                <button
-                  className="button button--primary analyze-button"
-                  type="submit"
-                  disabled={isAnalyzing || (!image && !message.trim()) || (!image && overLimit)}
-                >
-                  {isAnalyzing ? copy.checking : copy.analyze}
-                </button>
                 <p className="supporting-copy">{copy.pasteOnlyNotice}</p>
               </form>
 
@@ -655,38 +752,6 @@ export function App() {
                     ))}
                   </ol>
                 </section>
-                <section className="embedding-panel" aria-labelledby="embedding-title">
-                  <h2 id="embedding-title">{copy.embeddingTitle}</h2>
-                  {embeddingStatus.state === 'ready' ? (
-                    <p>{copy.embeddingReady}</p>
-                  ) : embeddingStatus.state === 'loading' ? (
-                    <div>
-                      <p className="loading-message" role="status">
-                        {copy.embeddingProgress(embeddingStatus.progress)}
-                      </p>
-                      <progress max="100" value={embeddingStatus.progress} />
-                    </div>
-                  ) : (
-                    <>
-                      <button
-                        className="button button--secondary"
-                        type="button"
-                        disabled={!isOnline}
-                        onClick={requestEmbeddingLoad}
-                      >
-                        {copy.embeddingAction}
-                      </button>
-                      {embeddingStatus.state === 'error' && (
-                        <p className="field-error" role="status">
-                          {copy.embeddingUnavailable}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </section>
-                <p className="network-proof" aria-live="polite">
-                  {copy.networkRequests(scanRequestCount)}
-                </p>
                 {showIosInstallHint && <p className="supporting-copy">{copy.iosInstallHint}</p>}
               </aside>
             </div>
@@ -698,9 +763,6 @@ export function App() {
             <div className="page-heading result-page-heading">
               <h1>{copy.resultTitle}</h1>
               <p className="page-intro">{copy.resultSubtitle}</p>
-              <p className="network-proof" aria-live="polite">
-                {copy.networkRequests(scanRequestCount)}
-              </p>
             </div>
             <div className="result-grid" aria-live="polite">
               <section className="result-primary">
@@ -709,26 +771,42 @@ export function App() {
                   <h2>{copy.assessment[verdict.level].label}</h2>
                 </div>
                 <p className="coverage-label">
-                  {resultIsImage ? copy.coverageImage : copy.coverageText}
+                  {resultUsedOcr
+                    ? copy.coverageOcr
+                    : resultIsImage
+                      ? copy.coverageImage
+                      : copy.coverageText}
                 </p>
                 <p className="assessment-summary">{copy.assessment[verdict.level].summary}</p>
-
-                <div className="next-step">
-                  <h2>
-                    {copy.nextPrefix}: {copy.assessment[verdict.level].nextTitle}
+                {verdict.explanation.extra && (
+                  <section className="llm-explanation" aria-labelledby="llm-explanation-title">
+                    <h2 id="llm-explanation-title">{copy.llmExplanationTitle}</h2>
+                    <p className="llm-explanation-disclaimer">{copy.llmDisclaimer}</p>
+                    <p className="llm-explanation-text">{verdict.explanation.extra}</p>
+                  </section>
+                )}
+                <section className={`next-step next-step--${verdict.level}`}>
+                  <h2 className="next-step-heading">
+                    <StatusMark level="suspicious" />
+                    <span>
+                      {copy.nextPrefix}: {copy.assessment[verdict.level].nextTitle}
+                    </span>
                   </h2>
                   <p>{copy.assessment[verdict.level].nextStep}</p>
-                </div>
+                </section>
 
-                <section className="result-section">
+                <section className="result-section model-section">
                   <h2>{copy.modelTitle}</h2>
                   <p>
                     {verdict.usedModels.embeddings ||
                     verdict.usedModels.ocr ||
-                    verdict.usedModels.llm
+                    verdict.usedModels.llm ||
+                    resultUsedOcr
                       ? copy.modelRan
                       : copy.noModel}
                   </p>
+                  <p>{verdict.usedModels.llm ? copy.llmModelRan : copy.llmModelNotRun}</p>
+                  {resultUsedOcr && <p>{copy.ocrUsed}</p>}
                 </section>
 
                 <section className="result-section evidence-section">
@@ -746,14 +824,14 @@ export function App() {
                 </section>
 
                 {verdict.level === 'probably_fine' && (
-                  <aside className="notice notice--neutral">
+                  <aside className="notice notice--neutral not-guarantee">
                     <h2>{copy.notAGuaranteeTitle}</h2>
                     <p>{copy.notAGuarantee}</p>
                   </aside>
                 )}
-                {resultIsImage && (
+                {resultIsImage && !resultMessage && (
                   <p className="field-error" role="status">
-                    {copy.screenshotUnavailable}
+                    {copy.screenshotFailed}
                   </p>
                 )}
               </section>
@@ -762,9 +840,21 @@ export function App() {
                 <section className="original-message">
                   <h2>{copy.originalTitle}</h2>
                   <p className="original-copy">
-                    {resultIsImage ? copy.imageOriginal : <InertMessage text={resultMessage} />}
+                    {resultMessage ? (
+                      <HighlightedMessage text={resultMessage} signals={verdict.signals} />
+                    ) : (
+                      copy.imageOriginal
+                    )}
                   </p>
                   <p className="supporting-copy">{copy.originalNote}</p>
+                  {resultMessage && normalize(resultMessage) !== resultMessage && (
+                    <details className="original-source">
+                      <summary>{copy.viewOriginal}</summary>
+                      <p className="original-copy">
+                        <InertMessage text={resultMessage} />
+                      </p>
+                    </details>
+                  )}
                 </section>
                 <button
                   className="button button--primary another-button"
@@ -775,7 +865,7 @@ export function App() {
                 </button>
                 {canInstall && (
                   <button
-                    className="button button--secondary another-button"
+                    className="button button--secondary install-button"
                     type="button"
                     onClick={promptInstall}
                   >
@@ -815,38 +905,6 @@ export function App() {
           </>
         )}
       </main>
-
-      {showDownloadPrompt && (
-        <div className="dialog-backdrop">
-          <section
-            className="download-prompt"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="download-prompt-title"
-          >
-            <h2 id="download-prompt-title">{copy.downloadPromptTitle}</h2>
-            <p>{copy.downloadPromptBody}</p>
-            <div className="download-prompt-actions">
-              <button className="button button--primary" type="button" onClick={startEmbeddingLoad}>
-                {copy.downloadContinue}
-              </button>
-              <button
-                className="button button--secondary"
-                type="button"
-                onClick={() => setShowDownloadPrompt(false)}
-              >
-                {copy.downloadCancel}
-              </button>
-            </div>
-          </section>
-        </div>
-      )}
-
-      {screen !== 'result' && (
-        <nav className="mobile-navigation" aria-label="Main navigation">
-          <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />
-        </nav>
-      )}
     </div>
   );
 }

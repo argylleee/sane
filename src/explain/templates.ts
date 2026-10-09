@@ -1,6 +1,8 @@
 // OWNER: backend. Fixed advice remains available without any model.
 import type { Lang, Level, Signal, Verdict } from '../types';
 
+// TASK-212 Filipino/Taglish copy awaits native-speaker review.
+// New signals retain the fixed no-payment / verify-separately template advice.
 const signalLabels: Record<Lang, Record<string, string>> = {
   en: {
     lookalike_domain: 'Brand-like link outside its known domain',
@@ -22,6 +24,9 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     romance_bait: 'Uses a personal relationship to ask for money',
     link_action: 'Directs you to a link',
     coercion: 'Threatens to contact your family or friends',
+    advance_fee: 'Requires payment before a promised benefit',
+    marketplace_deposit: 'Asks for a deposit before you can inspect an item',
+    relative_emergency: 'Uses a family emergency to request money',
   },
   fil: {
     lookalike_domain: 'Link na kamukha ng kilalang brand pero iba ang domain',
@@ -43,6 +48,9 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     romance_bait: 'Gumagamit ng personal na relasyon para humingi ng pera',
     link_action: 'Pinapapunta ka sa isang link',
     coercion: 'Nagbabantang kontakin ang pamilya o mga kaibigan mo',
+    advance_fee: 'Humihingi ng paunang bayad bago ibigay ang ipinangakong benepisyo',
+    marketplace_deposit: 'Humihingi ng deposito bago mo makita ang gamit',
+    relative_emergency: 'Gumagamit ng emergency ng kamag-anak para humingi ng pera',
   },
   taglish: {
     lookalike_domain: 'Mukhang brand link pero iba ang domain',
@@ -64,6 +72,9 @@ const signalLabels: Record<Lang, Record<string, string>> = {
     romance_bait: 'Ginagamit ang personal na relasyon para humingi ng money',
     link_action: 'Pinapapunta ka sa isang link',
     coercion: 'Nagbabantang kontakin ang family o friends mo',
+    advance_fee: 'Humihingi ng payment bago ibigay ang promised benefit',
+    marketplace_deposit: 'Humihingi ng deposit bago mo ma-inspect ang item',
+    relative_emergency: 'Ginagamit ang family emergency para humingi ng money',
   },
 };
 

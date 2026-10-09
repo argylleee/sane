@@ -9,7 +9,7 @@ const SAFE_CREDENTIAL =
 const SAFE_PRONOUN =
   /(?:do not|don't|never|huwag|wag)\s+(?:share|send|give|ibigay|i-send|i-share)[^.!?;]{0,20}\b(?:it|ito|yan)\b/giu;
 const CREDENTIAL_REQUEST =
-  /\b(?:send|share|give|provide|enter|submit|reply|confirm|verify|ibigay|isend|i-send|pakisend|pakisabi|sabihin|ilagay|i-share|pa-send)\b[^.!?;]{0,35}\b(?:otp|pin|mpin|password|code)\b/giu;
+  /\b(?:send|share|give|provide|enter|submit|reply|confirm|verify|forward|i-forward|ibigay|ipadala|ipasa|ibahagi|isend|i-send|paki-send|pakisend|pakisabi|sabihin|ilagay|i-share|pa-send)\b[^.!?;]{0,35}\b(?:otp|pin|mpin|password|code)\b/giu;
 const CARD_DATA_REQUEST =
   /\b(?:send|share|give|provide|enter|submit|reply|confirm|verify|ibigay|isend|i-send|pakisend|sabihin|ilagay|i-share|pa-send)\b[^.!?;]{0,45}\b(?:card number|card no\.?|cvv|cvc|security code|expiry|expiration|valid thru|numero ng card|likod ng card)\b/giu;
 const FOLLOWUP_CODE_REQUEST =
@@ -46,7 +46,9 @@ const JOB_RISK =
 const INVESTMENT_CONTEXT =
   /\b(?:invest|investment|crypto|trading|profit|returns|tubo|puhunan|mag-invest|pag-iinvest)\b/iu;
 const INVESTMENT_RISK =
-  /\b(?:guaranteed|double|doble|dodoble|deposit|mag-deposit|limited slots|kaunti na lang|quick return|sure win)\b/iu;
+  /\b(?:guaranteed|guarantees?|garantisado|garantisadong|siguradong|sure profit|double|doble|dodoble|limited slots|kaunti na lang|quick return|sure win)\b/iu;
+const GUARANTEED_RETURN =
+  /\b(?:guaranteed|guarantees?|garantisado|garantisadong|siguradong|sure profit|double|doble|dodoble)\b/iu;
 const GOVERNMENT_CONTEXT =
   /\b(?:government|gobyerno|ayuda|benefit|subsidy|grant|relief|dswd|sss|philhealth|pag-ibig|bir)\b/iu;
 const GOVERNMENT_ACTION =
@@ -54,15 +56,38 @@ const GOVERNMENT_ACTION =
 const ROMANCE_CONTEXT =
   /\b(?:sweetheart|honey|darling|love|romance|dating|relationship|mahal|sinta|nakilala|girlfriend|boyfriend)\b/iu;
 const ROMANCE_ACTION =
-  /\b(?:send money|padala|loan|pautang|hospital|emergency|invest|deposit|fee|magpadala|mag-invest)\b/iu;
+  /\b(?:send money|send funds|transfer funds|ipadala ang pera|padala|loan|pautang|invest|deposit|fee|magpadala|mag-invest)\b/iu;
+
+// Match combinations rather than treating an ordinary payment alone as a scam.
+const BENEFIT_CONTEXT =
+  /\b(?:prize|raffle|reward|premyo|loan|pautang|utang|ayuda|aid|grant|tulong pinansyal|job|trabaho|task)\b/iu;
+const ADVANCE_PAYMENT =
+  /\b(?:pay|send|transfer|magbayad|bayaran|magpadala|magdeposito)\b(?=[^.!?;]{0,70}\b(?:fee|charge|bayad|singil|deposit|collect|receive|release|matanggap|makuha)\b)[^.!?;]{0,55}\b(?:first|before|advance|upfront|muna|bago|paunang)\b|\b(?:top[ -]up|mag-top[ -]up|dagdagan)\b[^.!?;]{0,25}\b(?:working balance|balanse)\b/iu;
+const MARKETPLACE_CONTEXT = /\b(?:marketplace|item|seller|binebenta\w*|gamit)\b/iu;
+const BEFORE_INSPECTION =
+  /\b(?:send|pay|transfer|magdeposito|mag-deposit|magbayad)\b[^.!?;]{0,30}\b(?:deposit|reservation|bago)\b[^.!?;]{0,35}\b(?:before|bago)\b[^.!?;]{0,25}\b(?:inspect\w*|makita|ma-inspect|masuri)\b|\bmagdeposito\b[^.!?;]{0,25}\bbago\b[^.!?;]{0,25}\b(?:makita|masuri)\b/iu;
+const RELATIVE_CONTEXT =
+  /\b(?:sister|brother|daughter|son|mother|father|cousin|anak|kapatid|pinsan|nanay|tatay)\b/iu;
+const EMERGENCY_CONTEXT =
+  /\b(?:clinic|hospital|emergency|treatment|ospital|pagpapagamot|aksidente)\b/iu;
+const MONEY_TRANSFER =
+  /\b(?:send (?:money|funds)|transfer (?:money|funds)|ipadala (?:ang )?pera|magpadala|magbayad|pay)\b/iu;
+
+// Mask only payment disclaimers and keep offsets for highlighting the original text.
+const NO_PAYMENT =
+  /\b(?:no\s+(?:payment|fee|deposit)(?:\s+is)?\s+(?:required|needed|due)|(?:do not|don't)\s+need\s+to\s+pay(?:\s+(?:a|the|handling|processing|delivery|fee)){0,4}|no need\s+(?:to\s+)?(?:pay|magbayad)(?:\s+(?:a|the|ng|ang|handling|processing|delivery|fee)){0,4}|walang\s+(?:kailangang\s+)?(?:bayaran|bayad|paunang bayad)|hindi\s+(?:kailangan|required)\s+(?:ang\s+)?(?:bayad|payment|magbayad))\b/giu;
 
 function isNegated(text: string, at: number): boolean {
   const clause =
     text
       .slice(Math.max(0, at - 35), at)
-      .split(/[.!?;,]/)
+      .split(/[.!?;,]|\b(?:but|pero|subalit|however)\b/iu)
       .at(-1) ?? '';
-  return /\b(?:do not|don't|never|huwag|wag)(?:\s+\w+){0,6}\s*$/iu.test(clause);
+  // A conditional threat ("kung hindi mo bayaran") demands payment.
+  if (/\b(?:kung hindi|if you (?:do not|don't))(?:\s+[\w-]+){0,4}\s*$/iu.test(clause)) return false;
+  return /\b(?:do not|don't|does not|cannot|never|huwag|wag|hindi|walang|no|no need)(?:\s+[\w-]+){0,6}\s*$/iu.test(
+    clause,
+  );
 }
 
 function phraseSpan(
@@ -97,8 +122,11 @@ function contextualSpan(
   const actions = [...text.matchAll(global(action))];
   for (const contextMatch of contexts) {
     const contextAt = contextMatch.index;
-    const actionMatch = actions.find((candidate) => Math.abs(candidate.index - contextAt) <= 140);
-    if (!actionMatch || isNegated(text, actionMatch.index)) continue;
+    const actionMatch = actions.find(
+      (candidate) =>
+        Math.abs(candidate.index - contextAt) <= 140 && !isNegated(text, candidate.index),
+    );
+    if (!actionMatch) continue;
     return [actionMatch.index, actionMatch.index + actionMatch[0].length];
   }
 }
@@ -115,6 +143,7 @@ function pushSignal(
 }
 
 export function runRules(text: string): Signal[] {
+  text = text.replace(NO_PAYMENT, (notice) => ' '.repeat(notice.length));
   const signals = urlSignals(text);
   const hasCredential = /\b(?:otp|pin|mpin|code|password|one-time password)\b/iu.test(text);
   const safe = [
@@ -127,6 +156,7 @@ export function runRules(text: string): Signal[] {
     ...(hasCredential ? [...text.matchAll(FOLLOWUP_CODE_REQUEST)] : []),
   ].find(
     (match) =>
+      !isNegated(text, match.index) &&
       !safe.some(
         (notice) =>
           match.index >= notice.index &&
@@ -251,7 +281,7 @@ export function runRules(text: string): Signal[] {
     signals,
     'investment_bait',
     'Promises unusually quick or guaranteed investment returns',
-    15,
+    contextualSpan(text, INVESTMENT_CONTEXT, GUARANTEED_RETURN) ? 30 : 15,
     contextualSpan(text, INVESTMENT_CONTEXT, INVESTMENT_RISK),
   );
   pushSignal(
@@ -265,8 +295,32 @@ export function runRules(text: string): Signal[] {
     signals,
     'romance_bait',
     'Uses a personal relationship to ask for money',
-    15,
+    30,
     contextualSpan(text, ROMANCE_CONTEXT, ROMANCE_ACTION),
   );
+  pushSignal(
+    signals,
+    'advance_fee',
+    'Requires payment before a promised benefit',
+    30,
+    contextualSpan(text, BENEFIT_CONTEXT, ADVANCE_PAYMENT),
+  );
+  pushSignal(
+    signals,
+    'marketplace_deposit',
+    'Asks for a deposit before you can inspect an item',
+    30,
+    contextualSpan(text, MARKETPLACE_CONTEXT, BEFORE_INSPECTION),
+  );
+  const emergency = contextualSpan(text, RELATIVE_CONTEXT, EMERGENCY_CONTEXT);
+  if (emergency) {
+    pushSignal(
+      signals,
+      'relative_emergency',
+      'Uses a family emergency to request money',
+      30,
+      contextualSpan(text, RELATIVE_CONTEXT, MONEY_TRANSFER),
+    );
+  }
   return signals;
 }

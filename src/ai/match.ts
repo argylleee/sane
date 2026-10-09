@@ -13,9 +13,10 @@ import {
 export { MARGIN_MODERATE, MARGIN_STRONG, evidenceLevel, type EvidenceLevel } from './vector';
 
 /**
- * Best-archetype similarity alone does NOT separate scams from legit messages (held-out pilot:
- * scams 0.852 to 0.906, legit 0.850 to 0.897). Prefer `matchWithEvidence().level`, which compares
- * against benign examples. A lower score is never evidence of safety.
+ * Use `matchWithEvidence().level` only together with this floor: require a best similarity at or
+ * above it before treating the evidence as supporting a scam. The level alone flagged 7% to 21% of
+ * ordinary public messages; with the floor it flagged 0 of 1,200. A lower score is never evidence
+ * of safety.
  */
 export const SIMILARITY_FLOOR = 0.9;
 

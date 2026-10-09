@@ -8,9 +8,10 @@ export const BENIGN_ID = '__benign__';
 
 /**
  * Margin = best scam-archetype similarity minus best benign-example similarity.
- * Pilot measurements (30 held-out and 30 development messages, e5-small int8):
- * margin > 0.02 flagged 10/16 held-out scams and 0/14 legit; margin > 0.01 flagged 13/16 and 1/14.
- * Small samples written by the team: treat as evidence, not as an accuracy claim.
+ * Small hand-written pilots (held-out and development sets) looked good for margin alone, but on
+ * 1,200 ordinary public English messages margin > 0.01 flagged 21% and margin > 0.02 flagged 7.4%.
+ * Adding the best-similarity >= 0.90 requirement (SIMILARITY_FLOOR) flagged 0/1200. Never use the
+ * margin level without that floor to raise a warning.
  */
 export const MARGIN_STRONG = 0.02;
 export const MARGIN_MODERATE = 0.01;

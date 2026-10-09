@@ -64,6 +64,40 @@ Import from `src/ai/index.ts`.
 - A Taglish OTP request matched `otp_request` but its margin (0.006) fell under the 0.01
   "moderate" cutoff, so embedding evidence was `none`. Rules must still catch such cases.
 
+## Requests for the frontend owner (TASK-206)
+
+1. Auto-download on first visit, no button (team decision). Call `startEmbeddingsPreload()` from
+   `src/ai` once when the app mounts. It skips Data Saver and 2G, asks the browser to keep the
+   cache, never throws, and resolves when the model is ready. Keep the progress bar from
+   `subscribeEmbeddings` (progress is now one overall percentage across all files, not per file)
+   and show the status message if `state === 'error'`.
+2. `public/sw.js` caches huggingface.co model files in its own cache AND transformers.js keeps
+   its own cache, so a 118 MB model may be stored twice (about 236 MB), which can exceed storage
+   quotas on phones and in private windows. Prefer dropping the model rules from the service
+   worker and letting the library cache. Also `.mjs` is missing from the static-asset pattern, so
+   `ort/*.mjs` (needed to start the runtime) is not cached for offline use. Add `mjs`.
+3. The scan screen is where the matching panel lives today; it should disappear once the
+   download is automatic.
+
+## Review of TASK-205 (backend embedding scoring), corrected
+
+Earlier note (superseded): it suggested dropping the `similarity >= SIMILARITY_FLOOR` condition in
+`score()`. A larger test shows that would be unsafe. Do NOT drop it.
+
+Evidence: 1,200 ordinary English messages from a public SMS dataset (run locally, not committed;
+English only, no Filipino or Taglish):
+
+| Embedding rule                                 | Ordinary messages flagged | Fresh held-out scams flagged |
+| ---------------------------------------------- | ------------------------- | ---------------------------- |
+| margin > 0.01 only                             | 252/1200 (21%)            | 13/16                        |
+| margin > 0.02 only                             | 89/1200 (7.4%)            | 10/16                        |
+| margin > 0.01 AND similarity >= 0.90 (current) | 0/1200                    | 3/16                         |
+
+The current rule is the safe one: no false alarms on ordinary messages, at the cost of low embedding
+recall. Recall must come from the rules (TASK-207). Rules-only on the same 1,200 messages flagged
+1/1200. These are English-only numbers from one dataset of UK-style texts, not a Philippine
+validation.
+
 ## Not done yet
 
 OCR worker (Tesseract eng + fil), WebLLM wrapper behind a toggle, the 30-message verdict test
