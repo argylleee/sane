@@ -48,3 +48,5 @@ Read `RULES.md`, the task, and its allocation receipt for parallel work. Follow
   Keep one compact handoff: revision, touched paths, contract version, evidence, next action.
 
 MCP is optional. Load `mcp-workflow` only for a named connection with a scoped, read-only start.
+
+When a slice is committed and checked, land it with `npm run task:land` (direct to `main`, no PR). Resolve any merge conflict yourself via `resolve-conflict`, keeping both sides; never force-push.

@@ -22,6 +22,15 @@ Keep `main` as the integration branch. An explicit request to work/push directly
 an exception for that request, not a standing permission for future tasks. Do not rename an
 existing assigned branch silently; reconcile the coordinator receipt first.
 
+## Landing on main (no PR)
+
+The user authorized agents to land finished task commits directly on `main` without a PR.
+Commit owned paths on the task branch, then run `npm run task:land`. It merges `origin/main`
+into the branch, runs lint, format check, typecheck and app tests, pushes `HEAD:main`, and retries
+if main moved. On a merge conflict it stops (exit 2): the agent loads `resolve-conflict`, keeps both
+sides' intent, runs the checks, commits the merge, and reruns. Never force-push, reset, or discard
+others' work. Do not land failing checks or unfinished slices.
+
 ## Commits and PR titles
 
 Use `type(scope): imperative description`, with an optional lowercase kebab-case scope.
