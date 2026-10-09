@@ -99,6 +99,9 @@ self.addEventListener('fetch', (event) => {
 
   if (event.request.method !== 'GET') return;
 
+  // The hosted model (and its parts) are stored by the model cache itself, one verified part at a time.
+  if (requestUrl.pathname.includes('/models/')) return;
+
   const isNavigation = event.request.mode === 'navigate';
   const isSameOrigin = requestUrl.origin === self.location.origin;
   const isStaticAsset =

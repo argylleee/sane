@@ -23,3 +23,6 @@ playwright-report/
 .claude/skills/
 .github/skills/
 .agent/skills/
+
+# Hosted model files (see scripts/split-model.mjs)
+public/models/
