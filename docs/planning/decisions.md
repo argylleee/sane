@@ -17,3 +17,5 @@ recommendations carried into the requested guidance bundle. No application verif
 For a future change, record trigger, alternatives, evidence, ownership, revised contract version,
 and consequences for scope/security/device/demo. No model upgrade, frontend mock, or schedule
 pressure silently changes D-01/D-02. Organizer additions go in guidelines with source/date first.
+
+| D-09 | Real Android phone only for TASK-101 testing (SMS and WhatsApp both); no emulator, no Android Studio IDE, SDK command-line tools only | User chose lowest-setup path over an emulator; WhatsApp needs real account verification an emulator cannot complete; SMS tested by sending from a second phone/teammate; avoids the unverified Android 15 notification-redaction risk if a lower-OS phone is available; no runtime proof yet |
