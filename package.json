@@ -15,6 +15,7 @@
     "lint": "eslint . && node scripts/lint-markdown.mjs",
     "check:repo": "node scripts/check-repo.mjs",
     "check:task": "node scripts/check-task.mjs",
+    "task:start": "node scripts/start-task.mjs",
     "check:git": "node scripts/check-git.mjs",
     "role:session": "node scripts/role-session.mjs",
     "test:tooling": "node --test scripts/tests/*.test.mjs",

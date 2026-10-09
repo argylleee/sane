@@ -1,6 +1,6 @@
 # TASK-204: offline PWA, share target, zero-network proof (frontend)
 
-Role: frontend. Branch `codex/feat/task-204-offline-pwa-share`, allocation 1. Depends on TASK-203 (integrated).
+Role: frontend. Branch `codex/feat/task-204-offline-pwa-share`, allocation 2 (narrowed: `src/ui/` and `src/styles.css` moved to TASK-206). Depends on TASK-203 (integrated).
 Read `.agents/skills/design-ux/SKILL.md`, `security-privacy`, and `.agents/skills/design-ux/references/share-target.md`.
 
 ## Outcome
@@ -9,8 +9,7 @@ Read `.agents/skills/design-ux/SKILL.md`, `security-privacy`, and `.agents/skill
 2. Manifest in `public/`: installable on Android Chrome; iOS add-to-home-screen hint in the UI.
 3. Web Share Target handler (cut-ladder item 1): shared text opens Scan prefilled, never auto-sent anywhere.
 4. "Offline ready" badge and a live "network requests during scan: 0" counter.
-5. Download-size prompt before large model downloads on mobile; show embedding progress via `subscribeEmbeddings`.
-6. OCR entry for screenshots using `src/ai/ocr.ts` through `src/ai/index.ts`; template fallback on failure.
+5. Model-download and caching plumbing in `src/sw.ts` / `src/main.tsx`. The download-size prompt, progress UI and OCR entry are TASK-206 UI; expose what it needs (cache status, ready flag) and agree the shape in the handoff.
 
 ## Not in scope
 
@@ -19,5 +18,5 @@ Read `.agents/skills/design-ux/SKILL.md`, `security-privacy`, and `.agents/skill
 
 ## Acceptance evidence
 
-`npm run check:task -- --task TASK-204 --allocation 1` and `npm run validate -- --task TASK-204 --allocation 1`.
+`npm run check:task -- --task TASK-204 --allocation 2` and `npm run validate -- --task TASK-204 --allocation 2` (`npm run task:start` prepares the worktree and snapshot).
 Browser evidence at 360 px; airplane-mode relaunch result stated as tested or untested; no real-phone claim without a phone.
