@@ -40,3 +40,5 @@ For a small serial maintenance task, the user's narrow scope can suffice without
 paperwork. For cross-machine agents, one designated coordinator serializes allocations; independent
 registry copies are snapshots, not distributed locks. If freshness cannot be confirmed, continue
 read-only/independent work and defer contested writes. Load `resolve-conflict` only when needed.
+
+When a slice is committed and checked, land it with `npm run task:land` (direct to `main`, no PR). Resolve any merge conflict yourself via `resolve-conflict`, keeping both sides; never force-push.

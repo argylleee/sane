@@ -74,7 +74,7 @@ Managed worktrees supplied by a host are also suitable; follow that host's lifec
 
 Workers own their assigned paths. The coordinator edits shared dependencies/lockfiles/config,
 schemas, route registration, and planning summaries. Integrate small changes in dependency order
-using the authorized PR/merge or commit workflow. Revalidate on the combined revision.
+using `npm run task:land` (direct to main, no PR; see git-conventions). Revalidate on the combined revision.
 This scaffold does not authorize merging, pushing, deployment, or deleting other workers' state.
 
 Retain dirty/unpushed worktrees. Remove a worktree only after verifying its exact path, ownership,
