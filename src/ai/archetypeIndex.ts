@@ -2,7 +2,7 @@
 import archetypeData from '../data/archetypes.json';
 import { EMBEDDING_MODEL_ID } from './embedder';
 import { embedTexts } from './embedClient';
-import type { IndexEntry } from './vector';
+import { BENIGN_ID, type IndexEntry } from './vector';
 
 export type Archetype = {
   id: string;
@@ -12,6 +12,7 @@ export type Archetype = {
 };
 
 export const archetypes: Archetype[] = archetypeData.archetypes;
+const benignPhrases: string[] = archetypeData.benign;
 
 const DB_NAME = 'sane-ai';
 const STORE = 'archetype-vectors';
@@ -19,7 +20,7 @@ const STORE = 'archetype-vectors';
 /** Cheap content hash so editing phrases invalidates the cache without bumping the version. */
 export function archetypeCacheKey(items: Archetype[] = archetypes): string {
   let hash = 5381;
-  for (const phrase of items.flatMap((item) => item.phrases)) {
+  for (const phrase of [...items.flatMap((item) => item.phrases), ...benignPhrases]) {
     for (let i = 0; i < phrase.length; i++) hash = ((hash << 5) + hash + phrase.charCodeAt(i)) | 0;
   }
   return `v${archetypeData.version}:${EMBEDDING_MODEL_ID}:${items.length}:${hash >>> 0}`;
@@ -64,7 +65,7 @@ async function writeCache(key: string, entries: IndexEntry[]): Promise<void> {
 
 let memo: { key: string; entries: IndexEntry[] } | undefined;
 
-/** Requires the embedding model to be ready. Embeds ~36 short phrases on a cache miss. */
+/** Requires the embedding model to be ready. Embeds ~54 short phrases on a cache miss. */
 export async function getArchetypeIndex(): Promise<IndexEntry[]> {
   const key = archetypeCacheKey();
   if (memo?.key === key) return memo.entries;
@@ -73,9 +74,10 @@ export async function getArchetypeIndex(): Promise<IndexEntry[]> {
     memo = { key, entries: cached };
     return cached;
   }
-  const flat = archetypes.flatMap((item) =>
-    item.phrases.map((phrase) => ({ id: item.id, phrase })),
-  );
+  const flat = [
+    ...archetypes.flatMap((item) => item.phrases.map((phrase) => ({ id: item.id, phrase }))),
+    ...benignPhrases.map((phrase) => ({ id: BENIGN_ID, phrase })),
+  ];
   const vectors = await embedTexts(
     flat.map((entry) => entry.phrase),
     'passage',

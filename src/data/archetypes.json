@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "note": "AI-drafted seeds. Review with a native Filipino speaker and add real phrasings before use. Human-authored reference data, not training data.",
+  "note": "AI-drafted seeds. Review with a native Filipino speaker and add real phrasings before use. Human-authored reference data, not training data. The benign list holds hand-written examples of ordinary messages, used to compare against scam similarity (no training).",
   "archetypes": [
     {
       "id": "gcash_lockout",
@@ -170,5 +170,25 @@
         "Nag-send ako ng gift from abroad pero stuck sa customs. Bayaran mo muna release fee para ma-deliver."
       ]
     }
+  ],
+  "benign": [
+    "Your one-time code is 123456. Do not share this code with anyone. We will never ask for it.",
+    "Ang iyong OTP ay 123456. Huwag itong ibigay kaninuman, kahit sa bangko.",
+    "Your order has been shipped and will arrive in two days. Track it in the app. No payment needed.",
+    "Nasa labas na ang rider para sa order mo. Paki-abot na lang ang bayad kung COD.",
+    "Your monthly bill is ready. Pay through the official app or any authorized partner outlet before the due date.",
+    "Paalala: due na ang bill mo sa katapusan ng buwan. Magbayad sa opisyal na app o sa partner outlets.",
+    "Security reminder: we will never ask for your PIN, password, or OTP by text or call.",
+    "Babala: huwag magbigay ng PIN o password kahit kanino. Hindi namin ito hihingin.",
+    "Your card ending 1234 was used for a purchase of 500 pesos. If this was not you, call the hotline on your card.",
+    "Hi, running late, see you at 8. Start eating without me.",
+    "Kumain ka na ba? Nandito na ako sa bahay, may dala akong pagkain.",
+    "Meeting is moved to 3pm tomorrow. Please send the report before then, thanks.",
+    "Paki-send na lang yung files mamaya, ha. Salamat!",
+    "Reminder: you have an appointment tomorrow at 10am. Please bring a valid ID.",
+    "Walang pasok bukas dahil sa masamang panahon. Mag-ingat po tayong lahat.",
+    "Thanks for shopping with us! Enjoy 10 percent off on your next visit this weekend.",
+    "Your data promo is active until tomorrow night. Check your balance in the official app.",
+    "Game ka ba mamaya? Magkita tayo sa court, ambag lang tayo sa renta."
   ]
 }

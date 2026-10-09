@@ -1,8 +1,9 @@
 // OWNER: model. Scores analyze() on eval/testset.json. Skipped unless EVAL=1 so it never gates CI.
 // Usage: EVAL=1 npx vitest run eval/run.eval.test.ts   (PowerShell: $env:EVAL=1; npx vitest ...)
+// EVAL_SET=path/to/set.json scores a different file, e.g. a held-out set kept out of the repo.
 // In Node only rules run (no embedding model), so this reports the rules-only baseline.
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'vitest';
-import testset from './testset.json';
 import { analyze } from '../src/pipeline/analyze';
 import type { Lang, Level } from '../src/types';
 
@@ -10,7 +11,9 @@ type Case = { id: string; lang: Lang; expected: Level; note: string; text: strin
 
 describe.skipIf(!process.env.EVAL)('verdict evaluation (rules-only baseline)', () => {
   it('prints scam recall, false alarms, and abstain rate per language', async () => {
-    const cases = testset as Case[];
+    const cases = JSON.parse(
+      readFileSync(process.env.EVAL_SET ?? 'eval/testset.json', 'utf8'),
+    ) as Case[];
     const flagged = (level: Level) => level === 'likely_scam' || level === 'suspicious';
     const stats = new Map<
       string,

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { cosine, topMatches, type IndexEntry } from './vector';
+import {
+  BENIGN_ID,
+  cosine,
+  embeddingEvidence,
+  evidenceLevel,
+  topMatches,
+  type IndexEntry,
+} from './vector';
 
 const v = (...n: number[]) => new Float32Array(n);
 
@@ -35,5 +42,38 @@ describe('topMatches', () => {
   it('limits to k and handles an empty index', () => {
     expect(topMatches(v(1, 0), index, 1)).toHaveLength(1);
     expect(topMatches(v(1, 0), [], 3)).toEqual([]);
+  });
+});
+
+describe('benign comparison', () => {
+  const index: IndexEntry[] = [
+    { archetypeId: 'otp', vector: v(1, 0) },
+    { archetypeId: BENIGN_ID, vector: v(0, 1) },
+  ];
+
+  it('excludes benign examples from the scam ranking', () => {
+    const top = topMatches(v(0, 1), index, 3);
+    expect(top.map((m) => m.archetypeId)).toEqual(['otp']);
+  });
+
+  it('computes margin as best scam similarity minus best benign similarity', () => {
+    const { matches, benign, margin } = embeddingEvidence(v(1, 0), index);
+    expect(matches[0].archetypeId).toBe('otp');
+    expect(benign).toBeCloseTo(0);
+    expect(margin).toBeCloseTo(1);
+  });
+
+  it('has no margin without benign examples', () => {
+    expect(embeddingEvidence(v(1, 0), [{ archetypeId: 'otp', vector: v(1, 0) }]).margin).toBeNull();
+  });
+});
+
+describe('evidenceLevel', () => {
+  it('maps margins to supporting evidence and never to safety', () => {
+    expect(evidenceLevel(0.03)).toBe('strong');
+    expect(evidenceLevel(0.015)).toBe('moderate');
+    expect(evidenceLevel(0.005)).toBe('none');
+    expect(evidenceLevel(-0.05)).toBe('none');
+    expect(evidenceLevel(null)).toBe('none');
   });
 });
