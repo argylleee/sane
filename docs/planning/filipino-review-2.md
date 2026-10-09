@@ -10,29 +10,29 @@ How to use this file on GitHub: click the pencil (Edit this file), change `[ ]` 
 
 ### Online lending app threats (loan_app_threat)
 
-- [ ] A19. You are overdue. Pay now or we will message all your contacts and post your photo online.  
+- [x] A19. You are overdue. Pay now or we will message all your contacts and post your photo online.  
       Fix:
-- [ ] A20. Lampas ka na sa due date. Magbayad na o ime-message namin ang lahat ng contacts mo at ipo-post ang iyong larawan.  
+- [x] A20. Lampas ka na sa due date. Magbayad na o ime-message namin ang lahat ng contacts mo at ipo-post ang iyong larawan.  
       Fix:
-- [ ] A21. Overdue ka na. Bayaran mo ngayon or ime-message namin lahat ng contacts mo.  
+- [x] A21. Overdue ka na. Bayaran mo ngayon or ime-message namin lahat ng contacts mo.  
       Fix:
 
 ### Fake bank security alert (fake_bank_alert)
 
-- [ ] A22. Unusual login detected on your bank account. Click here to secure your account immediately.  
+- [x] A22. Unusual login detected on your bank account. Click here to secure your account immediately.  
       Fix:
-- [ ] A23. May kahina-hinalang pag-login sa iyong bank account. Mag-click dito para ma-secure agad ang account.  
+- [x] A23. May kahina-hinalang pag-login sa iyong bank account. Mag-click dito para ma-secure agad ang account.  
       Fix:
-- [ ] A24. May unusual login sa bank account mo. I-click mo 'to para ma-secure agad.  
+- [x] A24. May unusual login sa bank account mo. I-click mo 'to para ma-secure agad.  
       Fix:
 
 ### Fake government benefit or fine (gov_benefit)
 
-- [ ] A25. Your SSS/PhilHealth benefit is ready for release. Confirm your details at the link to receive payment.  
+- [x] A25. Your SSS/PhilHealth benefit is ready for release. Confirm your details at the link to receive payment.  
       Fix:
-- [ ] A26. Handa na ang iyong benepisyo sa SSS/PhilHealth. Kumpirmahin ang detalye sa link para matanggap ang bayad.  
+- [x] A26. Handa na ang iyong benepisyo sa SSS/PhilHealth. Kumpirmahin ang detalye sa link para matanggap ang bayad.  
       Fix:
-- [ ] A27. Ready na yung SSS benefit mo. I-confirm mo details mo sa link para ma-release.  
+- [x] A27. Ready na yung SSS benefit mo. I-confirm mo details mo sa link para ma-release.  
       Fix:
 
 ### Fake utility disconnection notice (utility_disconnect)
@@ -46,20 +46,20 @@ How to use this file on GitHub: click the pencil (Edit this file), change `[ ]` 
 
 ### Guaranteed-return investment (investment_crypto)
 
-- [ ] A31. Invest 1,000 pesos and get 5,000 in three days. Guaranteed returns. Limited slots only.  
+- [x] A31. Invest 1,000 pesos and get 5,000 in three days. Guaranteed returns. Limited slots only.  
       Fix:
-- [ ] A32. Mag-invest ng 1,000 piso at makakuha ng 5,000 sa loob ng tatlong araw. Garantisadong tubo. Limitado ang slot.  
+- [x] A32. Mag-invest ng 1,000 piso at makakuha ng 5,000 sa loob ng tatlong araw. Garantisadong tubo. Limitado ang slot.  
       Fix:
-- [ ] A33. Invest ka ng 1k, 5k balik in 3 days, guaranteed. Limited slots lang kaya sumali ka na.  
+- [x] A33. Invest ka ng 1k, 5k balik in 3 days, guaranteed. Limited slots lang kaya sumali ka na.  
       Fix:
 
 ### Online romance or gift with customs fee (romance_giftparcel)
 
-- [ ] A34. I sent you a gift from abroad but it is stuck at customs. Please pay the release fee so I can send it.  
+- [x] A34. I sent you a gift from abroad but it is stuck at customs. Please pay the release fee so I can send it.  
       Fix:
-- [ ] A35. Nagpadala ako ng regalo mula abroad pero naipit sa customs. Pakibayaran ang release fee para maipadala ko.  
+- [x] A35. Nagpadala ako ng regalo mula abroad pero naipit sa customs. Pakibayaran ang release fee para maipadala ko.  
       Fix:
-- [ ] A36. Nag-send ako ng gift from abroad pero stuck sa customs. Bayaran mo muna release fee para ma-deliver.  
+- [x] A36. Nag-send ako ng gift from abroad pero stuck sa customs. Bayaran mo muna release fee para ma-deliver.  
       Fix:
 
 ## B. Ordinary-message examples (used to avoid false alarms)
