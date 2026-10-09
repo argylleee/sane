@@ -198,13 +198,68 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": ["eval/heldout/", "docs/tasks/TASK-208.md", "docs/tasks/TASK-208-handoff.md"],
       "writeResources": [],
       "dependsOn": ["TASK-201", "TASK-202", "TASK-205", "TASK-207"],
       "branch": "codex/feat/task-208-heldout-eval",
       "worktree": "task-208",
       "baseRevision": "29edcc754f5e5778bfae5d657a8c09f1493f70d5"
+    },
+    {
+      "id": "TASK-209",
+      "allocation": 1,
+      "role": "frontend",
+      "owner": "frontend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ui/",
+        "src/styles.css",
+        "specs/task-209-ai-explanation-ui/",
+        "docs/tasks/TASK-209.md",
+        "docs/tasks/TASK-209-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-206"],
+      "branch": "codex/feat/task-209-ai-explanation-ui",
+      "worktree": "task-209",
+      "baseRevision": "77f92550ed6d82eb8c948b788317197ee60ccc57"
+    },
+    {
+      "id": "TASK-210",
+      "allocation": 1,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": ["src/pipeline/", "docs/tasks/TASK-210.md", "docs/tasks/TASK-210-handoff.md"],
+      "writeResources": [],
+      "dependsOn": ["TASK-205"],
+      "branch": "codex/feat/task-210-llm-pipeline-hook",
+      "worktree": "task-210",
+      "baseRevision": "77f92550ed6d82eb8c948b788317197ee60ccc57"
+    },
+    {
+      "id": "TASK-211",
+      "allocation": 1,
+      "role": "model",
+      "owner": "model-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ai/llm.ts",
+        "src/ai/llmPrompt.ts",
+        "src/ai/llmPrompt.test.ts",
+        "eval/llm/",
+        "docs/tasks/TASK-211.md",
+        "docs/tasks/TASK-211-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-202"],
+      "branch": "codex/feat/task-211-llm-guards",
+      "worktree": "task-211",
+      "baseRevision": "77f92550ed6d82eb8c948b788317197ee60ccc57"
     }
   ]
 }
