@@ -525,7 +525,9 @@ export function App() {
   const feedbackText = feedback ? copy[feedback] : null;
 
   return (
-    <div className="min-h-[100dvh] flex flex-col selection:bg-primary selection:text-white">
+    <div
+      className={`min-h-[100dvh] flex flex-col selection:bg-primary selection:text-white ${screen === 'welcome' ? 'home-shell' : ''}`}
+    >
       <ModelReadyNotification state={embeddingStatus.state} copy={copy} />
       <header
         className={`sticky top-0 z-50 flex h-16 items-center px-4 md:px-8 gap-4 bg-background/90 backdrop-blur-md border-b border-border transition-colors ${screen === 'result' ? 'bg-surface/90' : ''}`}
@@ -563,7 +565,9 @@ export function App() {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-16 flex flex-col relative overflow-hidden">
+      <main
+        className={`flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-16 flex flex-col relative overflow-hidden ${screen === 'welcome' ? 'home-main' : ''}`}
+      >
         <AnimatePresence mode="wait">
           {screen === 'welcome' && (
             <motion.section
@@ -1173,8 +1177,8 @@ export function App() {
         </AnimatePresence>
       </main>
       <footer className="site-footer w-full mt-auto">
-        <div className="mx-auto flex max-w-6xl flex-col md:flex-row items-center justify-between gap-8 px-4 sm:px-6 md:px-8 py-10 sm:py-12 text-sm text-secondary">
-          <div className="flex flex-col items-center md:items-start gap-3">
+        <div className="footer-inner mx-auto flex max-w-6xl flex-col md:flex-row items-center justify-between gap-8 px-4 sm:px-6 md:px-8 py-10 sm:py-12 text-sm text-secondary">
+          <div className="footer-brand flex flex-col items-center md:items-start gap-3">
             <button
               type="button"
               onClick={() => setScreen('welcome')}
@@ -1189,7 +1193,7 @@ export function App() {
             </button>
             <p>{copy.footerSlogan}</p>
           </div>
-          <div className="text-center md:text-right space-y-3">
+          <div className="footer-credit text-center md:text-right space-y-3">
             <p>
               {copy.footerDevelopedBy} <span className="footer-team">What if I Call</span>
             </p>

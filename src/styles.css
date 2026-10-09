@@ -423,6 +423,81 @@ button.brand-action {
   background: color-mix(in srgb, var(--color-surface) 30%, var(--color-background));
 }
 
+/* Keep the footer inside the full-height home composition with a quiet surface boundary. */
+.home-shell {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.home-shell > header {
+  flex-shrink: 0;
+}
+.home-shell .home-main {
+  padding-top: 1.5rem;
+  padding-bottom: calc(8rem + env(safe-area-inset-bottom));
+}
+.home-shell .home-hero {
+  padding-block: 0;
+  gap: 1rem;
+}
+.home-shell .home-copy {
+  gap: 1.25rem;
+}
+.home-shell .home-mascot-wrap {
+  width: clamp(10rem, 26dvh, 16rem);
+}
+.home-shell .site-footer {
+  position: absolute;
+  inset: auto 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 55%, var(--color-background));
+}
+.home-shell .footer-inner {
+  gap: 0.75rem;
+  padding-block: 1rem calc(1.25rem + env(safe-area-inset-bottom));
+}
+.home-shell .footer-brand {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+}
+.home-shell .footer-brand img {
+  height: 1.5rem;
+}
+.home-shell .footer-credit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  font-size: 0.8125rem;
+}
+.home-shell .footer-credit > p {
+  margin-block: 0;
+}
+.home-shell .footer-team {
+  font-size: 0.875rem;
+}
+@media (min-width: 1024px) {
+  .home-shell .home-main {
+    padding-top: 2rem;
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  }
+  .home-shell .home-hero {
+    gap: 3.5rem;
+  }
+  .home-shell .home-copy {
+    gap: 2rem;
+  }
+  .home-shell .home-mascot-wrap {
+    width: min(100%, 25rem);
+  }
+  .home-shell .footer-inner {
+    padding-block: 1.5rem calc(1.5rem + env(safe-area-inset-bottom));
+  }
+}
+
 .footer-team {
   font-family: var(--font-display);
   font-size: 1rem;
