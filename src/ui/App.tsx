@@ -19,9 +19,6 @@ import {
   Scan,
   Info,
   GlobeSimple,
-  Sun,
-  Moon,
-  Desktop,
 } from '@phosphor-icons/react';
 
 const MAX_MESSAGE_LENGTH = 2_000;
@@ -29,7 +26,7 @@ const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const LANGUAGES: readonly Lang[] = ['en', 'fil', 'taglish'];
 const LANGUAGE_NAMES: Record<Lang, string> = { en: 'English', fil: 'Filipino', taglish: 'Taglish' };
 type Screen = 'welcome' | 'scan' | 'result' | 'learn';
-type Theme = 'system' | 'light' | 'dark';
+
 type OcrState = 'idle' | 'loading' | 'ready' | 'error';
 type FeedbackKey =
   | 'clipboardUnavailable'
@@ -217,125 +214,6 @@ function LanguagePicker({
   );
 }
 
-function ThemeToggle({
-  theme,
-  onChange,
-  copy,
-}: {
-  theme: Theme;
-  onChange: (theme: Theme) => void;
-  copy: ReturnType<typeof copyFor>;
-}) {
-  const [open, setOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
-    }
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [open]);
-
-  const isDark =
-    theme === 'dark' ||
-    (theme === 'system' &&
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-  return (
-    <div className="relative" ref={containerRef}>
-      <Button
-        isIconOnly
-        variant="ghost"
-        size="sm"
-        aria-label={copy.themeLabel}
-        aria-haspopup="menu"
-        aria-expanded={open}
-        className="h-9 w-9 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
-        onPress={() => setOpen((prev) => !prev)}
-      >
-        <motion.div
-          key={isDark ? 'dark' : 'light'}
-          initial={{ rotate: -90, scale: 0.8, opacity: 0 }}
-          animate={{ rotate: 0, scale: 1, opacity: 1 }}
-          exit={{ rotate: 90, scale: 0.8, opacity: 0 }}
-          transition={{ duration: 0.15 }}
-          className="flex items-center justify-center"
-        >
-          {theme === 'system' ? (
-            <Desktop
-              size={19}
-              weight="bold"
-              className="text-secondary hover:text-text transition-colors"
-            />
-          ) : isDark ? (
-            <Sun
-              size={19}
-              weight="bold"
-              className="text-caution hover:scale-110 transition-transform"
-            />
-          ) : (
-            <Moon
-              size={19}
-              weight="bold"
-              className="text-secondary hover:text-text transition-colors"
-            />
-          )}
-        </motion.div>
-      </Button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -4 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -4 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-36 bg-surface/95 backdrop-blur-xl border border-border rounded-2xl shadow-xl p-1.5 z-50 overflow-hidden"
-            role="menu"
-            aria-label={copy.themeLabel}
-          >
-            {[
-              { id: 'light' as const, label: copy.themeLight, icon: Sun },
-              { id: 'dark' as const, label: copy.themeDark, icon: Moon },
-              { id: 'system' as const, label: copy.themeSystem, icon: Desktop },
-            ].map(({ id, label, icon: IconComponent }) => {
-              const isSelected = theme === id;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    onChange(id);
-                    setOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
-                    isSelected
-                      ? 'bg-primary-tonal text-primary font-bold'
-                      : 'text-text hover:bg-neutral'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <IconComponent size={15} weight={isSelected ? 'bold' : 'regular'} />
-                    {label}
-                  </span>
-                  {isSelected && <span className="text-primary text-xs font-bold">✓</span>}
-                </button>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 function MainNavigation({
   screen,
   onNavigate,
@@ -345,7 +223,7 @@ function MainNavigation({
 }) {
   return (
     <nav
-      className="inline-flex items-center bg-surface/80 border border-border/80 backdrop-blur-xl p-1 rounded-full shadow-xs"
+      className="inline-flex items-center bg-highlight border border-border/80 backdrop-blur-xl p-1 rounded-full shadow-xs"
       role="tablist"
       aria-orientation="horizontal"
       aria-label="Main navigation"
@@ -382,7 +260,7 @@ function MainNavigation({
 export function App() {
   const [screen, setScreen] = useState<Screen>('welcome');
   const [lang, setLang] = useState<Lang>('en');
-  const [theme, setTheme] = useState<Theme>('system');
+
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [ocrState, setOcrState] = useState<OcrState>('idle');
@@ -543,21 +421,6 @@ export function App() {
     document.documentElement.lang = lang === 'taglish' ? 'en-PH' : lang;
   }, [lang]);
 
-  useEffect(() => {
-    const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    const applyTheme = () => {
-      const resolved = theme === 'system' ? (colorScheme.matches ? 'dark' : 'light') : theme;
-      document.documentElement.dataset.theme = resolved;
-      document.documentElement.classList.toggle('dark', resolved === 'dark');
-    };
-
-    applyTheme();
-    if (theme !== 'system') return;
-
-    colorScheme.addEventListener('change', applyTheme);
-    return () => colorScheme.removeEventListener('change', applyTheme);
-  }, [theme]);
-
   async function pasteFromClipboard() {
     setFeedback(null);
     if (!navigator.clipboard?.readText) {
@@ -633,14 +496,14 @@ export function App() {
   return (
     <div className="min-h-[100dvh] flex flex-col selection:bg-primary selection:text-white">
       <header
-        className={`sticky top-0 z-50 flex h-16 items-center px-4 md:px-8 gap-4 glass-panel border-b border-border transition-colors ${screen === 'result' ? 'bg-surface/90' : ''}`}
+        className={`sticky top-0 z-50 flex h-16 items-center px-4 md:px-8 gap-4 bg-background/90 backdrop-blur-md border-b border-border transition-colors ${screen === 'result' ? 'bg-surface/90' : ''}`}
       >
         {screen === 'result' ? (
           <Button
             isIconOnly
             variant="ghost"
             size="sm"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface border border-border hover:bg-neutral active:scale-[0.98] transition-all text-text cursor-pointer"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface border border-transparent hover:bg-highlight active:scale-[0.98] transition-all text-text cursor-pointer"
             aria-label={copy.backToScan}
             onPress={() => setScreen('scan')}
           >
@@ -662,7 +525,6 @@ export function App() {
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <LanguagePicker lang={lang} onChange={setLang} label={copy.languageLabel} />
-          <ThemeToggle theme={theme} onChange={setTheme} copy={copy} />
         </div>
       </header>
 
@@ -714,14 +576,14 @@ export function App() {
               </div>
 
               <div className="grid gap-4 w-full max-w-md mx-auto md:ml-auto">
-                <div className="glass-panel rounded-2xl p-6 md:p-8 space-y-3">
+                <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3">
                   <div className="h-12 w-12 rounded-full bg-primary-tonal text-primary flex items-center justify-center mb-4">
                     <ClipboardText size={24} weight="fill" />
                   </div>
                   <h2 className="text-xl font-bold tracking-tight">{copy.manualTitle}</h2>
                   <p className="text-sm text-secondary leading-relaxed">{copy.manualDescription}</p>
                 </div>
-                <div className="glass-panel rounded-2xl p-6 md:p-8 space-y-3">
+                <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3">
                   <div className="h-12 w-12 rounded-full bg-primary-tonal text-primary flex items-center justify-center mb-4">
                     <ShieldCheck size={24} weight="fill" />
                   </div>
@@ -753,7 +615,7 @@ export function App() {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="glass-panel rounded-2xl p-4 flex items-center justify-between gap-4"
+                      className="clay-panel rounded-2xl p-4 flex items-center justify-between gap-4"
                       aria-live="polite"
                     >
                       <div className="flex items-center gap-3 overflow-hidden">
@@ -795,7 +657,7 @@ export function App() {
                           setMessage(event.currentTarget.value);
                           setFeedback(null);
                         }}
-                        className="w-full bg-surface border border-border rounded-2xl p-5 pb-10 text-base text-text placeholder:text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-y min-h-[180px]"
+                        className="w-full clay-inset p-5 pb-10 text-base text-text placeholder:text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-y min-h-[180px]"
                       />
                       <div
                         id="message-count"
@@ -818,7 +680,7 @@ export function App() {
                       variant="outline"
                       size="md"
                       fullWidth
-                      className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface border border-border hover:bg-neutral active:scale-95 transition-all duration-150 rounded-xl font-bold text-sm text-text shadow-xs cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface transition-all duration-150 rounded-xl font-bold text-sm text-text cursor-pointer"
                       onPress={pasteFromClipboard}
                     >
                       <ClipboardText size={18} /> {copy.paste}
@@ -827,7 +689,7 @@ export function App() {
                       variant="outline"
                       size="md"
                       fullWidth
-                      className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface border border-border hover:bg-neutral active:scale-95 transition-all duration-150 rounded-xl font-bold text-sm text-text shadow-xs cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface transition-all duration-150 rounded-xl font-bold text-sm text-text cursor-pointer"
                       onPress={() => fileInput.current?.click()}
                     >
                       <UploadSimple size={18} /> {copy.upload}
@@ -910,7 +772,7 @@ export function App() {
               </div>
 
               <aside className="space-y-6 lg:pt-16">
-                <div className="glass-panel rounded-2xl p-6">
+                <div className="clay-panel rounded-2xl p-6">
                   <h2 className="text-base font-bold text-text tracking-tight mb-2 flex items-center gap-2">
                     <ShieldCheck size={18} className="text-good" /> {copy.readyTitle}
                   </h2>
@@ -976,7 +838,7 @@ export function App() {
                   </div>
 
                   {/* Summary & Next Step */}
-                  <div className="glass-panel rounded-2xl p-6 space-y-6">
+                  <div className="clay-panel rounded-2xl p-6 space-y-6">
                     <p className="text-lg leading-relaxed text-text font-medium">
                       {copy.assessment[verdict.level].summary}
                     </p>
@@ -996,7 +858,7 @@ export function App() {
 
                   {/* LLM Explanation */}
                   {verdict.explanation.extra && (
-                    <div className="glass-panel rounded-2xl p-6 space-y-3">
+                    <div className="clay-panel rounded-2xl p-6 space-y-3">
                       <h3 className="font-bold text-text">{copy.llmExplanationTitle}</h3>
                       <p className="text-sm text-text whitespace-pre-wrap leading-relaxed">
                         {verdict.explanation.extra}
@@ -1006,7 +868,7 @@ export function App() {
                   )}
 
                   {/* Evidence / Signals */}
-                  <div className="glass-panel rounded-2xl p-6 space-y-4">
+                  <div className="clay-panel rounded-2xl p-6 space-y-4">
                     <h3 className="font-bold text-text">{copy.rulesTitle}</h3>
                     {verdict.signals.length > 0 ? (
                       <ul className="space-y-3">
@@ -1029,7 +891,7 @@ export function App() {
                   </div>
 
                   {verdict.level === 'probably_fine' && (
-                    <aside className="glass-panel bg-neutral/50 rounded-2xl p-6 space-y-2">
+                    <aside className="clay-panel bg-neutral/50 rounded-2xl p-6 space-y-2">
                       <h3 className="font-bold text-text">{copy.notAGuaranteeTitle}</h3>
                       <p className="text-sm text-secondary">{copy.notAGuarantee}</p>
                     </aside>
@@ -1047,7 +909,7 @@ export function App() {
 
                 <aside className="space-y-6">
                   {/* Original Message */}
-                  <div className="glass-panel rounded-2xl p-6 space-y-4">
+                  <div className="clay-panel rounded-2xl p-6 space-y-4">
                     <h3 className="font-bold text-text">{copy.originalTitle}</h3>
                     <div className="bg-surface border border-border rounded-xl p-4 text-sm text-text/90 leading-relaxed font-mono whitespace-pre-wrap max-h-64 overflow-y-auto shadow-inner">
                       {resultMessage ? (
@@ -1071,7 +933,7 @@ export function App() {
                   </div>
 
                   {/* Tech stack transparency */}
-                  <div className="glass-panel rounded-2xl p-6 space-y-3">
+                  <div className="clay-panel rounded-2xl p-6 space-y-3">
                     <h3 className="text-sm font-bold uppercase tracking-widest text-secondary">
                       {copy.modelTitle}
                     </h3>
@@ -1114,7 +976,7 @@ export function App() {
                       variant="outline"
                       size="md"
                       fullWidth
-                      className="w-full py-3 bg-surface border border-border hover:bg-neutral text-primary font-bold text-sm rounded-xl active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 bg-surface text-primary font-bold text-sm rounded-xl transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer"
                       onPress={promptInstall}
                     >
                       {copy.installApp}
@@ -1144,7 +1006,7 @@ export function App() {
 
               <div className="grid gap-6">
                 {copy.guides.map((guide) => (
-                  <div className="glass-panel rounded-2xl p-6 md:p-8 space-y-3" key={guide.title}>
+                  <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3" key={guide.title}>
                     <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
                       <div className="h-8 w-8 rounded-full bg-primary-tonal text-primary flex items-center justify-center shrink-0">
                         <Info size={20} weight="bold" />
@@ -1156,7 +1018,7 @@ export function App() {
                 ))}
               </div>
 
-              <aside className="glass-panel bg-neutral/50 rounded-2xl p-6 md:p-8 text-center space-y-3">
+              <aside className="clay-panel bg-neutral/50 rounded-2xl p-6 md:p-8 text-center space-y-3">
                 <h2 className="font-bold text-text">{copy.learnDisclaimerTitle}</h2>
                 <p className="text-sm text-secondary">{copy.learnDisclaimer}</p>
               </aside>

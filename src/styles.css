@@ -16,41 +16,30 @@
   --color-caution-surface: var(--color-caution-surface);
   --color-good: var(--color-good);
   --color-good-surface: var(--color-good-surface);
+  --color-highlight: var(--color-highlight);
 }
 
 @layer base {
-  :root {
-    --color-background: #f8f9f7;
-    --color-surface: #ffffff;
-    --color-primary: #124f38; /* Deep green */
-    --color-primary-tonal: #dcebe0;
-    --color-on-primary: #ffffff;
-    --color-text: #17241c;
-    --color-secondary: #4d5d52;
-    --color-border: #e5eae6;
-    --color-high: #a62828;
-    --color-high-surface: #fbe7e5;
-    --color-caution: #9e7000;
-    --color-caution-surface: #ffefc9;
-    --color-good: #124f38;
-    --color-good-surface: #dcebe0;
-  }
+  :root,
+  [data-theme='dark'],
+  [data-theme='light'] {
+    --color-background: #dce9e0; /* Sage green main background */
+    --color-surface: #c5d8cb; /* Raised surfaces */
+    --color-highlight: #f7f5ee; /* Light surfaces and highlights / Cream */
+    --color-primary: #79b99a; /* Mint green / Primary actions */
+    --color-primary-tonal: rgba(121, 185, 154, 0.25);
+    --color-on-primary: #244b3b; /* Dark green text on mint */
+    --color-text: #244b3b; /* Primary text */
+    --color-secondary: #53685c; /* Secondary text */
+    --color-border: rgba(36, 75, 59, 0.1);
 
-  [data-theme='dark'] {
-    --color-background: #0b100d;
-    --color-surface: #131b16;
-    --color-primary: #75c698;
-    --color-primary-tonal: #1e3025;
-    --color-on-primary: #0a1f13;
-    --color-text: #e9f0e8;
-    --color-secondary: #a0b2a3;
-    --color-border: #2a3b31;
-    --color-high: #ffb4ab;
-    --color-high-surface: #3b1212;
-    --color-caution: #f0cc75;
-    --color-caution-surface: #3d2d00;
-    --color-good: #75c698;
-    --color-good-surface: #1e3025;
+    /* Semantic colors adapted to blend with the Sage & Cream palette */
+    --color-high: #a93f3f;
+    --color-high-surface: rgba(169, 63, 63, 0.12);
+    --color-caution: #9e7000;
+    --color-caution-surface: rgba(158, 112, 0, 0.12);
+    --color-good: #2e6b4b;
+    --color-good-surface: rgba(46, 107, 75, 0.12);
   }
 
   html {
@@ -74,149 +63,101 @@
 }
 
 @layer utilities {
-  .glass-panel {
-    @apply bg-surface/80 backdrop-blur-xl border border-white/20 dark:border-white/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)];
+  .clay-panel {
+    @apply bg-surface rounded-3xl border border-highlight/60 shadow-[8px_8px_16px_rgba(163,188,172,0.6),-8px_-8px_16px_rgba(255,255,255,0.7),inset_1px_1px_2px_rgba(255,255,255,0.4)];
+  }
+
+  .clay-inset {
+    @apply bg-background rounded-2xl shadow-[inset_4px_4px_8px_rgba(163,188,172,0.7),inset_-4px_-4px_8px_rgba(255,255,255,0.8)] border border-transparent focus:border-primary/50 transition-colors;
   }
 }
 
 @layer components {
-  .button--full-width {
-    width: 100%;
-  }
-
-  /* Universal button polish and click tactile base */
+  /* Universal button polish and claymorphism tactile base */
   button:not(:disabled),
   [data-slot='button']:not([aria-disabled='true']),
   [role='button']:not([aria-disabled='true']) {
     position: relative;
     overflow: hidden;
     transition:
-      transform 160ms cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 180ms ease,
-      opacity 120ms ease;
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 200ms ease,
+      background-color 200ms ease,
+      opacity 150ms ease;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
 
-  button:not(:disabled):active,
-  [data-slot='button']:not([aria-disabled='true']):active,
-  [role='button']:not([aria-disabled='true']):active {
-    transform: scale(0.94) translateY(1px);
+  /* Primary Button - Soft Lift and Press */
+  button.bg-primary:not(:disabled),
+  .bg-primary[role='button']:not([aria-disabled='true']) {
+    box-shadow:
+      6px 6px 12px rgba(163, 188, 172, 0.6),
+      -6px -6px 12px rgba(255, 255, 255, 0.8),
+      inset 1px 1px 1px rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
-  /* Cool elastic spring pop and shockwave ring upon click */
-  .button-clicked {
-    animation:
-      button-spring-pop 360ms cubic-bezier(0.2, 0.9, 0.3, 1.3),
-      button-shockwave-pulse 420ms cubic-bezier(0.1, 0.8, 0.3, 1) !important;
+  /* Hover state for primary */
+  @media (hover: hover) {
+    button.bg-primary:not(:disabled):hover,
+    .bg-primary[role='button']:not([aria-disabled='true']):hover {
+      transform: translateY(-2px);
+      box-shadow:
+        8px 8px 16px rgba(163, 188, 172, 0.7),
+        -8px -8px 16px rgba(255, 255, 255, 0.9),
+        inset 1px 2px 2px rgba(255, 255, 255, 0.6);
+      background-color: #85c2a4; /* Slightly lighter mint */
+    }
+
+    /* Hover state for secondary (inset to raised) */
+    button.bg-surface:not(:disabled):hover,
+    .bg-surface[role='button']:not([aria-disabled='true']):hover {
+      box-shadow:
+        4px 4px 10px rgba(163, 188, 172, 0.5),
+        -4px -4px 10px rgba(255, 255, 255, 0.7),
+        inset 1px 1px 1px rgba(255, 255, 255, 0.6);
+      transform: translateY(-1px);
+    }
   }
 
-  /* Shimmer sheen passing over the button surface */
-  .button-clicked::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-      110deg,
-      transparent 20%,
-      rgba(255, 255, 255, 0.28) 50%,
-      transparent 80%
-    );
-    transform: translateX(-100%);
-    animation: button-gleam 420ms ease-out forwards;
-    pointer-events: none;
-    z-index: 10;
+  /* Active/Press state for primary */
+  button.bg-primary:not(:disabled):active,
+  .bg-primary[role='button']:not([aria-disabled='true']):active {
+    transform: scale(0.97) translateY(1px) !important;
+    box-shadow:
+      2px 2px 5px rgba(163, 188, 172, 0.4),
+      -2px -2px 5px rgba(255, 255, 255, 0.5),
+      inset 2px 2px 5px rgba(36, 75, 59, 0.15) !important;
   }
 
-  /* Liquid ripple wave expanding from click position */
-  .btn-ripple-wave {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    background: radial-gradient(
-      circle,
-      currentColor 0%,
-      rgba(255, 255, 255, 0.45) 35%,
-      transparent 70%
-    );
-    opacity: 0.35;
-    transform: translate(-50%, -50%) scale(0);
-    animation: btn-ripple-spread 520ms cubic-bezier(0.12, 0.8, 0.25, 1) forwards;
-    z-index: 5;
-    will-change: transform, opacity;
+  /* Secondary Button - Inset to Raised */
+  button.bg-surface:not(:disabled),
+  .bg-surface[role='button']:not([aria-disabled='true']) {
+    background-color: var(--color-background);
+    border: 1px solid transparent;
+    box-shadow:
+      inset 2px 2px 5px rgba(163, 188, 172, 0.4),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.6);
   }
 
-  /* Micro-sparkle floating particles */
-  .btn-click-particle {
-    position: fixed;
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%) translate(0, 0) scale(1);
-    animation: particle-burst 450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    z-index: 9999;
-    will-change: transform, opacity;
+  /* Active/Press state for secondary */
+  button.bg-surface:not(:disabled):active,
+  .bg-surface[role='button']:not([aria-disabled='true']):active {
+    transform: scale(0.97) translateY(1px) !important;
+    box-shadow:
+      inset 4px 4px 8px rgba(163, 188, 172, 0.6),
+      inset -4px -4px 8px rgba(255, 255, 255, 0.8) !important;
   }
-}
 
-@keyframes button-spring-pop {
-  0% {
-    transform: scale(0.92) translateY(1.5px);
-  }
-  38% {
-    transform: scale(1.04) translateY(-1px);
-  }
-  68% {
-    transform: scale(0.985) translateY(0.5px);
-  }
-  100% {
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes button-shockwave-pulse {
-  0% {
-    box-shadow: 0 0 0 0 var(--color-primary-tonal, rgba(18, 79, 56, 0.5));
-  }
-  50% {
-    box-shadow: 0 0 0 7px rgba(117, 198, 152, 0.35);
-  }
-  100% {
-    box-shadow: 0 0 0 14px rgba(117, 198, 152, 0);
-  }
-}
-
-@keyframes button-gleam {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes btn-ripple-spread {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0.42;
-  }
-  60% {
-    opacity: 0.22;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(2.8);
-    opacity: 0;
-  }
-}
-
-@keyframes particle-burst {
-  0% {
-    transform: translate(-50%, -50%) translate(0, 0) scale(1.3);
-    opacity: 0.95;
-  }
-  100% {
-    transform: translate(-50%, -50%) translate(var(--p-tx), var(--p-ty)) scale(0);
-    opacity: 0;
+  /* Disabled States */
+  button:disabled,
+  [data-slot='button'][aria-disabled='true'] {
+    opacity: 0.6;
+    box-shadow: none !important;
+    transform: none !important;
+    background-color: rgba(197, 216, 203, 0.5) !important;
+    color: var(--color-secondary) !important;
   }
 }
 
