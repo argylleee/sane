@@ -1,0 +1,10 @@
+{
+  "name": "Sane",
+  "short_name": "Sane",
+  "description": "Check a suspicious message privately. Everything runs on your device.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f766e",
+  "icons": []
+}

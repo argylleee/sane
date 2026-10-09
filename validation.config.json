@@ -1,6 +1,6 @@
 {
   "application": {
-    "status": "not-selected",
-    "scripts": []
+    "status": "configured",
+    "scripts": ["typecheck", "test:app", "build"]
   }
 }
