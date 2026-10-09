@@ -95,6 +95,9 @@ function request(body: RequestBody, timeoutMs?: number): Promise<WorkerResponse>
 // The WASM runtime is self-hosted under <app base>/ort/ so no check or load reaches a public CDN.
 const envSource: ModelSource = {
   modelBaseUrl: import.meta.env.VITE_MODEL_BASE_URL || undefined,
+  // The model is hosted next to the app (public/models/); if that is missing the worker uses Hugging Face.
+  hostedBase:
+    typeof document === 'undefined' ? undefined : new URL('models/', document.baseURI).href,
   wasmBaseUrl:
     import.meta.env.VITE_WASM_BASE_URL ||
     (typeof document === 'undefined' ? undefined : new URL('ort/', document.baseURI).href),

@@ -32,7 +32,10 @@ ctx.onmessage = async (event) => {
         (progress) => ctx.postMessage({ id: request.id, type: 'progress', progress }),
         'wasm',
         request.source,
-      );
+      ).catch((error) => {
+        embedder = undefined; // do not keep a failed load, so a retry starts again
+        throw error;
+      });
       await embedder;
       ctx.postMessage({ id: request.id, type: 'ready' });
     } else {

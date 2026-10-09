@@ -1,6 +1,7 @@
 // OWNER: model. Environment-neutral embedding loader, shared by the browser worker and Node probes.
 // Model: multilingual-e5-small (MIT upstream intfloat/multilingual-e5-small), int8 ONNX build.
 import { env, pipeline } from '@huggingface/transformers';
+import { createHostedCache, evictHosted, loadManifest, type Manifest } from './hostedModel';
 
 export const EMBEDDING_MODEL_ID = 'Xenova/multilingual-e5-small';
 
@@ -18,9 +19,18 @@ export type LoadProgress = {
 export type ModelSource = {
   /** Base URL that serves `<modelId>/...` files, e.g. `https://example.com/models/`. */
   modelBaseUrl?: string;
+  /**
+   * Try the model hosted next to the app: `<hostedBase>manifest.json` plus the files it lists (the ONNX
+   * file in parts, see scripts/split-model.mjs). Any problem falls back to the Hugging Face download.
+   * Ignored when modelBaseUrl is set.
+   */
+  hostedBase?: string;
   /** Base URL that serves onnxruntime-web `.wasm`/`.mjs` files (default is a public CDN). */
   wasmBaseUrl?: string;
 };
+
+// Defaults of the library, kept so a failed hosted load can fall back to Hugging Face.
+const DEFAULT_REMOTE = { host: env.remoteHost, template: env.remotePathTemplate };
 
 export type Embed = (texts: string[], kind: EmbedKind) => Promise<Float32Array[]>;
 
@@ -44,6 +54,24 @@ export async function createEmbedder(
       : `${source.modelBaseUrl}/`;
     env.remotePathTemplate = '{model}/';
   }
+  let hosted = false;
+  let hostedManifest: Manifest | undefined;
+  let hostedBase = '';
+  if (!source.modelBaseUrl && source.hostedBase) {
+    const manifest = await loadManifest(source.hostedBase);
+    if (manifest) {
+      const base = source.hostedBase.endsWith('/') ? source.hostedBase : `${source.hostedBase}/`;
+      env.allowLocalModels = false;
+      env.allowRemoteModels = true;
+      env.remoteHost = base;
+      env.remotePathTemplate = '{model}/';
+      env.useCustomCache = true;
+      env.customCache = createHostedCache({ base, manifest });
+      hosted = true;
+      hostedManifest = manifest;
+      hostedBase = base;
+    }
+  }
   if (source.wasmBaseUrl) {
     // Same variant choice as the library's CDN default: "asyncify", or the plain build on older
     // Safari. Both files must be served from wasmBaseUrl (see vite.config.ts).
@@ -59,11 +87,27 @@ export async function createEmbedder(
       wasm: `${base}ort-wasm-simd-threaded${suffix}.wasm`,
     };
   }
-  const extractor = (await pipeline('feature-extraction', EMBEDDING_MODEL_ID, {
-    dtype: 'q8',
-    device,
-    progress_callback: onProgress,
-  } as never)) as unknown as Extractor;
+  const load = async () =>
+    (await pipeline('feature-extraction', EMBEDDING_MODEL_ID, {
+      dtype: 'q8',
+      device,
+      progress_callback: onProgress,
+    } as never)) as unknown as Extractor;
+  let extractor: Extractor;
+  try {
+    extractor = await load();
+  } catch (error) {
+    if (!hosted) throw error;
+    // The hosted copy failed (missing part, bad checksum, blocked): use the public download instead.
+    console.warn('Hosted model failed, falling back to Hugging Face:', error);
+    if (hostedManifest) await evictHosted(hostedBase, hostedManifest); // do not keep a damaged copy
+    env.useCustomCache = false;
+    env.customCache = null;
+    env.allowLocalModels = true;
+    env.remoteHost = DEFAULT_REMOTE.host;
+    env.remotePathTemplate = DEFAULT_REMOTE.template;
+    extractor = await load();
+  }
 
   return async (texts, kind) => {
     // The e5 model card requires a "query: " or "passage: " prefix on every input.
