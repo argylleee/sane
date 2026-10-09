@@ -124,8 +124,7 @@ button:disabled {
   margin-left: auto;
 }
 
-.language-picker select,
-.theme-picker select {
+.language-picker select {
   min-height: 2.75rem;
   padding: 0 2rem 0 0.75rem;
   border: 1px solid transparent;
@@ -133,20 +132,6 @@ button:disabled {
   background: var(--color-background);
   color: var(--color-secondary);
   font-size: 0.875rem;
-}
-
-.theme-picker {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  gap: 0.125rem;
-  color: var(--color-secondary);
-  font-size: 0.75rem;
-  white-space: nowrap;
-}
-
-.theme-picker select {
-  padding: 0 1rem 0 0.5rem;
 }
 
 .back-button {
@@ -258,6 +243,7 @@ p {
 }
 
 .welcome-content {
+  width: 100%;
   max-width: 31rem;
 }
 
@@ -744,11 +730,6 @@ p {
 
   .detail-block + .detail-block {
     padding-block: 1.5rem 0.75rem;
-  }
-
-  .welcome-start {
-    width: auto;
-    min-width: 18rem;
   }
 
   .scan-layout {

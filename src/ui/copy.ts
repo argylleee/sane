@@ -17,10 +17,6 @@ type Copy = {
   welcomeTitle: string;
   welcomeDescription: string;
   languageLabel: string;
-  themeLabel: string;
-  themeSystem: string;
-  themeLight: string;
-  themeDark: string;
   manualLabel: string;
   manualTitle: string;
   manualDescription: string;
@@ -86,10 +82,6 @@ export const COPY: Record<Lang, Copy> = {
     welcomeTitle: 'Check a suspicious message',
     welcomeDescription: 'Paste a message to check for possible scam signs.',
     languageLabel: 'Language',
-    themeLabel: 'Theme',
-    themeSystem: 'System',
-    themeLight: 'Light',
-    themeDark: 'Dark',
     manualLabel: 'Manual check',
     manualTitle: 'You choose what to paste',
     manualDescription: 'Sane does not automatically read your clipboard.',
@@ -209,10 +201,6 @@ export const COPY: Record<Lang, Copy> = {
     welcomeTitle: 'Suriin ang kahina-hinalang mensahe',
     welcomeDescription: 'I-paste ang mensahe para tingnan kung may senyales ng scam.',
     languageLabel: 'Wika',
-    themeLabel: 'Tema',
-    themeSystem: 'Ayon sa device',
-    themeLight: 'Maliwanag',
-    themeDark: 'Madilim',
     manualLabel: 'Manu-manong pagsusuri',
     manualTitle: 'Ikaw ang pipili ng ipa-paste',
     manualDescription: 'Hindi awtomatikong binabasa ng Sane ang clipboard mo.',
@@ -333,10 +321,6 @@ export const COPY: Record<Lang, Copy> = {
     welcomeTitle: 'I-check ang suspicious na message',
     welcomeDescription: 'I-paste ang message para tingnan kung may possible scam signs.',
     languageLabel: 'Language',
-    themeLabel: 'Theme',
-    themeSystem: 'System',
-    themeLight: 'Light',
-    themeDark: 'Dark',
     manualLabel: 'Manual check',
     manualTitle: 'Ikaw ang pipili ng ipa-paste',
     manualDescription: 'Hindi automatic na binabasa ng Sane ang clipboard mo.',

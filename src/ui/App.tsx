@@ -7,9 +7,7 @@ import { copyFor } from './copy';
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const LANGUAGES: readonly Lang[] = ['en', 'fil', 'taglish'];
-const THEMES = ['system', 'light', 'dark'] as const;
 type Screen = 'welcome' | 'scan' | 'result' | 'learn';
-type Theme = (typeof THEMES)[number];
 type FeedbackKey =
   | 'clipboardUnavailable'
   | 'clipboardError'
@@ -112,34 +110,6 @@ function LanguagePicker({
   );
 }
 
-function ThemePicker({
-  theme,
-  onChange,
-  copy,
-}: {
-  theme: Theme;
-  onChange: (theme: Theme) => void;
-  copy: ReturnType<typeof copyFor>;
-}) {
-  return (
-    <label className="theme-picker">
-      <span>{copy.themeLabel}</span>
-      <select
-        aria-label={copy.themeLabel}
-        value={theme}
-        onChange={(event) => {
-          const selected = THEMES.find((option) => option === event.currentTarget.value);
-          if (selected) onChange(selected);
-        }}
-      >
-        <option value="system">{copy.themeSystem}</option>
-        <option value="light">{copy.themeLight}</option>
-        <option value="dark">{copy.themeDark}</option>
-      </select>
-    </label>
-  );
-}
-
 function MainNavigation({
   screen,
   copy,
@@ -172,7 +142,6 @@ function MainNavigation({
 export function App() {
   const [screen, setScreen] = useState<Screen>('welcome');
   const [lang, setLang] = useState<Lang>('en');
-  const [theme, setTheme] = useState<Theme>('system');
   const [message, setMessage] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [verdict, setVerdict] = useState<Verdict | null>(null);
@@ -192,16 +161,13 @@ export function App() {
   useEffect(() => {
     const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
     const applyTheme = () => {
-      document.documentElement.dataset.theme =
-        theme === 'system' ? (colorScheme.matches ? 'dark' : 'light') : theme;
+      document.documentElement.dataset.theme = colorScheme.matches ? 'dark' : 'light';
     };
 
     applyTheme();
-    if (theme !== 'system') return;
-
     colorScheme.addEventListener('change', applyTheme);
     return () => colorScheme.removeEventListener('change', applyTheme);
-  }, [theme]);
+  }, []);
 
   async function pasteFromClipboard() {
     setFeedback(null);
@@ -293,7 +259,7 @@ export function App() {
         >
           sane
         </button>
-        {(screen === 'scan' || screen === 'learn') && (
+        {screen !== 'result' && (
           <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />
         )}
         <LanguagePicker
@@ -302,7 +268,6 @@ export function App() {
           lang={lang}
           onChange={setLang}
         />
-        <ThemePicker theme={theme} onChange={setTheme} copy={copy} />
       </header>
 
       <main className={`page page--${screen}`}>
@@ -575,7 +540,7 @@ export function App() {
         )}
       </main>
 
-      {(screen === 'scan' || screen === 'learn') && (
+      {screen !== 'result' && (
         <nav className="mobile-navigation" aria-label="Main navigation">
           <MainNavigation screen={screen} copy={copy} onNavigate={setScreen} />
         </nav>
