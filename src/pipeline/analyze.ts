@@ -55,16 +55,45 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
 
     const matches = evidence?.matches ?? [];
     const { level, score: total, archetypeId } = score(signals, matches, evidence?.level);
-    return {
+    const verdict: Verdict = {
       level,
       score: total,
       signals: localizeSignals(signals, opts.lang),
       matches,
       archetypeId,
       lang: opts.lang,
-      explanation: explain(level, opts.lang),
+      explanation: { ...explain(level, opts.lang) },
       usedModels: { ocr, embeddings: evidence !== null, llm: false },
     };
+    if (opts.useLLM) {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      try {
+        const extra = await Promise.race([
+          (async () => {
+            const { explainWithLlm, archetypes } = await import('../ai');
+            return explainWithLlm({
+              level,
+              lang: opts.lang,
+              archetypeName: archetypes.find(({ id }) => id === archetypeId)?.name[opts.lang],
+              signals: verdict.signals.map(({ label }) => label),
+              text,
+            });
+          })(),
+          new Promise<null>((resolve) => {
+            timer = setTimeout(() => resolve(null), 15000);
+          }),
+        ]);
+        if (extra !== null) {
+          verdict.explanation.extra = extra;
+          verdict.usedModels.llm = true;
+        }
+      } catch {
+        // The optional explanation must never replace the computed verdict.
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+    return verdict;
   } catch {
     return fallback(opts, 'image' in input); // Fallback 4: never show a blank screen.
   }
