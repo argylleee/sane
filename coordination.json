@@ -117,7 +117,7 @@
       "role": "frontend",
       "owner": "frontend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/sw.ts",
         "src/main.tsx",
@@ -177,7 +177,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/rules/",
         "src/explain/",
