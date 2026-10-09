@@ -960,6 +960,14 @@ export function App() {
           </>
         )}
       </main>
+
+      <footer className="app-footer">
+        <div className="app-footer__inner">
+          <img className="app-footer__logo" src="/icons/sane-logo.svg" alt="Sane" />
+          <p>When in doubt, sane it out.</p>
+          <p className="app-footer__credits">What If I Call</p>
+        </div>
+      </footer>
     </div>
   );
 }
