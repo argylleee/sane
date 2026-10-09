@@ -168,8 +168,167 @@ const templates: Record<Lang, Record<Level, Verdict['explanation']>> = {
   },
 };
 
-export function explain(level: Level, lang: Lang): Verdict['explanation'] {
-  return templates[lang][level];
+type Advice = Record<Lang, string>;
+
+// One concrete, signal-specific step per red flag. Ordered from most to least important.
+const ADVICE: [string[], Advice][] = [
+  [
+    ['otp_pin_request'],
+    {
+      en: 'Never share an OTP, PIN or password. Real banks, wallets and agencies never ask for it.',
+      fil: 'Huwag kailanman ibigay ang OTP, PIN o password. Hindi ito hinihingi ng totoong bangko, wallet o ahensya.',
+      taglish:
+        'Never i-share ang OTP, PIN o password. Hindi ito hinihingi ng legit na bank, wallet o agency.',
+    },
+  ],
+  [
+    ['card_data_request'],
+    {
+      en: 'Do not give your card number, CVV or expiry date through a message.',
+      fil: 'Huwag ibigay ang numero, CVV o expiry ng card mo sa mensahe.',
+      taglish: 'Huwag i-send ang card number, CVV o expiry date mo sa message.',
+    },
+  ],
+  [
+    ['lookalike_domain'],
+    {
+      en: 'The link only looks like a known brand. Do not open it. Use the official app instead.',
+      fil: 'Kamukha lang ng kilalang brand ang link. Huwag itong buksan. Gamitin ang opisyal na app.',
+      taglish:
+        'Mukha lang legit ang link pero hindi. Huwag i-open. Sa official app ka na lang dumaan.',
+    },
+  ],
+  [
+    ['personal_data_request'],
+    {
+      en: 'Do not send IDs, selfies or account numbers to someone who messaged you first.',
+      fil: 'Huwag magpadala ng ID, selfie o account number sa taong unang nag-message sa iyo.',
+      taglish: 'Huwag mag-send ng ID, selfie o account number sa nag-message sa iyo nang biglaan.',
+    },
+  ],
+  [
+    ['relative_claims', 'relative_emergency'],
+    {
+      en: 'Call your relative on the number you already have before sending anything.',
+      fil: 'Tawagan muna ang kamag-anak sa dati niyang numero bago magpadala ng kahit ano.',
+      taglish: 'Tawagan muna ang relative mo sa old number niya bago mag-send ng kahit ano.',
+    },
+  ],
+  [
+    ['advance_fee', 'money_request', 'prize_or_job_bait'],
+    {
+      en: 'Do not pay a fee to receive a prize, loan, aid or package. Real ones do not charge first.',
+      fil: 'Huwag magbayad para makuha ang premyo, loan, ayuda o padala. Hindi naniningil muna ang totoo.',
+      taglish:
+        'Huwag mag-pay ng fee para ma-claim ang prize, loan, ayuda o parcel. Hindi naniningil muna ang legit.',
+    },
+  ],
+  [
+    ['delivery_scam'],
+    {
+      en: "Check the tracking number in the courier's official app, not through this message.",
+      fil: 'Tingnan ang tracking number sa opisyal na app ng courier, hindi sa mensaheng ito.',
+      taglish: 'I-check ang tracking number sa official app ng courier, hindi sa message na ito.',
+    },
+  ],
+  [
+    ['job_bait'],
+    {
+      en: 'Real employers do not ask you to pay, deposit or top up before you start.',
+      fil: 'Hindi pinagbabayad o pinagdedeposito ng totoong employer bago ka magsimula.',
+      taglish: 'Ang legit na employer, hindi ka pagbabayarin o pag-to-top up bago ka mag-start.',
+    },
+  ],
+  [
+    ['investment_bait'],
+    {
+      en: 'Guaranteed or doubled returns are a sign of fraud. Check the SEC advisories first.',
+      fil: 'Palatandaan ng panloloko ang garantisado o dobleng tubo. Tingnan muna ang mga abiso ng SEC.',
+      taglish: 'Red flag ang guaranteed o double na returns. I-check muna ang SEC advisories.',
+    },
+  ],
+  [
+    ['government_bait'],
+    {
+      en: 'Claim government aid only through the official office or app, never by paying or replying here.',
+      fil: 'Kunin lang ang ayuda sa opisyal na tanggapan o app, hindi sa pagbabayad o pagsagot dito.',
+      taglish:
+        'Sa official office o app lang mag-claim ng ayuda, hindi sa pag-pay o pag-reply dito.',
+    },
+  ],
+  [
+    ['romance_bait'],
+    {
+      en: 'Do not send money to someone you have only met online.',
+      fil: 'Huwag magpadala ng pera sa taong sa online mo lang nakilala.',
+      taglish: 'Huwag mag-send ng pera sa taong online mo lang nakilala.',
+    },
+  ],
+  [
+    ['marketplace_deposit'],
+    {
+      en: 'Do not pay a deposit before you see the item. Meet in a safe place or use cash on delivery.',
+      fil: 'Huwag magdeposito bago mo makita ang gamit. Magkita sa ligtas na lugar o mag-cash on delivery.',
+      taglish: 'Huwag mag-deposit bago mo makita ang item. Mag-meet sa safe na lugar o mag-COD.',
+    },
+  ],
+  [
+    ['coercion'],
+    {
+      en: 'Do not pay because of threats. Save the messages and report them to the authorities.',
+      fil: 'Huwag magbayad dahil sa pananakot. I-save ang mga mensahe at i-report sa awtoridad.',
+      taglish: 'Huwag mag-pay dahil sa threats. I-save ang messages at i-report sa authorities.',
+    },
+  ],
+  [
+    ['account_threat', 'bank_impersonation'],
+    {
+      en: 'Open your bank or wallet app yourself, or call the hotline printed on your card.',
+      fil: 'Ikaw mismo ang magbukas ng app ng bangko o wallet, o tumawag sa hotline sa likod ng card.',
+      taglish:
+        'Ikaw mismo mag-open ng bank o wallet app, o tawagan ang hotline sa likod ng card mo.',
+    },
+  ],
+  [
+    ['suspicious_link', 'link_action'],
+    {
+      en: 'Do not open links from unexpected messages. Type the official address yourself.',
+      fil: 'Huwag buksan ang link mula sa di-inaasahang mensahe. Ikaw mismo ang mag-type ng opisyal na address.',
+      taglish:
+        'Huwag i-open ang links sa unexpected na messages. I-type mo mismo ang official address.',
+    },
+  ],
+  [
+    ['urgency'],
+    {
+      en: 'Take your time. Scammers rush you so you do not stop to check.',
+      fil: 'Huwag magmadali. Minamadali ka ng manloloko para hindi ka na makapagsuri.',
+      taglish: 'Take your time. Minamadali ka ng scammer para hindi mo na ma-check.',
+    },
+  ],
+];
+
+const MAX_STEPS = 3;
+
+/**
+ * The level's headline plus up to three steps: first the advice for the red flags actually found,
+ * then the level's general advice. Every sentence is fixed, reviewed text, so it works without a model.
+ */
+export function explain(
+  level: Level,
+  lang: Lang,
+  signals: Pick<Signal, 'id'>[] = [],
+): Verdict['explanation'] {
+  const base = templates[lang][level];
+  if (level === 'probably_fine' || level === 'not_sure' || signals.length === 0)
+    return { headline: base.headline, steps: [...base.steps] };
+  const ids = new Set(signals.map(({ id }) => id));
+  const specific = ADVICE.filter(([keys]) => keys.some((key) => ids.has(key))).map(
+    ([, advice]) => advice[lang],
+  );
+  if (specific.length === 0) return { headline: base.headline, steps: [...base.steps] };
+  const steps = [...specific.slice(0, MAX_STEPS - 1), ...base.steps.slice(1)];
+  return { headline: base.headline, steps: [...new Set(steps)].slice(0, MAX_STEPS) };
 }
 
 export function localizeSignals(signals: Signal[], lang: Lang): Signal[] {

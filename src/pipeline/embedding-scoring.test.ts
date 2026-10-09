@@ -115,6 +115,36 @@ describe('embedding evidence in analyze()', () => {
     expect(otp.label).toMatch(/Humihingi/);
   });
 
+  it('says probably fine only with clear ordinary-message evidence and no risk signal', async () => {
+    match.mockResolvedValue(evidence(0.86, -0.03, 'none'));
+    expect((await analyze({ text: 'See you tomorrow at lunch.' }, opts)).level).toBe(
+      'probably_fine',
+    );
+    match.mockResolvedValue(evidence(0.86, -0.015, 'none'));
+    expect((await analyze({ text: 'See you tomorrow at lunch.' }, opts)).level).toBe('not_sure');
+  });
+
+  it('never says probably fine for an unknown link or a credential request', async () => {
+    match.mockResolvedValue(evidence(0.86, -0.09, 'none'));
+    const link = await analyze({ text: 'Photos from the party: myalbum-share.net/p/1' }, opts);
+    expect(link.level).toBe('not_sure');
+    const otp = await analyze({ text: 'Please send your PIN to me.' }, opts);
+    expect(otp.level).toBe('suspicious');
+    const official = await analyze(
+      { text: 'Your bill is ready. See gcash.com for details.' },
+      opts,
+    );
+    expect(official.level).toBe('probably_fine');
+  });
+
+  it('allows one weak cue only with much stronger ordinary-message evidence', async () => {
+    const text = 'Paalala: sale ends today only, see you at the mall.';
+    match.mockResolvedValue(evidence(0.86, -0.03, 'none'));
+    expect((await analyze({ text }, opts)).level).toBe('not_sure');
+    match.mockResolvedValue(evidence(0.86, -0.05, 'none'));
+    expect((await analyze({ text }, opts)).level).toBe('probably_fine');
+  });
+
   it('does not look up the model for empty input', async () => {
     const verdict = await analyze({ text: '  ' }, opts);
     expect(verdict.level).toBe('not_sure');

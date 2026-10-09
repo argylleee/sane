@@ -67,28 +67,131 @@ const ZERO_WIDTH = new RegExp(
   'gu',
 );
 
+const CLOCK = String.raw`\d{1,2}[:.]\d{2}(?:\s?[ap]\.?\s?m\.?)?`;
+const DAY = String.raw`(?:today|yesterday|ngayon|kahapon|mon|tue|wed|thu|fri|sat|sun)[a-z]*`;
+const MONTH = String.raw`(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:,?\s+\d{4})?`;
+
 const NOISE_LINES = [
-  /^\d{1,2}[:.]\d{2}(?:\s?[ap]\.?m\.?)?$/i, // clock
+  new RegExp(`^${CLOCK}$`, 'i'), // clock
+  // Whole status bar on one line ("9:41 al 5G 87%"): a clock plus short tokens and battery/signal.
+  new RegExp(
+    `^${CLOCK}(?=.*(?:\\d{1,3}\\s?%|\\b(?:lte|5g|4g|3g|wi-?fi)\\b))(?:\\s+[\\w%+.!|-]{1,4}){1,6}$`,
+    'i',
+  ),
+  new RegExp(`^(?:${DAY}|${MONTH})(?:,?\\s*(?:at\\s+)?${CLOCK})?$`, 'i'), // date separators
+  new RegExp(
+    `^(?:text message|sms|mms|imessage|rcs message|chat)(?:\\s*[-\u2022\u00b7]\\s*.*)?$`,
+    'i',
+  ),
+  new RegExp(`^(?:read|delivered|seen|sent)(?:\\s+(?:by\\b.*|at\\s+)?${CLOCK}?)?$`, 'i'),
   /^\d{1,3}\s?%$/, // battery
-  /^(?:lte|5g|4g|3g|2g|wi-?fi|vo\s?lte|volte|r|h\+?)$/i, // signal indicators
-  /^(?:delivered|seen|sent|typing\.{0,3}|type a message|message|aa|today|yesterday|now|online|active now)$/i,
+  /^(?:lte|5g|4g|3g|2g|wi-?fi|vo\s?lte|volte|r|h\+?)(?:\s+(?:lte|5g|4g|\d{1,3}\s?%))*$/i, // signal
+  /^(?:delivered|seen|sent|typing\.{0,3}|type a message|write a message|text message|message|aa|today|yesterday|now|online|active now|reply|forward|copy|more|back|<\s*back|messages|chats|search|send|tap to load preview|mark as read|details|info)$/i,
   /^[\W_]{1,6}$/u, // stray punctuation, bubbles and arrows
 ];
 
-/** Removes status-bar and chat-chrome lines and low-quality fragments. Keeps real message text. */
+// Bubble borders, avatars and icons that Tesseract reads as symbols at the edge of a line.
+// "*" and "#" are kept: they are part of USSD codes such as *143#.
+const EDGE_JUNK =
+  /^[|[\]{}<>\u00ab\u00bb\u00a9\u00ae\u00b0\u2022\u00b7~_=\\]+\s*|\s*[|[\]{}<>\u00ab\u00bb\u00a9\u00ae\u00b0\u2022\u00b7~_=\\]+$/gu;
+// A time stamp printed at the end of a chat bubble, after the sentence ended, or with read ticks.
+const TRAILING_TIME = new RegExp(
+  `(?<=[.!?)])\\s+${CLOCK}\\s*[\u2713\u2714]{0,2}$|\\s+${CLOCK}\\s*[\u2713\u2714]{1,2}$`,
+  'iu',
+);
+// Only endings that are not also everyday English or Filipino words ("at", "in", "to", "me", "co").
+const TLD =
+  'com|ph|net|org|gov|edu|ly|xyz|top|vip|io|link|online|site|club|info|biz|shop|cc|click|icu|buzz|cfd|sbs|tk';
+// After "word. " only endings that never start a sentence, so "done. shop now" stays two words.
+const SPACED_TLD = 'com|ph|net|org|gov|ly|xyz|io|tk|icu|cfd|sbs|vip|biz|cc';
+// Filipino prefixes that keep their hyphen when OCR splits them across lines (i-click, mag-load).
+const PREFIX_HYPHEN =
+  /(?:^|\s)(?:i|mag|nag|pag|ka|ma|na|pa|ipa|maki|paki|nakiki|naka|pinaka|mala)-$/iu;
+
+/** Repairs OCR spacing and character mistakes that break links, codes and keywords. */
+export function repairOcrLine(line: string): string {
+  return (
+    line
+      .replace(/[\u2018\u2019\u201a\u2032]/gu, "'")
+      .replace(/[\u201c\u201d\u201e\u2033]/gu, '"')
+      .replace(/[\u2010-\u2015\u2212]/gu, '-')
+      .replace(/\u2026/gu, '...')
+      .replace(EDGE_JUNK, '')
+      .replace(TRAILING_TIME, '')
+      .replace(/\b(https?)\s*:\s*\/\s*\/\s*/giu, '$1://')
+      .replace(/\bwww\s*[.,]\s*/giu, 'www.')
+      // "gcash . com", "gcash. com/ph", "bit.ly / abc": lowercase only, as links are read lowercase.
+      .replace(
+        new RegExp(`([\\p{Ll}\\p{N}-])\\.\\s+(${SPACED_TLD})\\b(?![\\p{L}\\p{N}])`, 'gu'),
+        '$1.$2',
+      )
+      .replace(new RegExp(`([\\p{Ll}\\p{N}-])\\s+\\.\\s*(${TLD})\\b`, 'gu'), '$1.$2')
+      .replace(new RegExp(`(\\.(?:${TLD}))\\s+/\\s*`, 'gu'), '$1/')
+      .replace(/(\p{L})\|(\p{L})/gu, '$1l$2') // "G|obe" -> "Globe"
+      .replace(/(^|\s)\|(?=\p{Ll})/gu, '$1I') // "|f you" -> "If you"
+      .replace(/\b0(TP|tp)\b/gu, 'O$1') // "0TP" -> "OTP"
+      .replace(/\b(M?)P[1l|]N\b/gu, '$1PIN')
+      .replace(/\s+/gu, ' ')
+      .trim()
+  );
+}
+
+function isGarbage(line: string): boolean {
+  const alnum = line.match(/[\p{L}\p{N}]/gu)?.length ?? 0;
+  if (line.length < 8 && alnum / line.length < 0.5) return true; // short, mostly symbols
+  if (alnum / line.length < 0.4) return true; // mostly symbols at any length
+  const tokens = line.split(' ');
+  const singles = tokens.filter((token) => /^[\p{L}\W]$/u.test(token)).length;
+  return tokens.length >= 3 && singles / tokens.length >= 0.6; // "a | e i" icon noise
+}
+
+const URL_CONTINUES = /(?:https?:\/\/|www\.)\S*[/\-.=?&_]$/iu;
+
+/** Joins lines that a chat bubble wrapped, keeping a break after a finished sentence. */
+function reflow(lines: string[]): string[] {
+  const out: string[] = [];
+  for (const line of lines) {
+    const previous = out.at(-1);
+    if (previous === undefined) {
+      out.push(line);
+      continue;
+    }
+    if (URL_CONTINUES.test(previous)) out[out.length - 1] = previous + line;
+    else if (PREFIX_HYPHEN.test(previous)) out[out.length - 1] = previous + line;
+    else if (/\p{Ll}-$/u.test(previous) && /^\p{Ll}/u.test(line))
+      out[out.length - 1] = previous.slice(0, -1) + line; // "veri-" + "fy"
+    else if (/[.!?:;"')]$/u.test(previous) && !/^\p{Ll}/u.test(line)) out.push(line);
+    else out[out.length - 1] = `${previous} ${line}`;
+  }
+  return out;
+}
+
+/**
+ * Turns raw Tesseract output into readable message text: drops status-bar and chat-chrome lines,
+ * repairs broken links and common character mistakes, rejoins wrapped bubble lines, and keeps
+ * paragraph breaks. Real message words are never rewritten beyond spacing and obvious OCR errors.
+ */
 export function cleanOcrText(text: string): string {
-  const lines = text
+  const paragraphs = text
     .normalize('NFKC')
     .replace(ZERO_WIDTH, '')
-    .split(/\r?\n/u)
-    .map((line) => line.replace(/\s+/gu, ' ').trim())
-    .filter((line) => line.length > 0)
-    .filter((line) => !NOISE_LINES.some((pattern) => pattern.test(line)))
-    .filter((line) => {
-      const alnum = line.match(/[\p{L}\p{N}]/gu)?.length ?? 0;
-      return line.length >= 8 || alnum / line.length >= 0.5; // short, mostly symbols: garbage
-    });
-  return lines.join('\n');
+    .split(/\r?\n\s*\r?\n/u)
+    .map((paragraph) =>
+      reflow(
+        paragraph
+          .split(/\r?\n/u)
+          .map((line) => line.replace(/\s+/gu, ' ').trim())
+          .filter((line) => line.length > 0 && !NOISE_LINES.some((p) => p.test(line)))
+          .map(repairOcrLine)
+          .filter(
+            (line) => line.length > 0 && !NOISE_LINES.some((p) => p.test(line)) && !isGarbage(line),
+          ),
+      ),
+    )
+    .filter((lines) => lines.length > 0);
+  const lines = paragraphs.flat();
+  // Drop an exact repeat of the previous line (a second read of the same bubble).
+  return lines.filter((line, i) => line !== lines[i - 1]).join('\n');
 }
 
 /**

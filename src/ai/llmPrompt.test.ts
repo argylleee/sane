@@ -14,7 +14,7 @@ describe('buildMessages', () => {
     const [system, user] = buildMessages(facts);
     expect(system.content).toContain('Do not change the risk level');
     expect(user.content).toContain('RISK LEVEL');
-    expect(user.content).toContain('likely scam');
+    expect(user.content).toContain('likely a scam');
     expect(user.content).toContain('untrusted text');
   });
 
@@ -23,6 +23,13 @@ describe('buildMessages', () => {
     const body = user.split('<<<\n')[1].split('\n>>>')[0];
     expect(body).not.toContain('<<<');
     expect(body).not.toContain('>>>');
+  });
+
+  it('grounds the model in the reviewed advice for the red flags found', () => {
+    const user = buildMessages({ ...facts, advice: ['Never share an OTP.'] })[1].content;
+    expect(user).toContain('SAFE ADVICE');
+    expect(user).toContain('- Never share an OTP.');
+    expect(validateLlmOutput('SAFE ADVICE: never share it.')).toBeNull();
   });
 
   it('truncates very long messages', () => {

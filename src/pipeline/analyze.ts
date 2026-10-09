@@ -4,6 +4,7 @@ import { extractText } from '../ai/ocr';
 import { matchWithEvidence, type MatchWithEvidence } from '../ai/match';
 import { explain, localizeSignals } from '../explain/templates';
 import { runRules } from '../rules';
+import { hasUnverifiedUrl } from '../rules/urls';
 import { score } from '../score/score';
 import { normalize } from './normalize';
 
@@ -54,7 +55,14 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
     }
 
     const matches = evidence?.matches ?? [];
-    const { level, score: total, archetypeId } = score(signals, matches, evidence?.level);
+    const {
+      level,
+      score: total,
+      archetypeId,
+    } = score(signals, matches, evidence?.level, {
+      margin: evidence?.margin,
+      unverifiedLink: hasUnverifiedUrl(text),
+    });
     const verdict: Verdict = {
       level,
       score: total,
@@ -62,7 +70,7 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
       matches,
       archetypeId,
       lang: opts.lang,
-      explanation: { ...explain(level, opts.lang) },
+      explanation: explain(level, opts.lang, signals),
       usedModels: { ocr, embeddings: evidence !== null, llm: false },
     };
     if (opts.useLLM) {
@@ -75,7 +83,8 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
               level,
               lang: opts.lang,
               archetypeName: archetypes.find(({ id }) => id === archetypeId)?.name[opts.lang],
-              signals: verdict.signals.map(({ label }) => label),
+              signals: verdict.signals.filter(({ weight }) => weight > 0).map(({ label }) => label),
+              advice: verdict.explanation.steps,
               text,
             });
           })(),

@@ -52,6 +52,7 @@ describe('optional LLM explanation', () => {
       lang: 'fil',
       archetypeName: 'Na-lock na wallet',
       signals: verdict.signals.map(({ label }) => label),
+      advice: verdict.explanation.steps,
       text: normalize(raw),
     });
     expect(verdict.signals.find(({ id }) => id === 'otp_pin_request')?.label).toMatch(/Humihingi/);
@@ -66,6 +67,7 @@ describe('optional LLM explanation', () => {
     await analyze({ image: new Blob(['image']) as File }, opts);
     expect(ai.explain.mock.calls[0][0].text).toBe(normalize(raw));
     expect(Object.keys(ai.explain.mock.calls[0][0]).sort()).toEqual([
+      'advice',
       'archetypeName',
       'lang',
       'level',

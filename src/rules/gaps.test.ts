@@ -97,7 +97,7 @@ describe('new multilingual development regressions', () => {
   it('does not suppress payment demands expressed as conditional threats', () => {
     const text = 'Kung hindi mo bayaran, i-text ko ang pamilya mo.';
     expect(runRules(text).map(({ id }) => id)).toContain('money_request');
-    expect(score(runRules(text), []).level).toBe('suspicious');
+    expect(score(runRules(text), []).level).toBe('likely_scam');
   });
 
   it.each([
