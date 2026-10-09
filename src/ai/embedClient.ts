@@ -87,16 +87,20 @@ function request(body: RequestBody, timeoutMs?: number): Promise<WorkerResponse>
   });
 }
 
+// The WASM runtime is self-hosted under <app base>/ort/ so no check or load reaches a public CDN.
 const envSource: ModelSource = {
   modelBaseUrl: import.meta.env.VITE_MODEL_BASE_URL || undefined,
-  wasmBaseUrl: import.meta.env.VITE_WASM_BASE_URL || undefined,
+  wasmBaseUrl:
+    import.meta.env.VITE_WASM_BASE_URL ||
+    (typeof document === 'undefined' ? undefined : new URL('ort/', document.baseURI).href),
 };
 
 /**
  * Idempotent. Downloads (first time) and loads the model; resolves when ready. Pass a source to
  * self-host the model or the WASM runtime; defaults come from VITE_MODEL_BASE_URL / VITE_WASM_BASE_URL.
  */
-export function loadEmbeddings(source: ModelSource = envSource): Promise<void> {
+export function loadEmbeddings(override: ModelSource = {}): Promise<void> {
+  const source = { ...envSource, ...override };
   if (status.state === 'ready') return Promise.resolve();
   loading ??= (async () => {
     setStatus({ state: 'loading', progress: 0 });
