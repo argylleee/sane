@@ -6,7 +6,13 @@ export const EMBEDDING_MODEL_ID = 'Xenova/multilingual-e5-small';
 
 export type EmbedKind = 'query' | 'passage';
 
-export type LoadProgress = { status: string; file?: string; progress?: number };
+export type LoadProgress = {
+  status: string;
+  file?: string;
+  progress?: number;
+  loaded?: number;
+  total?: number;
+};
 
 /** Optional self-hosting. Without it the model loads from Hugging Face and the browser caches it. */
 export type ModelSource = {

@@ -117,7 +117,7 @@
       "role": "frontend",
       "owner": "frontend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/sw.ts",
         "src/main.tsx",
@@ -177,7 +177,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/rules/",
         "src/explain/",
@@ -191,6 +191,20 @@
       "branch": "codex/feat/task-207-rules-explanations",
       "worktree": "task-207",
       "baseRevision": "89e07691359b2a2a5f4440dd89d618d483be8754"
+    },
+    {
+      "id": "TASK-208",
+      "allocation": 1,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": ["eval/heldout/", "docs/tasks/TASK-208.md", "docs/tasks/TASK-208-handoff.md"],
+      "writeResources": [],
+      "dependsOn": ["TASK-201", "TASK-202", "TASK-205", "TASK-207"],
+      "branch": "codex/feat/task-208-heldout-eval",
+      "worktree": "task-208",
+      "baseRevision": "29edcc754f5e5778bfae5d657a8c09f1493f70d5"
     }
   ]
 }

@@ -3,6 +3,7 @@
 // (or automatically on desktop). Until it is ready, matchArchetypes() returns no matches.
 import type { EmbedKind, ModelSource } from './embedder';
 import type { WorkerRequest, WorkerResponse } from './embed.worker';
+import { createProgressTracker } from './progress';
 
 type RequestBody =
   { type: 'init'; source?: ModelSource } | { type: 'embed'; texts: string[]; kind: EmbedKind };
@@ -22,6 +23,7 @@ const pending = new Map<
 let worker: Worker | undefined;
 let nextId = 1;
 let loading: Promise<void> | undefined;
+let tracker = createProgressTracker();
 
 function setStatus(next: EmbeddingsStatus) {
   status = next;
@@ -43,9 +45,12 @@ function getWorker(): Worker {
   worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
     const message = event.data;
     if (message.type === 'progress') {
-      const percent = message.progress.progress;
-      if (typeof percent === 'number' && status.state === 'loading') {
-        setStatus({ ...status, progress: Math.round(percent), message: message.progress.file });
+      if (status.state === 'loading') {
+        setStatus({
+          ...status,
+          progress: tracker(message.progress),
+          message: message.progress.file,
+        });
       }
       return;
     }
@@ -103,6 +108,7 @@ export function loadEmbeddings(override: ModelSource = {}): Promise<void> {
   const source = { ...envSource, ...override };
   if (status.state === 'ready') return Promise.resolve();
   loading ??= (async () => {
+    tracker = createProgressTracker();
     setStatus({ state: 'loading', progress: 0 });
     try {
       const response = await request({ type: 'init', source });

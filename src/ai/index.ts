@@ -6,6 +6,7 @@ export {
   subscribeEmbeddings,
   type EmbeddingsStatus,
 } from './embedClient';
+export { shouldAutoPreload, startEmbeddingsPreload } from './preload';
 export {
   evidenceLevel,
   matchArchetypes,

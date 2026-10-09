@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import { getEmbeddingsStatus, loadEmbeddings, subscribeEmbeddings } from '../ai';
+import {
+  getEmbeddingsStatus,
+  loadEmbeddings,
+  startEmbeddingsPreload,
+  subscribeEmbeddings,
+} from '../ai';
 import type { EmbeddingsStatus } from '../ai';
 import { analyze } from '../pipeline/analyze';
 import type { Lang, Level, Verdict } from '../types';
@@ -187,6 +192,12 @@ export function App() {
   const showIosInstallHint = isAppleMobile && !isStandalone;
 
   useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
+
+  // Download the matching model automatically on first visit (cached afterwards). The manual
+  // button below remains as a retry path when the download fails or was skipped (Data Saver, 2G).
+  useEffect(() => {
+    void startEmbeddingsPreload();
+  }, []);
 
   useEffect(() => {
     const onInstallPrompt = (event: Event) => {
