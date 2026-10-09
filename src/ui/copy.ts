@@ -14,6 +14,13 @@ type GuideCopy = {
 
 type Copy = {
   languageName: string;
+  openNavigation: string;
+  closeNavigation: string;
+  mainNavigationLabel: string;
+  navigationScan: string;
+  navigationLearn: string;
+  footerSlogan: string;
+  footerDevelopedBy: string;
   themeLabel: string;
   themeSystem: string;
   themeLight: string;
@@ -76,7 +83,12 @@ type Copy = {
   modelRan: string;
   noModel: string;
   modelPreparing: (percent: number) => string;
+  modelDownloadTitle: string;
+  modelDownloadNote: string;
   modelReadyStatus: string;
+  modelReadyNote: string;
+  notificationLabel: string;
+  dismissNotification: string;
   modelFailedStatus: string;
   modelPausedStatus: string;
   modelRetry: string;
@@ -119,6 +131,13 @@ type Copy = {
 export const COPY: Record<Lang, Copy> = {
   en: {
     languageName: 'English',
+    openNavigation: 'Open navigation',
+    closeNavigation: 'Close navigation',
+    mainNavigationLabel: 'Main navigation',
+    navigationScan: 'Scan',
+    navigationLearn: 'Learn',
+    footerSlogan: 'When in doubt, sane it out.',
+    footerDevelopedBy: 'Developed by',
     themeLabel: 'Theme',
     themeSystem: 'System',
     themeLight: 'Light',
@@ -192,7 +211,13 @@ export const COPY: Record<Lang, Copy> = {
     noModel: 'No AI model ran for this check. Accuracy is not validated.',
     modelPreparing: (percent) =>
       `Preparing the AI check: ${percent}%. You can still check a message; it will use rules only until this is ready.`,
+    modelDownloadTitle: 'Preparing the AI check',
+    modelDownloadNote:
+      'Downloading and setting up the model. You can keep checking messages with rules while it prepares.',
     modelReadyStatus: 'AI check ready.',
+    modelReadyNote: 'The model is ready to help check your next message on this device.',
+    notificationLabel: 'AI model notifications',
+    dismissNotification: 'Dismiss notification',
     modelFailedStatus: 'The AI check could not be prepared. Checks use rules only.',
     modelPausedStatus: 'The AI check is paused to save data. Checks use rules only.',
     modelRetry: 'Try again',
@@ -285,6 +310,13 @@ export const COPY: Record<Lang, Copy> = {
   },
   fil: {
     languageName: 'Filipino',
+    openNavigation: 'Buksan ang nabigasyon',
+    closeNavigation: 'Isara ang nabigasyon',
+    mainNavigationLabel: 'Pangunahing nabigasyon',
+    navigationScan: 'Suriin',
+    navigationLearn: 'Alamin',
+    footerSlogan: 'When in doubt, sane it out.',
+    footerDevelopedBy: 'Binuo ng',
     themeLabel: 'Tema',
     themeSystem: 'System',
     themeLight: 'Maliwanag',
@@ -361,7 +393,13 @@ export const COPY: Record<Lang, Copy> = {
     noModel: 'Walang AI model na ginamit. Hindi pa napatunayan ang accuracy.',
     modelPreparing: (percent) =>
       `Inihahanda ang AI check: ${percent}%. Maaari ka pa ring mag-check ng mensahe; rules lang ang gagamitin hanggang handa na ito.`,
+    modelDownloadTitle: 'Inihahanda ang AI check',
+    modelDownloadNote:
+      'Dina-download at inihahanda ang modelo. Maaari ka pa ring magsuri ng mensahe gamit ang rules.',
     modelReadyStatus: 'Handa na ang AI check.',
+    modelReadyNote: 'Handa na ang modelo para tumulong sa susunod na pagsusuri sa device na ito.',
+    notificationLabel: 'Mga abiso ng AI model',
+    dismissNotification: 'Isara ang abiso',
     modelFailedStatus: 'Hindi nahanda ang AI check. Rules lang ang gamit ng mga check.',
     modelPausedStatus:
       'Naka-pause ang AI check para makatipid ng data. Rules lang ang gamit ng mga check.',
@@ -457,6 +495,13 @@ export const COPY: Record<Lang, Copy> = {
   },
   taglish: {
     languageName: 'Taglish',
+    openNavigation: 'Buksan ang navigation',
+    closeNavigation: 'Isara ang navigation',
+    mainNavigationLabel: 'Main navigation',
+    navigationScan: 'Scan',
+    navigationLearn: 'Learn',
+    footerSlogan: 'When in doubt, sane it out.',
+    footerDevelopedBy: 'Developed by',
     themeLabel: 'Theme',
     themeSystem: 'System',
     themeLight: 'Light',
@@ -531,7 +576,13 @@ export const COPY: Record<Lang, Copy> = {
     noModel: 'Walang AI model na tumakbo. Hindi pa validated ang accuracy.',
     modelPreparing: (percent) =>
       `Inihahanda ang AI check: ${percent}%. Pwede ka pa ring mag-check ng message; rules lang ang gagamitin hangga't hindi pa ready.`,
+    modelDownloadTitle: 'Inihahanda ang AI check',
+    modelDownloadNote:
+      'Dina-download at sine-set up ang model. Pwede ka pa ring mag-check ng messages gamit ang rules.',
     modelReadyStatus: 'Ready na ang AI check.',
+    modelReadyNote: 'Ready na ang model para tumulong sa next message check sa device na ito.',
+    notificationLabel: 'AI model notifications',
+    dismissNotification: 'Isara ang notification',
     modelFailedStatus: 'Hindi na-prepare ang AI check. Rules lang ang gamit ng mga check.',
     modelPausedStatus:
       'Naka-pause ang AI check para makatipid ng data. Rules lang ang gamit ng mga check.',

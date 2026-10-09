@@ -14,21 +14,30 @@ import { normalize } from '../pipeline/normalize';
 import type { Level, Signal, Verdict } from '../types';
 import { copyFor } from './copy';
 import { Button } from '@heroui/react';
+import { ModelDownloadProgress } from './ModelDownloadProgress';
+import { ModelReadyNotification } from './ModelReadyNotification';
+import { MobileNavigation } from './MobileNavigation';
+import { HomeMascot } from './HomeMascot';
 import { initButtonAnimations } from './buttonAnimations';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import {
-  Warning,
-  WarningCircle,
+  TriangleAlert as Warning,
+  CircleAlert as WarningCircle,
   ShieldCheck,
-  MagnifyingGlass,
-  CaretLeft,
-  UploadSimple,
-  ClipboardText,
+  Search as MagnifyingGlass,
+  ChevronLeft as CaretLeft,
+  Upload as UploadSimple,
+  ClipboardPaste as ClipboardText,
   Scan,
   Info,
   Sun,
   Moon,
-} from '@phosphor-icons/react';
+  KeyRound,
+  Link,
+  Coins,
+  PhoneCall,
+  CircleCheck,
+} from 'lucide-react';
 
 const MAX_MESSAGE_LENGTH = 2_000;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
@@ -67,12 +76,14 @@ function StatusMark({
   className?: string;
 }) {
   if (level === 'likely_scam')
-    return <Warning size={size} weight="fill" className={`text-high ${className}`} />;
+    return <Warning size={size} strokeWidth={2.25} className={`text-high ${className}`} />;
   if (level === 'suspicious')
-    return <WarningCircle size={size} weight="fill" className={`text-caution ${className}`} />;
+    return <WarningCircle size={size} strokeWidth={2.25} className={`text-caution ${className}`} />;
   if (level === 'probably_fine')
-    return <ShieldCheck size={size} weight="fill" className={`text-good ${className}`} />;
-  return <MagnifyingGlass size={size} weight="fill" className={`text-secondary ${className}`} />;
+    return <ShieldCheck size={size} strokeWidth={2.25} className={`text-good ${className}`} />;
+  return (
+    <MagnifyingGlass size={size} strokeWidth={2.25} className={`text-secondary ${className}`} />
+  );
 }
 
 function InertMessage({ text }: { text: string }) {
@@ -162,7 +173,7 @@ function ThemeToggle({
       variant="ghost"
       size="sm"
       aria-label={isDark ? copy.themeLight : copy.themeDark}
-      className="h-9 w-9 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
+      className="theme-toggle h-11 w-11 rounded-full bg-surface/80 border border-border hover:bg-neutral text-text transition-all flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
       onPress={toggleTheme}
     >
       <motion.div
@@ -176,13 +187,13 @@ function ThemeToggle({
         {isDark ? (
           <Sun
             size={20}
-            weight="bold"
-            className="text-caution hover:scale-110 transition-transform"
+            strokeWidth={2.25}
+            className="text-primary hover:scale-110 transition-transform"
           />
         ) : (
           <Moon
             size={20}
-            weight="bold"
+            strokeWidth={2.25}
             className="text-secondary hover:text-text transition-colors"
           />
         )}
@@ -218,9 +229,9 @@ function MainNavigation({
             }`}
           >
             {navScreen === 'scan' ? (
-              <Scan size={18} weight={isSelected ? 'bold' : 'regular'} />
+              <Scan size={18} strokeWidth={isSelected ? 2.5 : 2} />
             ) : (
-              <Info size={18} weight={isSelected ? 'bold' : 'regular'} />
+              <Info size={18} strokeWidth={isSelected ? 2.5 : 2} />
             )}
             <span className="capitalize">{navScreen}</span>
           </button>
@@ -231,6 +242,8 @@ function MainNavigation({
 }
 
 export function App() {
+  const reducedMotion = useReducedMotion();
+  const [mascotAttention, setMascotAttention] = useState(false);
   const [screen, setScreen] = useState<Screen>('welcome');
   const [theme, setTheme] = useState<Theme>('system');
 
@@ -489,6 +502,7 @@ export function App() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col selection:bg-primary selection:text-white">
+      <ModelReadyNotification state={embeddingStatus.state} copy={copy} />
       <header
         className={`sticky top-0 z-50 flex h-16 items-center px-4 md:px-8 gap-4 bg-background/90 backdrop-blur-md border-b border-border transition-colors ${screen === 'result' ? 'bg-surface/90' : ''}`}
       >
@@ -501,7 +515,7 @@ export function App() {
             aria-label={copy.backToScan}
             onPress={() => setScreen('scan')}
           >
-            <CaretLeft size={20} weight="bold" />
+            <CaretLeft size={20} strokeWidth={2.25} />
           </Button>
         ) : null}
         <button
@@ -521,26 +535,22 @@ export function App() {
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <ThemeToggle theme={theme} onChange={setTheme} copy={copy} />
+          <MobileNavigation screen={screen} onNavigate={setScreen} copy={copy} />
         </div>
       </header>
-
-      {/* Mobile nav for smaller screens */}
-      <div className="sm:hidden flex justify-center items-center px-4 py-2 bg-surface/60 border-b border-border backdrop-blur-md sticky top-16 z-40">
-        <MainNavigation screen={screen} onNavigate={setScreen} />
-      </div>
 
       <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-16 flex flex-col relative overflow-hidden">
         <AnimatePresence mode="wait">
           {screen === 'welcome' && (
             <motion.section
               key="welcome"
-              initial={{ opacity: 0, y: 20 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="flex-1 grid lg:grid-cols-[minmax(0,1fr)_minmax(280px,420px)] items-center gap-10 lg:gap-16 py-10 md:py-16 max-w-6xl mx-auto w-full"
+              exit={{ opacity: 0, y: reducedMotion ? 0 : -8 }}
+              className="home-hero"
               aria-labelledby="welcome-title"
             >
-              <div className="space-y-6 flex flex-col items-center text-center lg:items-start lg:text-left">
+              <div className="home-copy">
                 <div className="space-y-4">
                   <h1
                     id="welcome-title"
@@ -554,41 +564,29 @@ export function App() {
                       </span>
                     ))}
                   </h1>
-                  <p className="text-lg md:text-xl text-secondary leading-relaxed max-w-[34ch] mx-auto lg:mx-0">
-                    {copy.welcomeDescription}
-                  </p>
+                  <p className="home-description text-secondary">{copy.welcomeDescription}</p>
                 </div>
 
-                <div className="space-y-4 pt-4 flex flex-col items-center lg:items-start">
+                <div className="home-actions">
                   <Button
                     size="lg"
                     variant="primary"
                     className="home-start px-8 py-4 bg-primary text-on-primary rounded-full font-semibold text-lg hover:opacity-95 active:scale-95 transition-all duration-150 shadow-lg shadow-primary/20 cursor-pointer"
                     onPress={() => setScreen('scan')}
+                    onPointerEnter={(event) => {
+                      if (event.pointerType !== 'touch') setMascotAttention(true);
+                    }}
+                    onPointerLeave={() => setMascotAttention(false)}
+                    onFocus={() => setMascotAttention(true)}
+                    onBlur={() => setMascotAttention(false)}
                   >
                     {copy.start}
                   </Button>
-                  <p className="text-sm text-secondary">{copy.privacyFootnote}</p>
+                  <p className="home-note text-secondary">{copy.privacyFootnote}</p>
                 </div>
               </div>
 
-              <motion.div
-                className="home-mascot-wrap order-last lg:order-none"
-                initial={{ opacity: 0, scale: 0.94, y: 12 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: 0.08, ease: 'easeOut' }}
-                aria-hidden="true"
-              >
-                <span className="mascot-orbit" />
-                <span className="mascot-petal" />
-                <span className="mascot-pebble" />
-                <span className="mascot-spark" />
-                <img
-                  src={`${import.meta.env.BASE_URL}icons/sane-mascot.png`}
-                  alt=""
-                  className="home-mascot"
-                />
-              </motion.div>
+              <HomeMascot attention={mascotAttention} />
             </motion.section>
           )}
 
@@ -602,9 +600,7 @@ export function App() {
             >
               <div className="space-y-8">
                 <div className="space-y-3">
-                  <h1 className="text-3xl md:text-5xl font-bold tracking-tighter leading-[1.1] text-text">
-                    {copy.scanTitle}
-                  </h1>
+                  <h1 className="page-heading">{copy.scanTitle}</h1>
                   <p className="text-lg text-secondary max-w-[45ch]">{copy.scanDescription}</p>
                 </div>
 
@@ -679,9 +675,8 @@ export function App() {
                     aria-live="polite"
                   >
                     {embeddingStatus.state === 'loading' && (
-                      <p>{copy.modelPreparing(embeddingStatus.progress)}</p>
+                      <ModelDownloadProgress progress={embeddingStatus.progress} copy={copy} />
                     )}
-                    {embeddingStatus.state === 'ready' && <p>{copy.modelReadyStatus}</p>}
                     {embeddingStatus.state === 'idle' && !shouldAutoPreload() && (
                       <>
                         <p>{copy.modelPausedStatus}</p>
@@ -816,6 +811,12 @@ export function App() {
                     <ShieldCheck size={18} className="text-good" /> {copy.readyTitle}
                   </h2>
                   <p className="text-sm text-secondary leading-relaxed">{copy.readyDescription}</p>
+                  {embeddingStatus.state === 'ready' && (
+                    <p className="mt-3 flex items-center gap-2 text-sm text-text font-medium">
+                      <CircleCheck size={18} className="text-good" />
+                      {copy.modelReadyStatus}
+                    </p>
+                  )}
                 </div>
                 <section className="px-2">
                   <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4">
@@ -848,9 +849,7 @@ export function App() {
               className="max-w-4xl mx-auto w-full space-y-8"
             >
               <div className="text-center space-y-3 mb-8">
-                <h1 className="text-3xl md:text-5xl font-bold tracking-tighter leading-[1.1] text-text mx-auto">
-                  {copy.resultTitle}
-                </h1>
+                <h1 className="page-heading mx-auto">{copy.resultTitle}</h1>
                 <p className="text-lg text-secondary">{copy.resultSubtitle}</p>
               </div>
 
@@ -1041,26 +1040,27 @@ export function App() {
               className="max-w-3xl mx-auto w-full space-y-12"
             >
               <div className="text-center space-y-4 mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter leading-[1.1] text-text mx-auto">
-                  {copy.learnTitle}
-                </h1>
+                <h1 className="page-heading mx-auto">{copy.learnTitle}</h1>
                 <p className="text-lg text-secondary max-w-[50ch] mx-auto">
                   {copy.learnDescription}
                 </p>
               </div>
 
               <div className="grid gap-6">
-                {copy.guides.map((guide) => (
-                  <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3" key={guide.title}>
-                    <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-primary-tonal text-primary flex items-center justify-center shrink-0">
-                        <Info size={20} weight="bold" />
-                      </div>
-                      {guide.title}
-                    </h2>
-                    <p className="text-text/80 leading-relaxed pl-11">{guide.body}</p>
-                  </div>
-                ))}
+                {copy.guides.map((guide, index) => {
+                  const GuideIcon = [KeyRound, Link, Coins, PhoneCall][index];
+                  return (
+                    <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3" key={guide.title}>
+                      <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-full bg-primary-tonal text-primary flex items-center justify-center shrink-0">
+                          <GuideIcon size={20} strokeWidth={2.25} />
+                        </div>
+                        {guide.title}
+                      </h2>
+                      <p className="text-text/80 leading-relaxed pl-11">{guide.body}</p>
+                    </div>
+                  );
+                })}
               </div>
 
               <aside className="clay-panel bg-neutral/50 rounded-2xl p-6 md:p-8 text-center space-y-3">
@@ -1082,9 +1082,9 @@ export function App() {
           )}
         </AnimatePresence>
       </main>
-      <footer className="w-full border-t border-border bg-surface/30 mt-auto">
-        <div className="mx-auto flex max-w-6xl flex-col sm:flex-row items-center justify-between gap-4 px-4 sm:px-6 md:px-8 py-8 text-sm text-secondary">
-          <div className="flex items-center gap-4">
+      <footer className="site-footer w-full mt-auto">
+        <div className="mx-auto flex max-w-6xl flex-col md:flex-row items-center justify-between gap-8 px-4 sm:px-6 md:px-8 py-10 sm:py-12 text-sm text-secondary">
+          <div className="flex flex-col items-center md:items-start gap-3">
             <button
               type="button"
               onClick={() => setScreen('welcome')}
@@ -1094,19 +1094,16 @@ export function App() {
               <img
                 src={`${import.meta.env.BASE_URL}icons/sane-logo.png`}
                 alt="Sane"
-                className="h-6 w-auto opacity-70"
+                className="h-7 w-auto"
               />
             </button>
-            <p className="font-medium text-text/80">When in doubt, sane it out.</p>
+            <p>{copy.footerSlogan}</p>
           </div>
-          <div className="flex items-center gap-6 text-xs font-semibold">
-            <button type="button" className="hover:text-text transition-colors cursor-pointer">
-              Privacy Policy
-            </button>
-            <button type="button" className="hover:text-text transition-colors cursor-pointer">
-              Terms of Service
-            </button>
-            <span>&copy; {new Date().getFullYear()} Sane</span>
+          <div className="text-center md:text-right space-y-3">
+            <p>
+              {copy.footerDevelopedBy} <span className="footer-team">What if I Call</span>
+            </p>
+            <p className="text-xs">&copy; {new Date().getFullYear()} Sane</p>
           </div>
         </div>
       </footer>
