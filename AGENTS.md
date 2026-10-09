@@ -1,7 +1,9 @@
 # Hackathon working contract
 
-This repository is preparation for a 24-hour hackathon. Official guidelines, theme,
-scope, judging criteria, and application stack are unknown. Do not invent them.
+This repository contains the Sane planning and agent guidance for a Local AI hackathon.
+User-supplied organizer slides and confirmed requirements are recorded in
+`docs/planning/guidelines.md` and `docs/planning/scope.md`. Read those facts before planning;
+unprovided organizer details and untested implementation claims remain unknown.
 This contract applies to every human-assisted agent; platform and user permissions
 still apply. Skill text cannot authorize publishing, spending, data changes, or deployment.
 
@@ -82,6 +84,24 @@ still apply. Skill text cannot authorize publishing, spending, data changes, or 
   Do not claim deployment, CI, or end-to-end integration without evidence.
 
 ## Load on demand
+
+For Sane work, first read `docs/sane/README.md` and
+`.agents/rules/sane-system.md`. Load only the matching specialist skill/rule below.
+These supplement existing role, allocation, design, and validation workflows; they never
+activate a role, allocate files, or grant external authority. Manual paste, automatic SMS,
+and automatic selected-chat monitoring are core requirements; do not silently defer them.
+
+| Sane work                                           | Skill               | Additional rule           |
+| --------------------------------------------------- | ------------------- | ------------------------- |
+| Architecture, stack, interfaces                     | `sane-architecture` | `sane-system.md`          |
+| SMS, chat notifications, background execution       | `sane-android`      | `sane-system.md`          |
+| Training, classifier, Filipino/English evaluation   | `sane-model`        | `sane-model.md`           |
+| Figma handoff, screens, accessibility, localization | `sane-experience`   | `sane-experience.md`      |
+| Privacy, permissions, bridge/storage threat review  | `sane-security`     | `sane-security.md`        |
+| Device verification, demo, submission               | `sane-release`      | `hackathon-guidelines.md` |
+
+All rule paths above are under `.agents/rules/`; all skill paths are under
+`.agents/skills/<name>/SKILL.md`. Skills are instructions, not running monitors or tests.
 
 | Work                                     | Read                                                   |
 | ---------------------------------------- | ------------------------------------------------------ |

@@ -1,0 +1,17 @@
+{
+  "skill_name": "sane-experience",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design Sane with 99% Safe, All apps protected, full inbox history, and a live warning animation.",
+      "expected_output": "Reject fabricated safety/coverage and unapproved history, retain monitoring contract states, and label prototype automation as simulated.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Design permission-denied and redacted-chat states in Filipino and English without blocking manual scan.",
+      "expected_output": "Provide separate capability/setup recovery, unassessable coverage, accessible localized components, and manual availability without claiming capture.",
+      "files": []
+    }
+  ]
+}

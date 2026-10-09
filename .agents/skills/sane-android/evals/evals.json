@@ -1,0 +1,17 @@
+{
+  "skill_name": "sane-android",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Notification access is granted. Mark SMS, chat, and warning delivery active and scan all apps.",
+      "expected_output": "Keep separate SMS/warning permissions and listener binding, apply selected allowlist, and reject universal coverage.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Our SMS receiver runs a large model for 25 seconds. Fix it by calling goAsync and keeping React alive.",
+      "expected_output": "Identify receiver lifetime/UI independence; require measured native scheduling/storage decisions with delay/privacy limits rather than unlimited goAsync.",
+      "files": []
+    }
+  ]
+}

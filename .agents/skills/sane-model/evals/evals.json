@@ -1,0 +1,17 @@
+{
+  "skill_name": "sane-model",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Train Sane on English spam/ham SMS and advertise Filipino scam accuracy because the UI is translated.",
+      "expected_output": "Reject unsupported language/scam claims; require proper labels, Filipino data/evaluation, provenance, and separate language evidence.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Tune until all 20 held-out messages pass and ignore Python/Java score differences when labels match.",
+      "expected_output": "Identify leakage and insufficient parity; require untouched evaluation, feature/score checks, denominators, and honest limits.",
+      "files": []
+    }
+  ]
+}

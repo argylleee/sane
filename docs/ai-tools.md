@@ -6,21 +6,27 @@ Native discovery and execution permissions vary; verify in the tool you actually
 
 ## Installed skills
 
-| Skill                | Use it for                                                          |
-| -------------------- | ------------------------------------------------------------------- |
-| `hackathon-delivery` | A timeboxed vertical slice and acceptance evidence                  |
-| `context-handoff`    | Context budgets, compaction, switching tools, compact task state    |
-| `parallel-work`      | Bounded delegation, ownership, worktrees, ordered integration       |
-| `self-validate`      | Diagnose/fix/recheck without endless loops or false green claims    |
-| `grill-me`           | An explicit interview to stress-test an idea                        |
-| `grilling`           | Required interview implementation called by upstream grill-me       |
-| `impeccable`         | Frontend design; its command router loads only relevant references  |
-| `role-dispatch`      | Task routing, allocation receipts, and bounded dispatch             |
-| `role-integration`   | Product/shared integration coordination                             |
-| `role-frontend`      | Assigned UI implementation and verification                         |
-| `role-backend`       | Assigned core/service implementation and verification               |
-| `resolve-conflict`   | Ownership, refactor, Git, semantic, or external-write collision     |
-| `mcp-workflow`       | A named optional MCP connection, scoped tools, and compact evidence |
+| Skill                | Use it for                                                               |
+| -------------------- | ------------------------------------------------------------------------ |
+| `hackathon-delivery` | A timeboxed vertical slice and acceptance evidence                       |
+| `context-handoff`    | Context budgets, compaction, switching tools, compact task state         |
+| `parallel-work`      | Bounded delegation, ownership, worktrees, ordered integration            |
+| `self-validate`      | Diagnose/fix/recheck without endless loops or false green claims         |
+| `grill-me`           | An explicit interview to stress-test an idea                             |
+| `grilling`           | Required interview implementation called by upstream grill-me            |
+| `impeccable`         | Frontend design; its command router loads only relevant references       |
+| `role-dispatch`      | Task routing, allocation receipts, and bounded dispatch                  |
+| `role-integration`   | Product/shared integration coordination                                  |
+| `role-frontend`      | Assigned UI implementation and verification                              |
+| `role-backend`       | Assigned core/service implementation and verification                    |
+| `resolve-conflict`   | Ownership, refactor, Git, semantic, or external-write collision          |
+| `mcp-workflow`       | A named optional MCP connection, scoped tools, and compact evidence      |
+| `sane-architecture`  | Sane stack, execution boundaries, and shared interface decisions         |
+| `sane-android`       | SMS/chat capture, Java native lifecycle, permissions, and warnings       |
+| `sane-model`         | Filipino/English data, classifier/export parity, and detection evidence  |
+| `sane-experience`    | Sane Figma/frontend states, bilingual UX, and accessibility              |
+| `sane-security`      | Message privacy, bridge/storage/permission boundaries, and threat review |
+| `sane-release`       | Real device, offline/local AI, demo, and submission acceptance evidence  |
 
 Four general workflows, six role/conflict/MCP workflows, the requested upstream bundles, and
 ten Spec Kit skills are installed. Spec Kit's five core prompts use the official lean preset;
@@ -28,6 +34,12 @@ convergence and optional clarification/analysis/checklist/issue conversion use t
 See [Spec Kit](spec-kit.md) for exact chat prompts and how they preserve role ownership.
 Vendored support files are preserved, and upstream text is excluded from our style rewriting.
 Review any newly downloaded instructions/scripts before use; they remain within the user's authority.
+
+The six Sane specialists supplement those workflows. Start at [the Sane development guide](sane/README.md),
+load the already assigned role, then only the matching specialist and rule. They do not activate
+roles, allocate files, run background monitors, or authorize external actions. The confirmed
+manual/SMS/selected-chat scope and language requirements must not be silently narrowed.
+Canonical skill names are distinct from existing role, Impeccable, and Spec Kit names.
 
 ## Exact usage
 
@@ -67,7 +79,9 @@ Codex/Claude have SessionStart adapters for compaction/reset; OpenCode has `/rol
 commands and the portable summary anchor. Never restore another chat's state by scanning local files.
 
 Impeccable `init` writes PRODUCT.md and may shared design config; run it after direction is known
-and assign one coordinator as owner. PRODUCT.md and DESIGN.md are currently truly empty.
+and assign one coordinator as owner. PRODUCT.md and DESIGN.md now contain Sane product truth and
+a proposed visual baseline. No approved comp or generated design sidecar is claimed; preserve
+these facts and reconcile the visual baseline through the selected Impeccable workflow.
 Keep UI work timeboxed and let the requested scope and AGENTS.md govern optional polish.
 For slash-command hosts, use `/grill-me` or `/impeccable shape <target>` **in chat**. In Codex use
 `$impeccable shape <target>`; `/prompts:` is not needed.
@@ -109,7 +123,7 @@ No platform has been launched to prove UI discovery. The canonical locations are
 [OpenCode](https://opencode.ai/docs/skills/), and
 [Antigravity](https://antigravity.google/docs/skills) documentation. Older versions may differ.
 
-All twenty-three bundles and their resources are checked in once under `.agents/skills`. The common
+All canonical bundles and their resources are checked in once under `.agents/skills`. The common
 `npm run setup` automatically generates Claude's complete local bundles. No separate Claude export,
 upstream reinstall, symlink creation, or copying from this machine is needed. Codex, OpenCode,
 current Antigravity, and current Copilot read the canonical folder directly. Committed native

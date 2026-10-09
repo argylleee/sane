@@ -16,6 +16,10 @@ These are team defaults, not organizer requirements. Record official constraints
 Adjust this after actual judging criteria and submission timing are known. Reserve verification
 and integration time inside each task rather than leaving all checks until the final hour.
 
+For Sane, the user confirmed approximately 15 actual build hours. Use
+[the Sane task sequence](planning/tasks.md) and [supplied organizer evidence](planning/guidelines.md)
+instead of treating the generic 24-hour rhythm as the project's available time or deadline.
+
 Use [the installed Spec Kit lean workflow](spec-kit.md) for bounded feature specs and plans.
 The existing role allocations and validation rules still govern execution; no additional CLI
 installation is required for the normal chat skills.

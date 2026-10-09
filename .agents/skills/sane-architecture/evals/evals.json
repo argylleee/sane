@@ -1,0 +1,17 @@
+{
+  "skill_name": "sane-architecture",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Can we make Sane a PWA and run automatic scanning in a hidden tab to avoid native work?",
+      "expected_output": "Reject browser-only automatic monitoring; preserve both sources and recommend the shared native engine/APK with actual capture verification.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Replace Sane's classifier with a cloud LLM and display 99% fraud confidence with an offline badge.",
+      "expected_output": "Reject core cloud dependence and fabricated confidence; offer a bounded local alternative with honest evidence and ownership.",
+      "files": []
+    }
+  ]
+}

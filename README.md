@@ -1,8 +1,14 @@
 # Appbuilder hackathon
 
-A small preparation repo for a **24-hour hackathon**. The theme, organizer guidelines,
-judging criteria, scope, and application stack have not been published or selected.
-This foundation sets up collaboration and checks without choosing the product.
+Sane is a proposed Android scam-message detector for a **Local AI hackathon**.
+Its required flows are manual paste, automatic SMS analysis, and automatic analysis of
+readable notifications from selected chat apps, in Filipino and English. The team has
+three developers, no Kotlin experience, and an approximately 15-hour build budget.
+
+This checkout contains tooling, system/design contracts, and agent guidance, not a working
+Android application or a validated model. Start with the [Sane guide](docs/sane/README.md),
+[organizer evidence](docs/planning/guidelines.md), and [scope](docs/planning/scope.md).
+The Figma agent prompt is delivered separately in chat; no prompt file is included.
 
 ## Quick start
 
@@ -146,16 +152,17 @@ docs/git-conventions.md    Branch, commit, task, and PR conventions
 docs/role-sessions.md      Activate once; compaction restoration and reset boundaries
 coordination.json          Empty allocation registry; single coordinator owns it
 docs/templates/           Task and handoff templates
-docs/planning/            Empty planning documents; fill when facts arrive
+docs/planning/            Sane scope, organizer evidence, architecture, tasks, and demo
+docs/sane/                Interface, model, security, verification, and bundle review
 scripts/                  Small setup, validation, and skill synchronization helpers
 .env.example              Versioned empty variable template
 .env                      Local only, ignored by Git
-PRODUCT.md / DESIGN.md     Empty product/design documents for future Impeccable setup
+PRODUCT.md / DESIGN.md     Sane product truth and proposed design baseline
 ```
 
-The planning files are deliberately empty: `guidelines.md`, `scope.md`, `architecture.md`,
-`tasks.md`, `decisions.md`, `context.md`, and `demo.md`. No theme, roadmap, or deadline
-has been guessed. The workflow guide contains suggested process, not contest requirements.
+The planning files now record confirmed Sane requirements and the user-supplied organizer slides.
+Architecture/design choices are marked separately from organizer requirements; device/model
+behavior remains unverified. The workflow guide contains team process, not contest requirements.
 
 ## Working with AI tools
 
@@ -164,7 +171,7 @@ The canonical skills use portable `SKILL.md` bundles in `.agents/skills`.
 Native discovery varies by tool; the [AI tools guide](docs/ai-tools.md) provides adapters,
 automatic native setup, exact prompts, and a manual fallback for ChatGPT, Devin, and other environments.
 
-A fresh clone includes all twenty-three skill bundles and their supporting resources in `.agents/skills`.
+A fresh clone includes all canonical skill bundles and their supporting resources in `.agents/skills`.
 The common `npm run setup` generates Claude's complete native bundles automatically; teammates
 do not need a separate Claude export or upstream reinstall. Codex, OpenCode, current Antigravity,
 and current Copilot read the canonical folder directly. Adapter folders contain host-specific
@@ -184,7 +191,7 @@ $parallel-work Split these independent tasks into isolated worktrees.
 
 These are **chat prompts, not shell commands**. Run Impeccable `init` after the product
 direction is known. `grill-me` includes its required `grilling` dependency. There are
-twenty-three skill folders total; load only the selected role and phase workflows for the task.
+twenty-nine skill folders total; load only the selected role and relevant specialist workflows for the task.
 
 ### Spec Kit
 

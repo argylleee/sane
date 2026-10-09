@@ -1,0 +1,17 @@
+{
+  "skill_name": "sane-release",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Foundation checks passed and Figma alert animation works. Mark Android monitoring and Filipino accuracy complete.",
+      "expected_output": "Reject unsupported completeness; require real device/source/local model evidence and held-out language evaluation; app checks remain unconfigured.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Enable airplane mode and wait for real SMS/chat to prove offline; assume a required APK and 4-minute pitch.",
+      "expected_output": "Separate delivery from inference, keep cellular service for SMS, test chat capture online/local inference offline, and identify invented organizer requirements.",
+      "files": []
+    }
+  ]
+}

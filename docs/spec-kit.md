@@ -80,7 +80,8 @@ The included CLI workflow definition is optional; the normal flow invokes each s
   Follow `coordination.json` and the existing branch/commit conventions. Parallel markers alone
   do not authorize spawning workers or bypass allocation checks.
 - Keep specs short and load only this feature's relevant artifacts. Later findings update the
-  smallest affected artifact. Leave the existing blank planning documents empty until facts arrive.
+  smallest affected artifact. Reuse Sane's populated planning contracts; leave genuinely unknown
+  facts explicit rather than inventing values or recreating a competing planning authority.
 - Implementation still requires scoped formatting, meaningful application checks, and repository
   validation. Spec convergence is an assessment, not a replacement for tests or runtime evidence.
   Timebox follow-up work and ask the coordinator to cut optional scope when necessary.
