@@ -145,9 +145,9 @@ describe('30-message development-set regression gate', () => {
       }
       expect(counts.scams).toBe(15);
       expect(counts.legit).toBe(15);
-      expect(counts.caught).toBeGreaterThanOrEqual(14);
+      expect(counts.caught).toBe(15);
       expect(counts.falseAlarms).toBe(0);
-      expect(counts.abstained).toBe(15);
+      expect(counts.abstained).toBe(14);
     },
   );
 });
