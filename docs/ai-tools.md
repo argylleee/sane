@@ -39,7 +39,7 @@ Review any newly downloaded instructions/scripts before use; they remain within 
 The six Sane specialists supplement those workflows. Start at [the Sane development guide](sane/README.md),
 load the already assigned role, then only the matching specialist and rule. They do not activate
 roles, allocate files, run background monitors, or authorize external actions. The confirmed
-manual/SMS/selected-chat scope and language requirements must not be silently narrowed.
+web-only scope (D-10, D-12) and the English, Filipino, and Taglish requirement must not be silently narrowed.
 Canonical skill names are distinct from existing role, Impeccable, and Spec Kit names.
 
 ## Exact usage

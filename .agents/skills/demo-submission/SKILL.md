@@ -21,7 +21,7 @@ Four reasons to keep visible in the UI and demo: **private, offline, free per ch
 2. **Check it (30 s):** paste, tap Check. Verdict, highlighted phrases, steps, in Taglish.
 3. **Prove it is local (45 s):** point to the "Network requests: 0" counter. Switch the phone/laptop to airplane mode.
 4. **Offline again (30 s):** check a Filipino message and a screenshot offline. Same quality.
-5. **Honesty (20 s):** show a legit bank OTP message returning "Probably fine," and say what the app is weaker at.
+5. **Honesty (20 s):** show a legit bank OTP message returning "No obvious warning signs," and say what the app is weaker at.
 6. **Close (20 s):** the four reasons: private, offline, free, instant. Show the test numbers from the eval report.
 
 If something fails live, switch to the recorded backup capture without apology and keep talking.
@@ -95,7 +95,7 @@ A web app cannot read the SMS inbox or react the moment a text arrives. Browsers
 ## Likely judge questions
 
 - **"Isn't hosting a website cloud?"** The host only serves files. No message and no AI call goes to it. After the first load it works offline.
-- **"How accurate is it?"** Quote the real eval numbers and the abstain behavior. Say it is strongest on common patterns.
+- **"How accurate is it?"** Quote the real eval numbers and the abstain behavior. Say it is strongest on common patterns. Metric definitions and follow-up answers: `.agents/skills/data-eval/references/metrics-and-parameters.md`.
 - **"Why not train a classifier?"** Time and labeled data. Retrieval plus code rules is explainable and needs no training. A trained model is a clear next step.
 - **"Can it read my SMS automatically?"** No. Browsers cannot read the inbox. It checks what you paste, copy or share, which is also why nothing is collected.
 - **"What if the user's phone is weak?"** The rules and embeddings run on WASM. The LLM is optional and falls back to templates.
