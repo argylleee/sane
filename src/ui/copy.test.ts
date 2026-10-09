@@ -24,5 +24,6 @@ describe('localized interface copy', () => {
     ).toBe(true);
     expect(copy.characterCount(12, 2000)).toContain('12');
     expect(copy.screenshotSelected('sample.png')).toContain('sample.png');
+    expect(copy.modelPreparing(42)).toContain('42');
   });
 });

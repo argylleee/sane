@@ -1,6 +1,6 @@
 // OWNER: model. Optional WebLLM explanation layer, lazy-loaded and fully skippable.
 // Verdicts never depend on it: any failure returns null and the template explanation is used.
-import type { Tier } from './capabilities';
+import { refineCapabilities, type Tier } from './capabilities';
 import { buildMessages, validateLlmOutput, type LlmFacts } from './llmPrompt';
 
 // Ids verified against WebLLM's prebuilt model list (@mlc-ai/web-llm 0.2.85).
@@ -44,13 +44,32 @@ export function subscribeLlm(listener: (status: LlmStatus) => void): () => void 
   return () => listeners.delete(listener);
 }
 
-/** Explicit, user-initiated download and load. Throws if the tier has no model. */
-export function loadLlm(tier: Tier): Promise<void> {
-  const modelId = LLM_MODEL_BY_TIER[tier];
-  if (!modelId) return Promise.reject(new Error('This device cannot run the language model.'));
+/** Same models without 16-bit shader math, for GPUs that lack `shader-f16` (many phones). */
+export const LLM_MODEL_F32_BY_TIER: Record<Tier, string | null> = {
+  A: 'Qwen2.5-1.5B-Instruct-q4f32_1-MLC',
+  B: 'Qwen2.5-0.5B-Instruct-q4f32_1-MLC',
+  C: null,
+};
+
+/** Picks the model id for a tier, or null when this device cannot run one. */
+export function pickLlmModel(tier: Tier, shaderF16: boolean | null): string | null {
+  return (shaderF16 === true ? LLM_MODEL_BY_TIER : LLM_MODEL_F32_BY_TIER)[tier];
+}
+
+/** Explicit, user-initiated download and load. Throws if the device cannot run a model. */
+export function loadLlm(requestedTier: Tier): Promise<void> {
+  if (!LLM_MODEL_BY_TIER[requestedTier])
+    return Promise.reject(new Error('This device cannot run the language model.'));
   enginePromise ??= (async () => {
     setStatus({ state: 'loading', progress: 0 });
     try {
+      // Inspect the real GPU adapter: a phone can expose WebGPU yet have no usable adapter or no f16.
+      const capabilities = await refineCapabilities();
+      const modelId = pickLlmModel(
+        capabilities.tier === 'C' ? 'C' : requestedTier,
+        capabilities.shaderF16,
+      );
+      if (!modelId) throw new Error('This device cannot run the language model.');
       const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
       const engine = (await CreateMLCEngine(modelId, {
         initProgressCallback: (report) =>
@@ -82,7 +101,10 @@ export async function explainWithLlm(facts: LlmFacts): Promise<string | null> {
         setTimeout(() => reject(new Error('LLM timed out.')), LLM_TIMEOUT_MS),
       ),
     ]);
-    return validateLlmOutput(reply.choices[0]?.message.content);
+    return validateLlmOutput(reply.choices[0]?.message.content, {
+      level: facts.level,
+      lang: facts.lang,
+    });
   } catch {
     return null;
   }

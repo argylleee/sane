@@ -75,7 +75,25 @@ const MONEY_TRANSFER =
 
 // Mask only payment disclaimers and keep offsets for highlighting the original text.
 const NO_PAYMENT =
-  /\b(?:no\s+(?:payment|fee|deposit)(?:\s+is)?\s+(?:required|needed|due)|(?:do not|don't)\s+need\s+to\s+pay(?:\s+(?:a|the|handling|processing|delivery|fee)){0,4}|no need\s+(?:to\s+)?(?:pay|magbayad)(?:\s+(?:a|the|ng|ang|handling|processing|delivery|fee)){0,4}|walang\s+(?:kailangang\s+)?(?:bayaran|bayad|paunang bayad)|hindi\s+(?:kailangan|required)\s+(?:ang\s+)?(?:bayad|payment|magbayad))\b/giu;
+  /\b(?:no\s+(?:payment|fee|deposit)(?:\s+is)?\s+(?:required|needed|due)|(?:do not|don't)\s+need\s+to\s+pay(?:\s+(?:a|the|handling|processing|delivery|fee)){0,4}|no need\s+(?:to\s+)?(?:pay|magbayad)(?:\s+(?:a|the|ng|ang|handling|processing|delivery|fee)){0,4}|walang\s+(?:kailangang\s+)?(?:bayaran|bayad|paunang bayad)|hindi\s+(?:kailangan|required)\s+(?:ang\s+)?(?:bayad|payment|magbayad)|(?:hindi|di)\s+(?:(?:mo|ka|po|na)\s+){0,3}kailangang?\s+(?:ng\s+)?(?:magbayad|mag-bayad|bayaran|bayad|payment)|(?:there\s+is\s+)?nothing\s+to\s+pay|(?:do not|don't)\s+have\s+to\s+pay(?:\s+(?:anything|a\s+thing))?|without\s+(?:any\s+)?(?:fees?|charges?|payments?))\b/giu;
+
+// A sentence that only says nothing is owed ("walang bayad", "no fee", "libre") is a disclaimer, not a
+// payment demand. Mask its payment words, but only when the sentence has no demand marker, so a
+// conditional threat, an instruction to send or click, or a credential request still counts.
+const DISCLAIMER_CUE =
+  /\b(?:hindi|di|wala|walang|no|not|nothing|without|free|libre|exempt|zero)\b/iu;
+const PAYMENT_WORDS =
+  /\b(?:bayad|bayaran|babayaran|magbayad|mag-bayad|payment|pay|fees?|charges?|singil|cost)\b/giu;
+const DEMAND_MARKER =
+  /\b(?:kung hindi|kapag hindi|pag hindi|if you|unless|otherwise|or else|bago|before|muna|first|link|click|tap|pindutin|i-click|otp|pin|mpin|code|password|send|ipadala|i-send|magpadala|deposit|magdeposito|verify|i-verify|confirm|i-confirm)\b/iu;
+
+function maskDisclaimedPayments(text: string): string {
+  return text.replace(/[^.!?;\n]+[.!?;]?/gu, (sentence) =>
+    DISCLAIMER_CUE.test(sentence) && !DEMAND_MARKER.test(sentence)
+      ? sentence.replace(PAYMENT_WORDS, (word) => ' '.repeat(word.length))
+      : sentence,
+  );
+}
 
 function isNegated(text: string, at: number): boolean {
   const clause =
@@ -144,6 +162,7 @@ function pushSignal(
 
 export function runRules(text: string): Signal[] {
   text = text.replace(NO_PAYMENT, (notice) => ' '.repeat(notice.length));
+  text = maskDisclaimedPayments(text);
   const signals = urlSignals(text);
   const hasCredential = /\b(?:otp|pin|mpin|code|password|one-time password)\b/iu.test(text);
   const safe = [
