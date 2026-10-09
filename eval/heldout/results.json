@@ -1,0 +1,989 @@
+{
+  "datasetHash": "8d301bfb1825e812dbe374f0ab6497759873fda67cf90091c1af99f7101f572f",
+  "detectorRevision": "29edcc754f5e5778bfae5d657a8c09f1493f70d5",
+  "rulesOnly": {
+    "overall": {
+      "total": 42,
+      "scams": 21,
+      "legit": 21,
+      "caught": 9,
+      "falseAlarms": 1,
+      "abstained": 28,
+      "precision": 0.9,
+      "recall": 0.42857142857142855,
+      "falsePositiveRate": 0.047619047619047616,
+      "abstentionRate": 0.6666666666666666,
+      "levelAgreement": 0.21428571428571427,
+      "confusion": {
+        "likely_scam": {
+          "likely_scam": 3,
+          "suspicious": 4,
+          "probably_fine": 0,
+          "not_sure": 1
+        },
+        "suspicious": {
+          "likely_scam": 0,
+          "suspicious": 2,
+          "probably_fine": 0,
+          "not_sure": 11
+        },
+        "probably_fine": {
+          "likely_scam": 0,
+          "suspicious": 1,
+          "probably_fine": 4,
+          "not_sure": 16
+        },
+        "not_sure": {
+          "likely_scam": 0,
+          "suspicious": 0,
+          "probably_fine": 0,
+          "not_sure": 0
+        }
+      },
+      "perLabel": {
+        "likely_scam": {
+          "expected": 8,
+          "predicted": 3,
+          "tp": 3,
+          "fp": 0,
+          "precision": 1,
+          "recall": 0.375,
+          "falsePositiveRate": 0,
+          "abstentionRate": 0.125
+        },
+        "suspicious": {
+          "expected": 13,
+          "predicted": 7,
+          "tp": 2,
+          "fp": 5,
+          "precision": 0.2857142857142857,
+          "recall": 0.15384615384615385,
+          "falsePositiveRate": 0.1724137931034483,
+          "abstentionRate": 0.8461538461538461
+        },
+        "probably_fine": {
+          "expected": 21,
+          "predicted": 4,
+          "tp": 4,
+          "fp": 0,
+          "precision": 1,
+          "recall": 0.19047619047619047,
+          "falsePositiveRate": 0,
+          "abstentionRate": 0.7619047619047619
+        },
+        "not_sure": {
+          "expected": 0,
+          "predicted": 28,
+          "tp": 0,
+          "fp": 28,
+          "precision": 0,
+          "recall": null,
+          "falsePositiveRate": 0.6666666666666666,
+          "abstentionRate": null
+        }
+      },
+      "missedScams": [
+        "h03",
+        "h05",
+        "h06",
+        "h15",
+        "h16",
+        "h17",
+        "h18",
+        "h20",
+        "h21",
+        "h31",
+        "h32",
+        "h35"
+      ],
+      "falseAlarmIds": ["h23"],
+      "abstentionIds": [
+        "h03",
+        "h05",
+        "h06",
+        "h09",
+        "h10",
+        "h11",
+        "h12",
+        "h13",
+        "h14",
+        "h15",
+        "h16",
+        "h17",
+        "h18",
+        "h20",
+        "h21",
+        "h25",
+        "h26",
+        "h27",
+        "h28",
+        "h31",
+        "h32",
+        "h35",
+        "h37",
+        "h38",
+        "h39",
+        "h40",
+        "h41",
+        "h42"
+      ],
+      "mismatchIds": [
+        "h02",
+        "h03",
+        "h05",
+        "h06",
+        "h09",
+        "h10",
+        "h11",
+        "h12",
+        "h13",
+        "h14",
+        "h15",
+        "h16",
+        "h17",
+        "h18",
+        "h19",
+        "h20",
+        "h21",
+        "h23",
+        "h25",
+        "h26",
+        "h27",
+        "h28",
+        "h29",
+        "h31",
+        "h32",
+        "h33",
+        "h35",
+        "h37",
+        "h38",
+        "h39",
+        "h40",
+        "h41",
+        "h42"
+      ]
+    },
+    "perLanguage": {
+      "en": {
+        "total": 14,
+        "scams": 7,
+        "legit": 7,
+        "caught": 4,
+        "falseAlarms": 0,
+        "abstained": 9,
+        "precision": 1,
+        "recall": 0.5714285714285714,
+        "falsePositiveRate": 0,
+        "abstentionRate": 0.6428571428571429,
+        "levelAgreement": 0.2857142857142857,
+        "confusion": {
+          "likely_scam": {
+            "likely_scam": 2,
+            "suspicious": 1,
+            "probably_fine": 0,
+            "not_sure": 0
+          },
+          "suspicious": {
+            "likely_scam": 0,
+            "suspicious": 1,
+            "probably_fine": 0,
+            "not_sure": 3
+          },
+          "probably_fine": {
+            "likely_scam": 0,
+            "suspicious": 0,
+            "probably_fine": 1,
+            "not_sure": 6
+          },
+          "not_sure": {
+            "likely_scam": 0,
+            "suspicious": 0,
+            "probably_fine": 0,
+            "not_sure": 0
+          }
+        },
+        "perLabel": {
+          "likely_scam": {
+            "expected": 3,
+            "predicted": 2,
+            "tp": 2,
+            "fp": 0,
+            "precision": 1,
+            "recall": 0.6666666666666666,
+            "falsePositiveRate": 0,
+            "abstentionRate": 0
+          },
+          "suspicious": {
+            "expected": 4,
+            "predicted": 2,
+            "tp": 1,
+            "fp": 1,
+            "precision": 0.5,
+            "recall": 0.25,
+            "falsePositiveRate": 0.1,
+            "abstentionRate": 0.75
+          },
+          "probably_fine": {
+            "expected": 7,
+            "predicted": 1,
+            "tp": 1,
+            "fp": 0,
+            "precision": 1,
+            "recall": 0.14285714285714285,
+            "falsePositiveRate": 0,
+            "abstentionRate": 0.8571428571428571
+          },
+          "not_sure": {
+            "expected": 0,
+            "predicted": 9,
+            "tp": 0,
+            "fp": 9,
+            "precision": 0,
+            "recall": null,
+            "falsePositiveRate": 0.6428571428571429,
+            "abstentionRate": null
+          }
+        },
+        "missedScams": ["h03", "h05", "h06"],
+        "falseAlarmIds": [],
+        "abstentionIds": ["h03", "h05", "h06", "h09", "h10", "h11", "h12", "h13", "h14"],
+        "mismatchIds": ["h02", "h03", "h05", "h06", "h09", "h10", "h11", "h12", "h13", "h14"]
+      },
+      "fil": {
+        "total": 14,
+        "scams": 7,
+        "legit": 7,
+        "caught": 1,
+        "falseAlarms": 1,
+        "abstained": 10,
+        "precision": 0.5,
+        "recall": 0.14285714285714285,
+        "falsePositiveRate": 0.14285714285714285,
+        "abstentionRate": 0.7142857142857143,
+        "levelAgreement": 0.14285714285714285,
+        "confusion": {
+          "likely_scam": {
+            "likely_scam": 0,
+            "suspicious": 1,
+            "probably_fine": 0,
+            "not_sure": 1
+          },
+          "suspicious": {
+            "likely_scam": 0,
+            "suspicious": 0,
+            "probably_fine": 0,
+            "not_sure": 5
+          },
+          "probably_fine": {
+            "likely_scam": 0,
+            "suspicious": 1,
+            "probably_fine": 2,
+            "not_sure": 4
+          },
+          "not_sure": {
+            "likely_scam": 0,
+            "suspicious": 0,
+            "probably_fine": 0,
+            "not_sure": 0
+          }
+        },
+        "perLabel": {
+          "likely_scam": {
+            "expected": 2,
+            "predicted": 0,
+            "tp": 0,
+            "fp": 0,
+            "precision": null,
+            "recall": 0,
+            "falsePositiveRate": 0,
+            "abstentionRate": 0.5
+          },
+          "suspicious": {
+            "expected": 5,
+            "predicted": 2,
+            "tp": 0,
+            "fp": 2,
+            "precision": 0,
+            "recall": 0,
+            "falsePositiveRate": 0.2222222222222222,
+            "abstentionRate": 1
+          },
+          "probably_fine": {
+            "expected": 7,
+            "predicted": 2,
+            "tp": 2,
+            "fp": 0,
+            "precision": 1,
+            "recall": 0.2857142857142857,
+            "falsePositiveRate": 0,
+            "abstentionRate": 0.5714285714285714
+          },
+          "not_sure": {
+            "expected": 0,
+            "predicted": 10,
+            "tp": 0,
+            "fp": 10,
+            "precision": 0,
+            "recall": null,
+            "falsePositiveRate": 0.7142857142857143,
+            "abstentionRate": null
+          }
+        },
+        "missedScams": ["h15", "h16", "h17", "h18", "h20", "h21"],
+        "falseAlarmIds": ["h23"],
+        "abstentionIds": ["h15", "h16", "h17", "h18", "h20", "h21", "h25", "h26", "h27", "h28"],
+        "mismatchIds": [
+          "h15",
+          "h16",
+          "h17",
+          "h18",
+          "h19",
+          "h20",
+          "h21",
+          "h23",
+          "h25",
+          "h26",
+          "h27",
+          "h28"
+        ]
+      },
+      "taglish": {
+        "total": 14,
+        "scams": 7,
+        "legit": 7,
+        "caught": 4,
+        "falseAlarms": 0,
+        "abstained": 9,
+        "precision": 1,
+        "recall": 0.5714285714285714,
+        "falsePositiveRate": 0,
+        "abstentionRate": 0.6428571428571429,
+        "levelAgreement": 0.21428571428571427,
+        "confusion": {
+          "likely_scam": {
+            "likely_scam": 1,
+            "suspicious": 2,
+            "probably_fine": 0,
+            "not_sure": 0
+          },
+          "suspicious": {
+            "likely_scam": 0,
+            "suspicious": 1,
+            "probably_fine": 0,
+            "not_sure": 3
+          },
+          "probably_fine": {
+            "likely_scam": 0,
+            "suspicious": 0,
+            "probably_fine": 1,
+            "not_sure": 6
+          },
+          "not_sure": {
+            "likely_scam": 0,
+            "suspicious": 0,
+            "probably_fine": 0,
+            "not_sure": 0
+          }
+        },
+        "perLabel": {
+          "likely_scam": {
+            "expected": 3,
+            "predicted": 1,
+            "tp": 1,
+            "fp": 0,
+            "precision": 1,
+            "recall": 0.3333333333333333,
+            "falsePositiveRate": 0,
+            "abstentionRate": 0
+          },
+          "suspicious": {
+            "expected": 4,
+            "predicted": 3,
+            "tp": 1,
+            "fp": 2,
+            "precision": 0.3333333333333333,
+            "recall": 0.25,
+            "falsePositiveRate": 0.2,
+            "abstentionRate": 0.75
+          },
+          "probably_fine": {
+            "expected": 7,
+            "predicted": 1,
+            "tp": 1,
+            "fp": 0,
+            "precision": 1,
+            "recall": 0.14285714285714285,
+            "falsePositiveRate": 0,
+            "abstentionRate": 0.8571428571428571
+          },
+          "not_sure": {
+            "expected": 0,
+            "predicted": 9,
+            "tp": 0,
+            "fp": 9,
+            "precision": 0,
+            "recall": null,
+            "falsePositiveRate": 0.6428571428571429,
+            "abstentionRate": null
+          }
+        },
+        "missedScams": ["h31", "h32", "h35"],
+        "falseAlarmIds": [],
+        "abstentionIds": ["h31", "h32", "h35", "h37", "h38", "h39", "h40", "h41", "h42"],
+        "mismatchIds": ["h29", "h31", "h32", "h33", "h35", "h37", "h38", "h39", "h40", "h41", "h42"]
+      }
+    },
+    "rows": [
+      {
+        "id": "h01",
+        "lang": "en",
+        "expected": "likely_scam",
+        "actual": "likely_scam",
+        "score": 70,
+        "signals": ["lookalike_domain", "otp_pin_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h02",
+        "lang": "en",
+        "expected": "likely_scam",
+        "actual": "suspicious",
+        "score": 35,
+        "signals": ["money_request", "delivery_scam"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h03",
+        "lang": "en",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["money_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h04",
+        "lang": "en",
+        "expected": "suspicious",
+        "actual": "suspicious",
+        "score": 30,
+        "signals": ["money_request", "job_bait"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h05",
+        "lang": "en",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h06",
+        "lang": "en",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["investment_bait"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h07",
+        "lang": "en",
+        "expected": "likely_scam",
+        "actual": "likely_scam",
+        "score": 77,
+        "signals": ["otp_pin_request", "urgency", "account_threat", "bank_impersonation"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h08",
+        "lang": "en",
+        "expected": "probably_fine",
+        "actual": "probably_fine",
+        "score": 0,
+        "signals": ["safe_credential_notice"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h09",
+        "lang": "en",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h10",
+        "lang": "en",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h11",
+        "lang": "en",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h12",
+        "lang": "en",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h13",
+        "lang": "en",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h14",
+        "lang": "en",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h15",
+        "lang": "fil",
+        "expected": "likely_scam",
+        "actual": "not_sure",
+        "score": 12,
+        "signals": ["urgency"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h16",
+        "lang": "fil",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["money_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h17",
+        "lang": "fil",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["money_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h18",
+        "lang": "fil",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h19",
+        "lang": "fil",
+        "expected": "likely_scam",
+        "actual": "suspicious",
+        "score": 35,
+        "signals": ["otp_pin_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h20",
+        "lang": "fil",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["money_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h21",
+        "lang": "fil",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["money_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h22",
+        "lang": "fil",
+        "expected": "probably_fine",
+        "actual": "probably_fine",
+        "score": 0,
+        "signals": ["safe_credential_notice"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h23",
+        "lang": "fil",
+        "expected": "probably_fine",
+        "actual": "suspicious",
+        "score": 35,
+        "signals": ["money_request", "delivery_scam"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h24",
+        "lang": "fil",
+        "expected": "probably_fine",
+        "actual": "probably_fine",
+        "score": 0,
+        "signals": ["safe_credential_notice"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h25",
+        "lang": "fil",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h26",
+        "lang": "fil",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h27",
+        "lang": "fil",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 12,
+        "signals": ["urgency"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h28",
+        "lang": "fil",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h29",
+        "lang": "taglish",
+        "expected": "likely_scam",
+        "actual": "suspicious",
+        "score": 35,
+        "signals": ["otp_pin_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h30",
+        "lang": "taglish",
+        "expected": "suspicious",
+        "actual": "suspicious",
+        "score": 35,
+        "signals": ["money_request", "delivery_scam"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h31",
+        "lang": "taglish",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h32",
+        "lang": "taglish",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 27,
+        "signals": ["urgency", "money_request"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h33",
+        "lang": "taglish",
+        "expected": "likely_scam",
+        "actual": "suspicious",
+        "score": 30,
+        "signals": ["money_request", "prize_or_job_bait"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h34",
+        "lang": "taglish",
+        "expected": "likely_scam",
+        "actual": "likely_scam",
+        "score": 85,
+        "signals": ["lookalike_domain", "otp_pin_request", "account_threat"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h35",
+        "lang": "taglish",
+        "expected": "suspicious",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["government_bait"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h36",
+        "lang": "taglish",
+        "expected": "probably_fine",
+        "actual": "probably_fine",
+        "score": 0,
+        "signals": ["safe_credential_notice"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h37",
+        "lang": "taglish",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 20,
+        "signals": ["delivery_scam"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h38",
+        "lang": "taglish",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h39",
+        "lang": "taglish",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h40",
+        "lang": "taglish",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["prize_or_job_bait"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h41",
+        "lang": "taglish",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 15,
+        "signals": ["account_threat"],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      },
+      {
+        "id": "h42",
+        "lang": "taglish",
+        "expected": "probably_fine",
+        "actual": "not_sure",
+        "score": 0,
+        "signals": [],
+        "usedModels": {
+          "ocr": false,
+          "embeddings": false,
+          "llm": false
+        }
+      }
+    ]
+  },
+  "embeddings": {
+    "status": "unmeasured",
+    "reason": "`local_files_only=true` or `env.allowRemoteModels=false` and file was not found locally at \"C:\\Users\\Windows 11\\Documents\\GitHub\\appbuilder-hackathon\\.worktrees\\task-208\\node_modules\\@huggingface\\transformers\\models\\/Xenova/multilingual-e5-small/config.json\"."
+  }
+}

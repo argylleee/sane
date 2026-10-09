@@ -10,15 +10,14 @@ Read `.agents/skills/design-ux/SKILL.md`, `DESIGN.md`, and look at every frame i
    no obvious warning signs, unable to assess), Learn; English and Filipino as drawn, Taglish derived from the same components.
 2. Responsive: the frames are tablet-sized (Surface Pro 8); the phone layout at 360 px is the primary target, with no horizontal scroll.
 3. Show the verdict's signals with safe highlighting (text nodes only, spans index the normalized text; see `docs/tasks/TASK-201-handoff.md`).
-4. Download-size prompt before large model downloads on mobile, embedding progress via `subscribeEmbeddings`, and the screenshot OCR
-   entry using `src/ai/index.ts` with the template fallback on failure.
+4. Screenshot OCR entry using `src/ai/index.ts` with the template fallback on failure. Keep the existing guarded first-visit embedding preload; remove its matching and download controls at the user’s direction.
 5. Keep the System/Light/Dark theme control from TASK-203 unless the Figma frames deliberately remove it; say which in the handoff.
    Another agent edited the control in the shared integration checkout; reconcile against `origin/main`, not that checkout.
-6. Keep the "Offline ready" badge and "network requests: 0" counter slots for TASK-204 to feed (agree the prop shape in the handoff).
+6. Use TASK-204’s service worker, manifest, and icon already present on `main`. Per the user’s direction, do not render offline/online status or network-request counter rows.
 
 ## Not in scope
 
-`src/sw.ts`, `src/main.tsx`, `public/` (TASK-204), `src/pipeline/`, `src/score/`, `src/rules/`, `src/ai/`, `src/types.ts`.
+`src/sw.ts`, `src/main.tsx`, `src/pipeline/`, `src/score/`, `src/rules/`, `src/ai/`, `src/types.ts`, and `public/` (TASK-204 ownership).
 Propose contract changes to the coordinator. Nothing in a frame overrides `RULES.md` (no network, accounts, SMS or monitoring).
 
 ## Acceptance evidence

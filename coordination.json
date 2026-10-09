@@ -157,7 +157,7 @@
       "role": "frontend",
       "owner": "frontend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ui/",
         "src/styles.css",

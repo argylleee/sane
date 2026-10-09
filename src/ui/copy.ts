@@ -14,6 +14,10 @@ type GuideCopy = {
 
 type Copy = {
   languageName: string;
+  themeLabel: string;
+  themeSystem: string;
+  themeLight: string;
+  themeDark: string;
   welcomeTitle: string;
   welcomeDescription: string;
   languageLabel: string;
@@ -23,6 +27,7 @@ type Copy = {
   localLabel: string;
   localTitle: string;
   localDescription: string;
+  privacyFootnote: string;
   start: string;
   scanNav: string;
   learnNav: string;
@@ -31,6 +36,7 @@ type Copy = {
   scanTitle: string;
   scanDescription: string;
   messageLabel: string;
+  extractedMessageLabel: string;
   messagePlaceholder: string;
   paste: string;
   upload: string;
@@ -43,26 +49,14 @@ type Copy = {
   screenshotSelected: (name: string) => string;
   screenshotTypeError: string;
   screenshotLimitError: string;
-  screenshotUnavailable: string;
+  screenshotLoading: string;
+  screenshotReady: string;
+  screenshotFailed: string;
   readyTitle: string;
   readyDescription: string;
   howTitle: string;
   howSteps: readonly [string, string, string];
   pasteOnlyNotice: string;
-  offlineReady: string;
-  offlinePreparing: string;
-  online: string;
-  offline: string;
-  networkRequests: (count: number) => string;
-  embeddingTitle: string;
-  embeddingAction: string;
-  embeddingReady: string;
-  embeddingUnavailable: string;
-  embeddingProgress: (percent: number) => string;
-  downloadPromptTitle: string;
-  downloadPromptBody: string;
-  downloadContinue: string;
-  downloadCancel: string;
   sharedLimitError: string;
   shareEmpty: string;
   iosInstallHint: string;
@@ -72,6 +66,9 @@ type Copy = {
   resultSubtitle: string;
   coverageText: string;
   coverageImage: string;
+  coverageOcr: string;
+  ocrUsed: string;
+  viewOriginal: string;
   nextPrefix: string;
   originalTitle: string;
   imageOriginal: string;
@@ -97,23 +94,31 @@ type Copy = {
 export const COPY: Record<Lang, Copy> = {
   en: {
     languageName: 'English',
+    themeLabel: 'Theme',
+    themeSystem: 'System',
+    themeLight: 'Light',
+    themeDark: 'Dark',
     welcomeTitle: 'Check a suspicious message',
-    welcomeDescription: 'Paste a message to check for possible scam signs.',
+    welcomeDescription: 'Paste a message to check for possible signs of a scam.',
     languageLabel: 'Language',
-    manualLabel: 'Manual check',
-    manualTitle: 'You choose what to paste',
-    manualDescription: 'Sane does not automatically read your clipboard.',
+    manualLabel: 'Manual',
+    manualTitle: 'Paste to scan',
+    manualDescription: 'You choose what to paste. Sane does not automatically read your clipboard.',
     localLabel: 'On device',
-    localTitle: 'Local message check',
-    localDescription: 'Results may be wrong. Accuracy has not been validated.',
-    start: 'Start manual check',
+    localTitle: 'Local phone analysis',
+    localDescription:
+      'The baseline may miss or incorrectly flag messages. Its accuracy is not validated.',
+    privacyFootnote: 'No account needed. Messages are analyzed on your device.',
+    start: 'Start Manual Check',
     scanNav: 'Scan',
     learnNav: 'Learn',
     backToScan: 'Back to scan',
     useText: 'Use text instead',
     scanTitle: 'Scan a message',
-    scanDescription: 'Paste a message or choose a screenshot to check for possible scam signs.',
+    scanDescription:
+      'Paste a message or upload a screenshot to check for possible scam indicators.',
     messageLabel: 'Original message',
+    extractedMessageLabel: 'Extracted message',
     messagePlaceholder: 'Paste or type the complete message here.',
     paste: 'Paste',
     upload: 'Choose screenshot',
@@ -126,8 +131,9 @@ export const COPY: Record<Lang, Copy> = {
     screenshotSelected: (name) => `Selected screenshot: ${name}`,
     screenshotTypeError: 'Choose an image file to continue.',
     screenshotLimitError: 'This image is too large. Choose an image smaller than 10 MB.',
-    screenshotUnavailable:
-      'Screenshot text extraction is not available yet. Paste the message text instead.',
+    screenshotLoading: 'Reading text from this screenshot on your device…',
+    screenshotReady: 'Review and edit the extracted text before checking.',
+    screenshotFailed: 'We could not read this screenshot. Paste or type the message instead.',
     readyTitle: 'Ready to check',
     readyDescription:
       'Messages are checked on this device. Results may be wrong and do not guarantee a message is safe.',
@@ -138,22 +144,6 @@ export const COPY: Record<Lang, Copy> = {
       'Read the possible signs and next step.',
     ],
     pasteOnlyNotice: 'Clipboard is read only when you choose Paste. Links are never opened.',
-    offlineReady: 'Offline ready',
-    offlinePreparing: 'Preparing offline use',
-    online: 'Online',
-    offline: 'Offline',
-    networkRequests: (count) => `Network requests during this check: ${count}`,
-    embeddingTitle: 'Optional message matching',
-    embeddingAction: 'Load offline matching',
-    embeddingReady: 'Offline message matching is ready.',
-    embeddingUnavailable:
-      'Offline message matching could not load. You can still check with the basic rules.',
-    embeddingProgress: (percent) => `Preparing message matching: ${percent}%`,
-    downloadPromptTitle: 'Download message matching?',
-    downloadPromptBody:
-      'The model weights are about 120 MB, plus supporting files. Use Wi-Fi if you can. Your message stays on this device.',
-    downloadContinue: 'Download on this device',
-    downloadCancel: 'Maybe later',
     sharedLimitError:
       'This shared message is over the 2,000 character limit. Paste a shorter part to check.',
     shareEmpty: 'No message or screenshot came through. Paste or choose one to check.',
@@ -164,6 +154,9 @@ export const COPY: Record<Lang, Copy> = {
     resultSubtitle: 'A helpful check, not a guarantee.',
     coverageText: 'Coverage: complete message · entered manually',
     coverageImage: 'Coverage: screenshot text unavailable',
+    coverageOcr: 'Coverage: text read from screenshot and reviewed',
+    ocrUsed: 'Screenshot text was read on this device.',
+    viewOriginal: 'View original message',
     nextPrefix: 'Next step',
     originalTitle: 'Original message',
     imageOriginal: 'No text was extracted from this screenshot.',
@@ -237,16 +230,23 @@ export const COPY: Record<Lang, Copy> = {
   },
   fil: {
     languageName: 'Filipino',
+    themeLabel: 'Tema',
+    themeSystem: 'System',
+    themeLight: 'Maliwanag',
+    themeDark: 'Madilim',
     welcomeTitle: 'Suriin ang kahina-hinalang mensahe',
     welcomeDescription: 'I-paste ang mensahe para tingnan kung may senyales ng scam.',
     languageLabel: 'Wika',
-    manualLabel: 'Manu-manong pagsusuri',
-    manualTitle: 'Ikaw ang pipili ng ipa-paste',
-    manualDescription: 'Hindi awtomatikong binabasa ng Sane ang clipboard mo.',
+    manualLabel: 'Manu-mano',
+    manualTitle: 'I-paste para suriin',
+    manualDescription:
+      'Ikaw ang pipili at magpa-paste ng mensahe. Hindi awtomatikong binabasa ang clipboard.',
     localLabel: 'Sa device',
-    localTitle: 'Pagsusuri sa device',
-    localDescription: 'Maaaring magkamali ang resulta. Hindi pa napatunayan ang accuracy nito.',
-    start: 'Simulan ang pagsusuri',
+    localTitle: 'Pagsusuri sa telepono',
+    localDescription:
+      'Maaaring may hindi makita o maling ma-flag ang baseline. Hindi pa napatunayan ang accuracy nito.',
+    privacyFootnote: 'Hindi kailangan ng account. Sinusuri ang mensahe sa iyong device.',
+    start: 'Simulan ang Pagsusuri',
     scanNav: 'Suriin',
     learnNav: 'Alamin',
     backToScan: 'Bumalik sa pagsusuri',
@@ -255,6 +255,7 @@ export const COPY: Record<Lang, Copy> = {
     scanDescription:
       'I-paste ang mensahe o pumili ng screenshot para tingnan kung may senyales ng scam.',
     messageLabel: 'Orihinal na mensahe',
+    extractedMessageLabel: 'Nakuha na mensahe',
     messagePlaceholder: 'I-paste o i-type rito ang buong mensahe.',
     paste: 'I-paste',
     upload: 'Pumili ng screenshot',
@@ -267,8 +268,9 @@ export const COPY: Record<Lang, Copy> = {
     screenshotSelected: (name) => `Napiling screenshot: ${name}`,
     screenshotTypeError: 'Pumili ng image file para magpatuloy.',
     screenshotLimitError: 'Masyadong malaki ang image. Pumili ng mas maliit sa 10 MB.',
-    screenshotUnavailable:
-      'Hindi pa available ang pagkuha ng text mula sa screenshot. I-paste na lang ang mensahe.',
+    screenshotLoading: 'Binabasa sa device mo ang text mula sa screenshot…',
+    screenshotReady: 'Basahin at i-edit muna ang nakuha na text bago magsuri.',
+    screenshotFailed: 'Hindi mabasa ang screenshot. I-paste o i-type na lang ang mensahe.',
     readyTitle: 'Handa nang magsuri',
     readyDescription:
       'Sinusuri ang mensahe sa device mo. Maaaring mali ang resulta at hindi nito ginagarantiya na ligtas ito.',
@@ -280,22 +282,6 @@ export const COPY: Record<Lang, Copy> = {
     ],
     pasteOnlyNotice:
       'Binabasa lang ang clipboard kapag pinili mo ang I-paste. Hindi binubuksan ang mga link.',
-    offlineReady: 'Handa offline',
-    offlinePreparing: 'Inihahanda para magamit offline',
-    online: 'Online',
-    offline: 'Offline',
-    networkRequests: (count) => `Mga network request habang nagsusuri: ${count}`,
-    embeddingTitle: 'Opsyonal na pagtutugma ng mensahe',
-    embeddingAction: 'I-load para offline',
-    embeddingReady: 'Handa na ang pagtutugma ng mensahe offline.',
-    embeddingUnavailable:
-      'Hindi na-load ang pagtutugma offline. Maaari ka pa ring magsuri gamit ang mga batayang tuntunin.',
-    embeddingProgress: (percent) => `Inihahanda ang pagtutugma ng mensahe: ${percent}%`,
-    downloadPromptTitle: 'I-download ang pagtutugma ng mensahe?',
-    downloadPromptBody:
-      'Mga 120 MB ang model weights, dagdag pa ang supporting files. Gumamit ng Wi-Fi kung kaya. Mananatili sa device mo ang mensahe.',
-    downloadContinue: 'I-download sa device na ito',
-    downloadCancel: 'Mamaya na lang',
     sharedLimitError:
       'Lampas sa 2,000 character ang mensaheng ipinasa. Mag-paste ng mas maikling bahagi para masuri.',
     shareEmpty: 'Walang dumating na mensahe o screenshot. Mag-paste o pumili ng susuriin.',
@@ -307,6 +293,9 @@ export const COPY: Record<Lang, Copy> = {
     resultSubtitle: 'Gabay lang ito, hindi garantiya.',
     coverageText: 'Saklaw: buong mensahe · ikaw ang naglagay',
     coverageImage: 'Saklaw: hindi mabasa ang text sa screenshot',
+    coverageOcr: 'Saklaw: binasa at nirepaso ang text mula sa screenshot',
+    ocrUsed: 'Binasa sa device na ito ang text mula sa screenshot.',
+    viewOriginal: 'Tingnan ang orihinal na mensahe',
     nextPrefix: 'Susunod',
     originalTitle: 'Orihinal na mensahe',
     imageOriginal: 'Walang text na nakuha mula sa screenshot na ito.',
@@ -379,6 +368,10 @@ export const COPY: Record<Lang, Copy> = {
   },
   taglish: {
     languageName: 'Taglish',
+    themeLabel: 'Theme',
+    themeSystem: 'System',
+    themeLight: 'Light',
+    themeDark: 'Dark',
     welcomeTitle: 'I-check ang suspicious na message',
     welcomeDescription: 'I-paste ang message para tingnan kung may possible scam signs.',
     languageLabel: 'Language',
@@ -388,6 +381,7 @@ export const COPY: Record<Lang, Copy> = {
     localLabel: 'Sa device',
     localTitle: 'Local na message check',
     localDescription: 'Puwedeng magkamali ang result. Hindi pa validated ang accuracy.',
+    privacyFootnote: 'No account kailangan. Sa device mo chine-check ang message.',
     start: 'Simulan ang manual check',
     scanNav: 'I-check',
     learnNav: 'Alamin',
@@ -397,6 +391,7 @@ export const COPY: Record<Lang, Copy> = {
     scanDescription:
       'I-paste ang message o pumili ng screenshot para tingnan ang possible scam signs.',
     messageLabel: 'Original na message',
+    extractedMessageLabel: 'Extracted na message',
     messagePlaceholder: 'I-paste o i-type dito ang buong message.',
     paste: 'I-paste',
     upload: 'Pumili ng screenshot',
@@ -409,8 +404,9 @@ export const COPY: Record<Lang, Copy> = {
     screenshotSelected: (name) => `Selected screenshot: ${name}`,
     screenshotTypeError: 'Pumili ng image file para magpatuloy.',
     screenshotLimitError: 'Masyadong malaking image. Pumili ng mas maliit sa 10 MB.',
-    screenshotUnavailable:
-      'Hindi pa available ang pagkuha ng text mula sa screenshot. I-paste na lang ang message.',
+    screenshotLoading: 'Binabasa sa device mo ang text mula sa screenshot…',
+    screenshotReady: 'I-review at i-edit muna ang extracted text bago mag-check.',
+    screenshotFailed: 'Hindi mabasa ang screenshot. I-paste o i-type na lang ang message.',
     readyTitle: 'Ready nang mag-check',
     readyDescription:
       'Sa device mo chine-check ang message. Puwedeng mali ang result at walang safety guarantee.',
@@ -422,22 +418,6 @@ export const COPY: Record<Lang, Copy> = {
     ],
     pasteOnlyNotice:
       'Clipboard lang ang binabasa kapag pinili mo ang I-paste. Hindi ino-open ang links.',
-    offlineReady: 'Ready offline',
-    offlinePreparing: 'Inihahanda para offline',
-    online: 'Online',
-    offline: 'Offline',
-    networkRequests: (count) => `Network requests habang nagche-check: ${count}`,
-    embeddingTitle: 'Optional na message matching',
-    embeddingAction: 'I-load para offline',
-    embeddingReady: 'Ready na ang offline message matching.',
-    embeddingUnavailable:
-      'Hindi na-load ang offline message matching. Puwede pa ring mag-check gamit ang basic rules.',
-    embeddingProgress: (percent) => `Inihahanda ang message matching: ${percent}%`,
-    downloadPromptTitle: 'I-download ang message matching?',
-    downloadPromptBody:
-      'Mga 120 MB ang model weights, plus supporting files. Wi-Fi muna kung kaya. Dito lang sa device ang message mo.',
-    downloadContinue: 'I-download sa device na ito',
-    downloadCancel: 'Later na lang',
     sharedLimitError:
       'Lampas 2,000 characters ang shared message. I-paste ang mas maikling part para ma-check.',
     shareEmpty: 'Walang dumating na message o screenshot. Mag-paste o pumili ng iche-check.',
@@ -449,6 +429,9 @@ export const COPY: Record<Lang, Copy> = {
     resultSubtitle: 'Helpful na check ito, hindi guarantee.',
     coverageText: 'Coverage: buong message · ikaw ang nag-enter',
     coverageImage: 'Coverage: hindi available ang screenshot text',
+    coverageOcr: 'Coverage: na-read at na-review ang text mula sa screenshot',
+    ocrUsed: 'Na-read sa device na ito ang screenshot text.',
+    viewOriginal: 'View ang original na message',
     nextPrefix: 'Next step',
     originalTitle: 'Original na message',
     imageOriginal: 'Walang text na na-extract mula sa screenshot.',
