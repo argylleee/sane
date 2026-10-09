@@ -142,6 +142,33 @@ function HighlightedMessage({ text, signals }: { text: string; signals: Signal[]
   return <>{parts}</>;
 }
 
+function useMenu() {
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        trigger.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
+
+  return { open, setOpen, root, trigger };
+}
+
 function LanguagePicker({
   lang,
   onChange,
@@ -153,24 +180,45 @@ function LanguagePicker({
   label: string;
   className?: string;
 }) {
+  const { open, setOpen, root, trigger } = useMenu();
+
   return (
-    <label className={`language-picker ${className}`}>
-      <span className="visually-hidden">{label}</span>
-      <select
-        aria-label={label}
-        value={lang}
-        onChange={(event) => {
-          const selected = LANGUAGES.find((language) => language === event.currentTarget.value);
-          if (selected) onChange(selected);
-        }}
+    <div className={`language-picker ${className}`} ref={root} data-open={open}>
+      <button
+        ref={trigger}
+        type="button"
+        className="language-trigger"
+        aria-label={`${label}: ${LANGUAGE_NAMES[lang]}`}
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
       >
+        <span>{LANGUAGE_NAMES[lang]}</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true" className="language-chevron">
+          <path d="m5 8 5 5 5-5" />
+        </svg>
+      </button>
+      <ul className="language-menu" aria-label={label}>
         {LANGUAGES.map((language) => (
-          <option key={language} value={language}>
-            {LANGUAGE_NAMES[language]}
-          </option>
+          <li key={language}>
+            <button
+              type="button"
+              aria-pressed={lang === language}
+              onClick={() => {
+                onChange(language);
+                setOpen(false);
+                trigger.current?.focus();
+              }}
+            >
+              <span>{LANGUAGE_NAMES[language]}</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true" className="language-check">
+                <path d="m4.5 10.5 3.5 3.5 7.5-8" />
+              </svg>
+            </button>
+          </li>
         ))}
-      </select>
-    </label>
+      </ul>
+    </div>
   );
 }
 
@@ -183,22 +231,50 @@ function ThemePicker({
   onChange: (theme: Theme) => void;
   copy: ReturnType<typeof copyFor>;
 }) {
+  const { open, setOpen, root, trigger } = useMenu();
+  const names: Record<Theme, string> = {
+    system: copy.themeSystem,
+    light: copy.themeLight,
+    dark: copy.themeDark,
+  };
+
   return (
-    <label className="theme-picker">
-      <span className="visually-hidden">{copy.themeLabel}</span>
-      <select
-        aria-label={copy.themeLabel}
-        value={theme}
-        onChange={(event) => {
-          const selected = THEMES.find((option) => option === event.currentTarget.value);
-          if (selected) onChange(selected);
-        }}
+    <div className="language-picker theme-picker" ref={root} data-open={open}>
+      <button
+        ref={trigger}
+        type="button"
+        className="language-trigger"
+        aria-label={`${copy.themeLabel}: ${names[theme]}`}
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((value) => !value)}
       >
-        <option value="system">{copy.themeSystem}</option>
-        <option value="light">{copy.themeLight}</option>
-        <option value="dark">{copy.themeDark}</option>
-      </select>
-    </label>
+        <span>{names[theme]}</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true" className="language-chevron">
+          <path d="m5 8 5 5 5-5" />
+        </svg>
+      </button>
+      <ul className="language-menu" aria-label={copy.themeLabel}>
+        {THEMES.map((option) => (
+          <li key={option}>
+            <button
+              type="button"
+              aria-pressed={theme === option}
+              onClick={() => {
+                onChange(option);
+                setOpen(false);
+                trigger.current?.focus();
+              }}
+            >
+              <span>{names[option]}</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true" className="language-check">
+                <path d="m4.5 10.5 3.5 3.5 7.5-8" />
+              </svg>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
