@@ -42,6 +42,8 @@ Add more phrasings, not more archetypes, when coverage is weak. Diversity of wor
 
 Starting weights only. Tune them against your own test set.
 
+Full definitions, small-sample honesty, tunable parameters and likely judge questions are in `references/metrics-and-parameters.md`. Read it before setting thresholds or answering questions about accuracy.
+
 ## Scoring (simple, explainable)
 
 ```text
@@ -103,7 +105,7 @@ A small LLM judging "scam or not" by itself is unreliable. It can be fooled by p
 
 1. **Rules + retrieval decide, LLM only explains.** Most predictable on stage, least "AI-heavy."
 2. **Add few-shot examples (3 to 4 sample verdicts) in the LLM prompt** so it contributes more to the judgment. More flexible, less predictable.
-3. **Add the confidence labels** (Likely scam / Suspicious / Probably fine / Not sure). Admitting uncertainty protects you from confidently wrong answers.
+3. **Add the confidence labels** (High concern / Use caution / No obvious warning signs / Unable to assess). Admitting uncertainty protects you from confidently wrong answers.
    Default in this kit is option 1 plus option 3, because Technical Execution rewards reliability in a live demo. Pick option 2 only if your tests show the LLM is dependable. Be upfront that it is strongest on common, pattern-based scams and weaker on brand-new or very subtle ones.
 
 ## Languages: English, Filipino, Taglish

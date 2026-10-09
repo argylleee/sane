@@ -35,7 +35,7 @@ context; confirm with organizers. Do not represent this assumption as slide text
 
 Full eligibility, team limits, official start/build window, submission portal/form/artifact format,
 pitch duration, internet policy, pretrained-data restrictions beyond the supplied allowance,
-and full contest rulebook remain unknown. Android/APK delivery, monitoring, bilingual detection,
-offline relaunch, and our 15-hour schedule are project choices/user requirements, not organizer mandates.
+and full contest rulebook remain unknown. Web-only PWA delivery, share-target input, trilingual detection,
+offline relaunch, and our build schedule are project choices/user requirements, not organizer mandates.
 
 This register establishes intended alignment. It does not prove build provenance or working behavior.

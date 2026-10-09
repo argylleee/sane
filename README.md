@@ -1,14 +1,14 @@
 # Appbuilder hackathon
 
-Sane is a proposed Android scam-message detector for a **Local AI hackathon**.
-Its required flows are manual paste, automatic SMS analysis, and automatic analysis of
-readable notifications from selected chat apps, in Filipino and English. The team has
-three developers, no Kotlin experience, and an approximately 15-hour build budget.
+Sane is a web-only, mobile-first PWA that checks a suspicious message for scam signs, fully
+in the browser, for a **Local AI hackathon**. Input is paste, typed text, a screenshot, or the
+Web Share Target (installed PWA on Android Chrome). It does not read SMS or chat apps and has no
+automatic monitoring (D-12). English, Filipino, and Taglish are supported.
 
-This checkout contains tooling, system/design contracts, and agent guidance, not a working
-Android application or a validated model. Start with the [Sane guide](docs/sane/README.md),
-[organizer evidence](docs/planning/guidelines.md), and [scope](docs/planning/scope.md).
-The Figma agent prompt is delivered separately in chat; no prompt file is included.
+This checkout holds the web app scaffold, tooling, and agent guidance. Start with
+[RULES.md](RULES.md), [PLAN.md](PLAN.md), [DESIGN.md](DESIGN.md),
+[organizer evidence](docs/planning/guidelines.md), and [decisions](docs/planning/decisions.md).
+The Android-native documents under `docs/sane` are superseded history.
 
 ## Quick start
 
