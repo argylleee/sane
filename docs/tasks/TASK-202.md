@@ -50,6 +50,20 @@ Import from `src/ai/index.ts`.
   0/14 legit, and abstained on 27/30, versus 14/15 on the development set it was tuned on. The
   rules need broader coverage; embeddings are the planned complement.
 
+## Browser evidence (headless Chrome via DevTools protocol, not a phone)
+
+- The embedding worker loads and answers in a real Chrome: status `ready`, warm match about
+  90 ms, first match about 6 to 7 s (it builds the 54-phrase archetype index, then caches it).
+- With the model served from a local host and the app's own `/ort/` runtime files, the page made
+  zero non-local requests. The library's default fetches its WASM runtime from a public CDN, so
+  `vite.config.ts` now serves it in dev and bundles it into `dist/ort/` (about 39 MB, 10 MB
+  gzipped) and `loadEmbeddings()` points at it by default.
+- The model itself still downloads from Hugging Face on the first load unless
+  `VITE_MODEL_BASE_URL` points at our own host. After that the browser caches it for offline use.
+  Not yet tested: offline relaunch, installed-PWA mode, and any phone.
+- A Taglish OTP request matched `otp_request` but its margin (0.006) fell under the 0.01
+  "moderate" cutoff, so embedding evidence was `none`. Rules must still catch such cases.
+
 ## Not done yet
 
 OCR worker (Tesseract eng + fil), WebLLM wrapper behind a toggle, the 30-message verdict test
