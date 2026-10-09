@@ -232,7 +232,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": ["src/pipeline/", "docs/tasks/TASK-210.md", "docs/tasks/TASK-210-handoff.md"],
       "writeResources": [],
       "dependsOn": ["TASK-205"],
@@ -268,7 +268,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/rules/",
         "src/explain/",
@@ -321,6 +321,91 @@
       "branch": "codex/feat/task-214-ocr-quality",
       "worktree": "task-214",
       "baseRevision": "9b85eaf2ddd89ddf4b30cd179e71183bd4aeacfa"
+    },
+    {
+      "id": "TASK-215",
+      "allocation": 1,
+      "role": "frontend",
+      "owner": "frontend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ui/",
+        "src/styles.css",
+        "specs/task-215-model-status-ui/",
+        "docs/tasks/TASK-215.md",
+        "docs/tasks/TASK-215-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-209"],
+      "branch": "codex/feat/task-215-model-status-ui",
+      "worktree": "task-215",
+      "baseRevision": "46d7b6bfff990cc33f1e2dca5727e8e4881ad708"
+    },
+    {
+      "id": "TASK-216",
+      "allocation": 1,
+      "role": "backend",
+      "owner": "backend-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/rules/",
+        "src/explain/",
+        "src/data/keywords.json",
+        "src/data/brands.json",
+        "docs/tasks/TASK-216.md",
+        "docs/tasks/TASK-216-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-212"],
+      "branch": "codex/feat/task-216-negation-notices",
+      "worktree": "task-216",
+      "baseRevision": "46d7b6bfff990cc33f1e2dca5727e8e4881ad708"
+    },
+    {
+      "id": "TASK-217",
+      "allocation": 1,
+      "role": "model",
+      "owner": "model-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/ai/embedder.ts",
+        "src/ai/embedClient.ts",
+        "src/ai/embed.worker.ts",
+        "src/ai/preload.ts",
+        "src/ai/progress.ts",
+        "src/ai/progress.test.ts",
+        "eval/embeddings-load/",
+        "docs/tasks/TASK-217.md",
+        "docs/tasks/TASK-217-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-202"],
+      "branch": "codex/fix/task-217-restore-embeddings",
+      "worktree": "task-217",
+      "baseRevision": "f709afbc6075ee9d67c7b16fed19bafb0e1c5c18"
+    },
+    {
+      "id": "TASK-218",
+      "allocation": 1,
+      "role": "model",
+      "owner": "model-dev",
+      "mode": "write",
+      "status": "active",
+      "allowedPaths": [
+        "src/data/archetypes.json",
+        "src/ai/archetypeIndex.ts",
+        "eval/archetypes/",
+        "docs/tasks/TASK-218.md",
+        "docs/tasks/TASK-218-handoff.md"
+      ],
+      "writeResources": [],
+      "dependsOn": ["TASK-202"],
+      "branch": "codex/feat/task-218-archetype-phrasings",
+      "worktree": "task-218",
+      "baseRevision": "f709afbc6075ee9d67c7b16fed19bafb0e1c5c18"
     }
   ]
 }
