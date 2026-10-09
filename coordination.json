@@ -138,7 +138,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/pipeline/",
         "src/score/",
