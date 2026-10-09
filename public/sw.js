@@ -103,13 +103,12 @@ self.addEventListener('fetch', (event) => {
   const isSameOrigin = requestUrl.origin === self.location.origin;
   const isStaticAsset =
     isSameOrigin &&
-    /\.(?:js|css|html|json|wasm|onnx|bin|data|svg|png|webp|woff2?|traineddata(?:\.gz)?)$/i.test(
+    /\.(?:m?js|css|html|json|wasm|onnx|bin|data|svg|png|webp|woff2?|traineddata(?:\.gz)?)$/i.test(
       requestUrl.pathname,
     );
-  const isModelHost =
-    requestUrl.hostname === 'huggingface.co' || requestUrl.hostname.endsWith('.huggingface.co');
+  // The embedding model on huggingface.co is deliberately not handled here: transformers.js keeps
+  // its own cache, and a second 118 MB copy can exceed the phone's storage quota and fail the download.
   const isModelAsset =
-    (isModelHost && /\.(?:js|mjs|wasm|onnx|bin|data|json)$/i.test(requestUrl.pathname)) ||
     (requestUrl.hostname === 'tessdata.projectnaptha.com' &&
       /\.traineddata(?:\.gz)?$/i.test(requestUrl.pathname)) ||
     (requestUrl.hostname === 'cdn.jsdelivr.net' &&
@@ -127,7 +126,10 @@ self.addEventListener('fetch', (event) => {
       try {
         const response = await fetch(event.request);
         if (response.ok && (isNavigation || isStaticAsset || isModelAsset)) {
-          await cache.put(event.request, response.clone());
+          // A failed cache write (storage quota, low-end phone) must never fail or delay the
+          // request itself: store a copy in the background and ignore any error.
+          const copy = response.clone();
+          event.waitUntil(cache.put(event.request, copy).catch(() => undefined));
         }
         return response;
       } catch (error) {
