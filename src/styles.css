@@ -9,7 +9,7 @@
   background: #f6f7f3;
   --color-background: #f6f7f3;
   --color-surface: #ffffff;
-  --color-primary: #176347;
+  --color-primary: #103b28;
   --color-topbar-background: var(--color-primary);
   --color-on-topbar: #ffffff;
   --color-topbar-border: color-mix(in srgb, #ffffff 24%, transparent);
@@ -96,6 +96,42 @@ button:disabled {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   clip-path: inset(50%);
+}
+
+.app-footer {
+  border-top: 1px solid var(--color-border);
+  color: var(--color-secondary);
+  background: var(--color-surface);
+}
+
+.app-footer__inner {
+  display: flex;
+  width: min(100% - 2rem, var(--content-width));
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-inline: auto;
+  padding-block: 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+.app-footer__logo {
+  display: block;
+  width: min(6rem, 30vw);
+  height: auto;
+}
+
+.app-footer p {
+  margin-bottom: 0;
+  font-size: 0.8125rem;
+  text-align: right;
+}
+
+.app-footer__credits {
+  flex-basis: 100%;
+  color: var(--color-secondary);
+  font-size: 0.75rem !important;
+  text-align: center !important;
 }
 
 .topbar {
@@ -821,6 +857,21 @@ p {
   white-space: pre-wrap;
 }
 
+.model-status {
+  margin: 0.5rem 0;
+  min-height: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.model-status p {
+  margin: 0 0 0.35rem;
+}
+
+.model-status details p {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
 .model-section {
   grid-area: model;
 }
@@ -1053,6 +1104,17 @@ p {
 .learn-action {
   width: 100%;
   margin-top: 1rem;
+}
+
+@media (max-width: 47.999rem) {
+  .app-footer__inner {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .app-footer p {
+    text-align: center;
+  }
 }
 
 @media (min-width: 48rem) {

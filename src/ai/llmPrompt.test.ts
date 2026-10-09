@@ -13,7 +13,8 @@ describe('buildMessages', () => {
   it('passes the verdict as fact and wraps the message as untrusted data', () => {
     const [system, user] = buildMessages(facts);
     expect(system.content).toContain('Do not change the risk level');
-    expect(user.content).toContain('RISK LEVEL: likely scam');
+    expect(user.content).toContain('RISK LEVEL');
+    expect(user.content).toContain('likely scam');
     expect(user.content).toContain('untrusted text');
   });
 

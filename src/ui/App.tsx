@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
-import { extractText, startEmbeddingsPreload } from '../ai';
+import {
+  extractText,
+  getEmbeddingsStatus,
+  loadEmbeddings,
+  shouldAutoPreload,
+  startEmbeddingsPreload,
+  subscribeEmbeddings,
+} from '../ai';
 import { analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Lang, Level, Signal, Verdict } from '../types';
-
+import type { EmbeddingsStatus } from '../ai';
 import { copyFor } from './copy';
 
 const MAX_MESSAGE_LENGTH = 2_000;
@@ -317,6 +324,8 @@ export function App() {
   const ocrRequestId = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
   const messageInput = useRef<HTMLTextAreaElement>(null);
+  const [embeddingStatus, setEmbeddingStatus] = useState<EmbeddingsStatus>(getEmbeddingsStatus);
+  const [modelAtScan, setModelAtScan] = useState<EmbeddingsStatus['state']>('idle');
   const copy = copyFor(lang);
 
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
@@ -330,6 +339,8 @@ export function App() {
   useEffect(() => {
     void startEmbeddingsPreload();
   }, []);
+
+  useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
 
   const clearScreenshot = useCallback(() => {
     ocrRequestId.current += 1;
@@ -509,6 +520,7 @@ export function App() {
     setIsAnalyzing(true);
     const sourceImage = image && !message.trim() ? image : null;
     const sourceMessage = message;
+    const modelStateAtScan = getEmbeddingsStatus().state;
 
     try {
       const result = await analyze(sourceImage ? { image: sourceImage } : { text: sourceMessage }, {
@@ -516,6 +528,7 @@ export function App() {
         useLLM: false,
       });
       setVerdict(result);
+      setModelAtScan(modelStateAtScan);
       setResultMessage(sourceMessage);
       setResultIsImage(Boolean(image));
       setResultUsedOcr(Boolean(image && sourceMessage.trim() && ocrState === 'ready'));
@@ -663,6 +676,42 @@ export function App() {
                     setFeedback(null);
                   }}
                 />
+                <div className="model-status" role="status" aria-live="polite">
+                  {embeddingStatus.state === 'loading' && (
+                    <p>{copy.modelPreparing(embeddingStatus.progress)}</p>
+                  )}
+                  {embeddingStatus.state === 'ready' && <p>{copy.modelReadyStatus}</p>}
+                  {embeddingStatus.state === 'idle' && !shouldAutoPreload() && (
+                    <>
+                      <p>{copy.modelPausedStatus}</p>
+                      <button
+                        className="button button--quiet"
+                        type="button"
+                        onClick={() => void loadEmbeddings().catch(() => undefined)}
+                      >
+                        {copy.modelPrepare}
+                      </button>
+                    </>
+                  )}
+                  {embeddingStatus.state === 'error' && (
+                    <>
+                      <p>{copy.modelFailedStatus}</p>
+                      <button
+                        className="button button--quiet"
+                        type="button"
+                        onClick={() => void loadEmbeddings().catch(() => undefined)}
+                      >
+                        {copy.modelRetry}
+                      </button>
+                      {embeddingStatus.message && (
+                        <details>
+                          <summary>{copy.modelDetails}</summary>
+                          <p>{embeddingStatus.message}</p>
+                        </details>
+                      )}
+                    </>
+                  )}
+                </div>
                 <div
                   id="message-count"
                   className={`character-count${overLimit ? ' character-count--error' : ''}`}
@@ -801,7 +850,13 @@ export function App() {
                     verdict.usedModels.llm ||
                     resultUsedOcr
                       ? copy.modelRan
-                      : copy.noModel}
+                      : modelAtScan === 'loading'
+                        ? copy.modelNotReadyAtScan
+                        : modelAtScan === 'error'
+                          ? copy.modelFailedAtScan
+                          : modelAtScan === 'idle' && !shouldAutoPreload()
+                            ? copy.modelSkippedAtScan
+                            : copy.noModel}
                   </p>
                   <p>{verdict.usedModels.llm ? copy.llmModelRan : copy.llmModelNotRun}</p>
                   {resultUsedOcr && <p>{copy.ocrUsed}</p>}
@@ -903,6 +958,14 @@ export function App() {
           </>
         )}
       </main>
+
+      <footer className="app-footer">
+        <div className="app-footer__inner">
+          <img className="app-footer__logo" src="/icons/sane-logo.svg" alt="Sane" />
+          <p>When in doubt, sane it out.</p>
+          <p className="app-footer__credits">What If I Call</p>
+        </div>
+      </footer>
     </div>
   );
 }
