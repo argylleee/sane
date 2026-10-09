@@ -26,10 +26,10 @@ The test phone (Android 14, Chrome 155, Adreno 610) reports WebGPU as available,
 backend, Vulkan disabled, and no `shader-f16` feature. `detectCapabilities()` only checks `'gpu' in navigator`, so it
 would pick tier B and try `Qwen2.5-0.5B-Instruct-q4f16_1-MLC`, which needs f16. Required:
 
-6. In `capabilities.ts`, request the adapter (`navigator.gpu.requestAdapter()`) and read its features/info. Make the result
-   async-safe and keep `detectCapabilities()` backward compatible for existing callers (propose a new function if the signature must change).
-7. No `shader-f16`: use a q4f32 model variant if WebLLM's list has one for the tier, otherwise no LLM. A compatibility/fallback adapter or a
-   failed engine start is tier C (toggle hidden). Verify ids against the WebLLM list. Record the phone result as tested or untested.
+- In `capabilities.ts`, request the adapter (`navigator.gpu.requestAdapter()`) and read its features/info. Make the result
+  async-safe and keep `detectCapabilities()` backward compatible for existing callers (propose a new function if the signature must change).
+- No `shader-f16`: use a q4f32 model variant if WebLLM's list has one for the tier, otherwise no LLM. A compatibility/fallback adapter or a
+  failed engine start is tier C (toggle hidden). Verify ids against the WebLLM list. Record the phone result as tested or untested.
 
 ## Not in scope
 
