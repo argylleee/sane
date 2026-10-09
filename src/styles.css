@@ -485,9 +485,9 @@ p {
 }
 
 .language-options button[aria-pressed='true'] {
-  border-color: var(--color-primary);
-  color: var(--color-on-primary);
-  background: var(--color-primary);
+  border-color: var(--color-topbar-background);
+  color: var(--color-on-topbar);
+  background: var(--color-topbar-background);
 }
 
 .button {
