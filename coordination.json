@@ -246,7 +246,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ai/llm.ts",
         "src/ai/llmPrompt.ts",
@@ -307,7 +307,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ai/ocr.ts",
         "src/ai/ocrPreprocess.ts",
@@ -328,7 +328,7 @@
       "role": "frontend",
       "owner": "frontend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ui/",
         "src/styles.css",
@@ -348,7 +348,7 @@
       "role": "backend",
       "owner": "backend-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/rules/",
         "src/explain/",
@@ -369,7 +369,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/ai/embedder.ts",
         "src/ai/embedClient.ts",

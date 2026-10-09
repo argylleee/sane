@@ -32,11 +32,29 @@ const INSTRUCTION_PHRASES = [
   /\b(?:sabihin|ipakita|ilabas)\b[^.\n]{0,25}\b(?:system prompt|mga utos|instruction)\b/giu,
 ];
 
+// Control, zero-width and bidirectional-override characters, built from code points so the source
+// stays plain ASCII and the pattern is not mistaken for a literal control-character class.
+const INVISIBLE = new RegExp(
+  `[${[
+    [0x00, 0x08],
+    [0x0b, 0x0c],
+    [0x0e, 0x1f],
+    [0x7f, 0x7f],
+    [0x200b, 0x200f],
+    [0x202a, 0x202e],
+    [0x2060, 0x2060],
+    [0xfeff, 0xfeff],
+  ]
+    .map(([from, to]) => `${String.fromCharCode(from)}-${String.fromCharCode(to)}`)
+    .join('')}]`,
+  'gu',
+);
+
 /** Neutralize anything that could pose as the prompt's own structure or as new instructions. */
 function sanitize(text: string): string {
   let clean = text
     .normalize('NFKC')
-    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f​-‏‪-‮⁠﻿]/gu, '')
+    .replace(INVISIBLE, '')
     .replace(/<<<|>>>/g, ' ')
     .replace(/```+/g, ' ')
     .replace(/^\s*(?:system|assistant|user|developer|human|ai)\s*:/gimu, ' ')
