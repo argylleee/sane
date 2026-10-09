@@ -1,0 +1,122 @@
+[
+  {
+    "id": "p01",
+    "lang": "en",
+    "expect": "otp_request",
+    "text": "Hi, this is the bank fraud team. We blocked a payment on your card. Reply with the verification code you just received so we can reverse it."
+  },
+  {
+    "id": "p02",
+    "lang": "fil",
+    "expect": "otp_request",
+    "text": "Maaari po bang ibigay ang code na dumating sa inyong telepono? Kailangan lang po para ma-confirm namin ang refund ninyo."
+  },
+  {
+    "id": "p03",
+    "lang": "taglish",
+    "expect": "otp_request",
+    "text": "Boss paki-forward yung 6 digit na pumasok sa phone mo, mali kasi yung nasend ko sa'yo na pera."
+  },
+  {
+    "id": "p04",
+    "lang": "en",
+    "expect": "gcash_lockout",
+    "text": "ALERT: your e-wallet is restricted due to unusual activity. Confirm your identity at the link below or the account will be closed today."
+  },
+  {
+    "id": "p05",
+    "lang": "fil",
+    "expect": "gcash_lockout",
+    "text": "Naka-hold ang inyong GCash dahil kulang ang impormasyon. Pindutin ang link at i-update agad bago mag-expire ngayong gabi."
+  },
+  {
+    "id": "p06",
+    "lang": "taglish",
+    "expect": "gcash_lockout",
+    "text": "Hello po, na-flag yung Maya account mo. Click mo to re-activate, 12 hrs lang ang palugit bago i-close."
+  },
+  {
+    "id": "p07",
+    "lang": "en",
+    "expect": "parcel_fee",
+    "text": "Your package is held at customs. Pay a 85 peso redelivery fee at the link to release it, or it goes back to the sender."
+  },
+  {
+    "id": "p08",
+    "lang": "taglish",
+    "expect": "parcel_fee",
+    "text": "May parcel ka na naka-pending sa courier, bayaran mo muna yung shipping fee na 120 para ma-deliver today."
+  },
+  {
+    "id": "p09",
+    "lang": "en",
+    "expect": "prize_promo",
+    "text": "Congratulations! You were randomly picked to win a new phone. Send a small processing fee to claim your prize before midnight."
+  },
+  {
+    "id": "p10",
+    "lang": "fil",
+    "expect": "prize_promo",
+    "text": "Nanalo po kayo ng 50,000 piso sa aming raffle! Magbayad lang ng maliit na bayad para makuha ang premyo."
+  },
+  {
+    "id": "p11",
+    "lang": "taglish",
+    "expect": "relative_emergency",
+    "text": "Anak ito si Mama, nasira cellphone ko kaya new number to. Pwede ka bang mag-send ng load, may emergency kasi ako ngayon."
+  },
+  {
+    "id": "p12",
+    "lang": "en",
+    "expect": "task_job_scam",
+    "text": "Part-time online job, earn up to 5000 pesos daily just by rating products. Add our Telegram agent to begin, no experience required."
+  },
+  {
+    "id": "p13",
+    "lang": "taglish",
+    "expect": "loan_app_threat",
+    "text": "Overdue ka na sa loan mo. Kapag di ka nagbayad ngayon, ipapadala namin sa lahat ng contacts mo ang pangalan mo."
+  },
+  {
+    "id": "p14",
+    "lang": "en",
+    "expect": "investment_crypto",
+    "text": "Join our trading group. Members double their deposit in 7 days, guaranteed returns. Limited slots, send your first deposit today."
+  },
+  {
+    "id": "l01",
+    "lang": "en",
+    "expect": null,
+    "text": "Your OTP is 482913. It is valid for 5 minutes. Do not share this code with anyone, including bank staff."
+  },
+  {
+    "id": "l02",
+    "lang": "taglish",
+    "expect": null,
+    "text": "Hi, nandito na yung order mo sa lobby. Paki-pick up na lang bago mag 6pm, salamat!"
+  },
+  {
+    "id": "l03",
+    "lang": "en",
+    "expect": null,
+    "text": "Reminder: your electricity bill for this month is 1,845 pesos, due on the 20th. You can pay through our official app or any partner outlet."
+  },
+  {
+    "id": "l04",
+    "lang": "fil",
+    "expect": null,
+    "text": "Kumusta na kayo? Dadalaw kami ni Tatay sa Sabado, magdadala kami ng pasalubong."
+  },
+  {
+    "id": "l05",
+    "lang": "en",
+    "expect": null,
+    "text": "Thanks for your purchase. Your order has shipped and will arrive in 2 to 3 days. Track it in the app."
+  },
+  {
+    "id": "l06",
+    "lang": "taglish",
+    "expect": null,
+    "text": "Meeting tayo mamaya sa office, 3pm. Paki-bring yung documents para sa project."
+  }
+]
