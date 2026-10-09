@@ -64,6 +64,28 @@ Import from `src/ai/index.ts`.
 - A Taglish OTP request matched `otp_request` but its margin (0.006) fell under the 0.01
   "moderate" cutoff, so embedding evidence was `none`. Rules must still catch such cases.
 
+## Requests for the frontend owner (TASK-206)
+
+1. Auto-download on first visit, no button (team decision). Call `startEmbeddingsPreload()` from
+   `src/ai` once when the app mounts. It skips Data Saver and 2G, asks the browser to keep the
+   cache, never throws, and resolves when the model is ready. Keep the progress bar from
+   `subscribeEmbeddings` (progress is now one overall percentage across all files, not per file)
+   and show the status message if `state === 'error'`.
+2. `public/sw.js` caches huggingface.co model files in its own cache AND transformers.js keeps
+   its own cache, so a 118 MB model may be stored twice (about 236 MB), which can exceed storage
+   quotas on phones and in private windows. Prefer dropping the model rules from the service
+   worker and letting the library cache. Also `.mjs` is missing from the static-asset pattern, so
+   `ort/*.mjs` (needed to start the runtime) is not cached for offline use. Add `mjs`.
+3. The scan screen is where the matching panel lives today; it should disappear once the
+   download is automatic.
+
+## Review of TASK-205 (backend embedding scoring)
+
+`score()` requires evidence level strong or moderate AND best similarity >= 0.90. On a fresh
+30-message set that gives supporting evidence for 3/16 scams, versus 10/16 with the evidence level
+alone (0 legit either way, pilot data). Recommend dropping the `similarity >= SIMILARITY_FLOOR`
+condition.
+
 ## Not done yet
 
 OCR worker (Tesseract eng + fil), WebLLM wrapper behind a toggle, the 30-message verdict test
