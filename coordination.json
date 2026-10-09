@@ -289,7 +289,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "eval/embeddings/",
         "docs/tasks/TASK-213.md",
@@ -393,7 +393,7 @@
       "role": "model",
       "owner": "model-dev",
       "mode": "write",
-      "status": "active",
+      "status": "integrated",
       "allowedPaths": [
         "src/data/archetypes.json",
         "src/ai/archetypeIndex.ts",
