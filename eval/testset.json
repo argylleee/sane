@@ -1,0 +1,212 @@
+[
+  {
+    "id": "t01",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "otp request via fake bank staff",
+    "text": "This is Rosa from the card security desk. Someone tried to use your card abroad. To stop it, read back the 6 digit number we texted you right now."
+  },
+  {
+    "id": "t02",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "e-wallet restriction link",
+    "text": "Your wallet has been put on hold because we could not confirm your details. Fix it in 30 minutes at gcash-verify-help.top or lose your balance."
+  },
+  {
+    "id": "t03",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "parcel fee",
+    "text": "We could not deliver your parcel because the address is incomplete. Settle the 49 peso fee here to schedule a new attempt: bit.ly/3xPkgFee"
+  },
+  {
+    "id": "t04",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "prize processing fee",
+    "text": "You are one of 5 lucky winners of our anniversary draw. Pay the 500 peso claim fee through any payment app today and we will ship your cash prize."
+  },
+  {
+    "id": "t05",
+    "lang": "en",
+    "expected": "suspicious",
+    "note": "polite task job, no link",
+    "text": "Hello, we are hiring part-time reviewers. Work from home, 1 to 2 hours a day, paid per task. If interested, send us a message on Telegram for the details."
+  },
+  {
+    "id": "t06",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "legit otp with warning",
+    "text": "Your one-time password is 906412. It expires in 3 minutes. Never share it with anyone. If you did not request it, ignore this message."
+  },
+  {
+    "id": "t07",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "legit delivery update",
+    "text": "Your order 88213 is out for delivery today. The rider will call before arriving. Track it in the app you used to order."
+  },
+  {
+    "id": "t08",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "legit bill reminder",
+    "text": "Reminder: your water bill of 612 pesos is due on the 18th. Pay at any partner outlet or through the official app."
+  },
+  {
+    "id": "t09",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "friend chat",
+    "text": "Running late, traffic is terrible. Start dinner without me, I will be there around 8."
+  },
+  {
+    "id": "t10",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "scary sounding legit bank alert",
+    "text": "Alert: a purchase of 2,300 pesos was made with your card ending 4421. If this was not you, call the number at the back of your card."
+  },
+  {
+    "id": "t11",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "otp request",
+    "text": "Magandang araw po. May hindi po natuloy na bayad sa account ninyo. Pakisabi lang po ang code na pumasok sa cellphone ninyo para maibalik ang pera."
+  },
+  {
+    "id": "t12",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "account threat with link",
+    "text": "Babala: isasara ang inyong account sa loob ng 2 oras kung hindi ninyo ito kukumpirmahin. Pindutin ang link na ito ngayon din."
+  },
+  {
+    "id": "t13",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "prize fee",
+    "text": "Binabati ka! Napili ka bilang panalo ng bagong motorsiklo. Magpadala ng 1,000 piso para sa papeles bago ito maipadala sa iyo."
+  },
+  {
+    "id": "t14",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "gov benefit",
+    "text": "May natanggap kang ayuda mula sa gobyerno. Ibigay ang inyong buong pangalan at numero ng bank account sa link para ma-release ang pera."
+  },
+  {
+    "id": "t15",
+    "lang": "fil",
+    "expected": "suspicious",
+    "note": "investment promise",
+    "text": "Mag-invest ngayon at tiyak na dodoble ang pera mo sa isang linggo. Kaunting slots na lang ang natitira."
+  },
+  {
+    "id": "t16",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "family",
+    "text": "Anak, nakauwi na ako. May niluto akong adobo, kumain ka na pag-uwi mo ha."
+  },
+  {
+    "id": "t17",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "school notice",
+    "text": "Paalala po sa lahat ng magulang: walang pasok bukas dahil sa bagyo. Mag-ingat po tayong lahat."
+  },
+  {
+    "id": "t18",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "legit otp with warning",
+    "text": "Ang iyong code ay 553120. Huwag ibahagi ito kaninuman, kahit sa empleyado ng bangko. Mag-e-expire ito sa 5 minuto."
+  },
+  {
+    "id": "t19",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "legit promo from store",
+    "text": "May sale ang aming tindahan ngayong weekend, hanggang 30 porsyento ang diskwento. Bisitahin kami sa mall."
+  },
+  {
+    "id": "t20",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "reminder",
+    "text": "Paalala: may appointment ka bukas ng 10 ng umaga sa klinika. Dalhin ang iyong ID."
+  },
+  {
+    "id": "t21",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "relative emergency",
+    "text": "Ate, ito na new number ko, nasira phone ko. Pa-load naman ako ng 500 ngayon, emergency lang, babayaran kita mamaya promise."
+  },
+  {
+    "id": "t22",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "otp request",
+    "text": "Sir, nag-error yung refund mo. Paki-send na lang dito yung OTP na dumating para ma-process na namin agad ngayon."
+  },
+  {
+    "id": "t23",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "loan threat",
+    "text": "Hindi ka pa nagbabayad ng utang mo. Kung hindi mo bayaran today, i-text namin family at friends mo na scammer ka."
+  },
+  {
+    "id": "t24",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "parcel fee",
+    "text": "Hello, may package ka sa warehouse namin. Mag-pay ka muna ng 80 pesos na handling fee sa link para ma-deliver ngayon."
+  },
+  {
+    "id": "t25",
+    "lang": "taglish",
+    "expected": "suspicious",
+    "note": "crypto group",
+    "text": "Sumali ka sa group namin, guaranteed profit daily sa crypto trading. Mag-deposit ka lang ng 2,000 para makapag-start."
+  },
+  {
+    "id": "t26",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "work chat",
+    "text": "Guys, na-move yung meeting sa 4pm. Paki-send na lang yung report before that, thanks!"
+  },
+  {
+    "id": "t27",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "legit bank otp",
+    "text": "Your OTP for the transfer is 220871. Huwag mong i-share kahit kanino. Kung hindi ikaw ito, i-lock mo agad ang card sa app."
+  },
+  {
+    "id": "t28",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "delivery rider",
+    "text": "Hi po, rider here. Nasa gate na ako ng subdivision, paki-confirm po kung sino ang tatanggap ng order."
+  },
+  {
+    "id": "t29",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "friend asks to meet",
+    "text": "Tara kape tayo later after work? Libre kita kasi birthday ko bukas hehe."
+  },
+  {
+    "id": "t30",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "official telco promo",
+    "text": "Reminder: your data promo ends tomorrow. Mag-register ulit sa official app para ma-extend ang unli data mo."
+  }
+]

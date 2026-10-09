@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "note": "AI-drafted seeds. Review with a native Filipino speaker and add real phrasings before use. Human-authored reference data, not training data.",
+  "archetypes": [
+    {
+      "id": "gcash_lockout",
+      "name": {
+        "en": "GCash/Maya account lockout",
+        "fil": "Pag-lock ng GCash/Maya account",
+        "taglish": "GCash/Maya lockout"
+      },
+      "defaultWeight": 40,
+      "phrases": [
+        "Your GCash account has been limited. Verify your details within 24 hours to avoid permanent suspension.",
+        "Na-limit ang iyong GCash account. I-verify ang iyong detalye sa loob ng 24 oras para hindi tuluyang ma-suspend.",
+        "Na-lock na GCash mo. I-verify mo na agad ang account mo sa link para hindi ma-suspend."
+      ]
+    },
+    {
+      "id": "otp_request",
+      "name": {
+        "en": "Request for OTP or PIN",
+        "fil": "Paghingi ng OTP o PIN",
+        "taglish": "Hinihingi ang OTP/PIN"
+      },
+      "defaultWeight": 45,
+      "phrases": [
+        "Please send the 6-digit code we just texted you so we can cancel the wrong transaction.",
+        "Pakisabi ang 6-digit code na ipinadala namin para makansela ang maling transaksyon.",
+        "Pa-send naman ng OTP na na-receive mo, nagkamali kasi kami ng transaction."
+      ]
+    },
+    {
+      "id": "task_job_scam",
+      "name": {
+        "en": "Online task or easy job scam",
+        "fil": "Scam na online task o madaling trabaho",
+        "taglish": "Easy job/task scam"
+      },
+      "defaultWeight": 40,
+      "phrases": [
+        "Earn 3,000 pesos a day by liking videos. No experience needed. Message us on Telegram to start.",
+        "Kumita ng 3,000 piso kada araw sa pag-like ng videos. Walang karanasan na kailangan. Mag-message sa Telegram para magsimula.",
+        "Earn ka ng 3k daily, like lang ng videos. Walang experience needed, chat ka lang sa Telegram."
+      ]
+    },
+    {
+      "id": "parcel_fee",
+      "name": {
+        "en": "Fake parcel or delivery fee",
+        "fil": "Pekeng bayad sa parcel o delivery",
+        "taglish": "Fake delivery fee"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Your parcel is on hold. Pay the 49 peso redelivery fee at the link below or it will be returned.",
+        "Naka-hold ang iyong parcel. Bayaran ang 49 pisong redelivery fee sa link sa ibaba o ibabalik ito.",
+        "Hold ang parcel mo. Bayaran mo yung 49 pesos na redelivery fee sa link or ibabalik na 'to."
+      ]
+    },
+    {
+      "id": "prize_promo",
+      "name": {
+        "en": "Fake prize or raffle",
+        "fil": "Pekeng premyo o raffle",
+        "taglish": "Fake prize"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Congratulations! You won 50,000 pesos in our raffle. Claim your prize now by sending your details.",
+        "Binabati ka! Nanalo ka ng 50,000 piso sa aming raffle. I-claim ang premyo ngayon sa pagpapadala ng iyong detalye.",
+        "Congrats, nanalo ka ng 50k sa raffle! I-claim mo na ngayon, send mo lang details mo."
+      ]
+    },
+    {
+      "id": "relative_emergency",
+      "name": {
+        "en": "Fake relative in emergency",
+        "fil": "Pekeng kamag-anak na may emergency",
+        "taglish": "Fake relative emergency"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Hi Mom, this is my new number. I lost my phone. Can you send 5,000 pesos by e-wallet? It's urgent.",
+        "Hello Ma, ito ang bago kong numero. Nawala ang telepono ko. Maaari bang magpadala ng 5,000 piso sa e-wallet? Madalian.",
+        "Ma, new number ko 'to, nawala phone ko. Pa-send naman ng 5k sa GCash, urgent talaga."
+      ]
+    },
+    {
+      "id": "loan_app_threat",
+      "name": {
+        "en": "Online lending app threats",
+        "fil": "Banta ng online lending app",
+        "taglish": "Lending app threats"
+      },
+      "defaultWeight": 40,
+      "phrases": [
+        "You are overdue. Pay now or we will message all your contacts and post your photo online.",
+        "Lampas ka na sa due date. Magbayad na o ime-message namin ang lahat ng contacts mo at ipo-post ang iyong larawan.",
+        "Overdue ka na. Bayaran mo ngayon or ime-message namin lahat ng contacts mo."
+      ]
+    },
+    {
+      "id": "fake_bank_alert",
+      "name": {
+        "en": "Fake bank security alert",
+        "fil": "Pekeng security alert ng bangko",
+        "taglish": "Fake bank alert"
+      },
+      "defaultWeight": 40,
+      "phrases": [
+        "Unusual login detected on your bank account. Click here to secure your account immediately.",
+        "May kahina-hinalang pag-login sa iyong bank account. Mag-click dito para ma-secure agad ang account.",
+        "May unusual login sa bank account mo. I-click mo 'to para ma-secure agad."
+      ]
+    },
+    {
+      "id": "gov_benefit",
+      "name": {
+        "en": "Fake government benefit or fine",
+        "fil": "Pekeng benepisyo o multa ng gobyerno",
+        "taglish": "Fake government benefit/fine"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Your SSS/PhilHealth benefit is ready for release. Confirm your details at the link to receive payment.",
+        "Handa na ang iyong benepisyo sa SSS/PhilHealth. Kumpirmahin ang detalye sa link para matanggap ang bayad.",
+        "Ready na yung SSS benefit mo. I-confirm mo details mo sa link para ma-release."
+      ]
+    },
+    {
+      "id": "utility_disconnect",
+      "name": {
+        "en": "Fake utility disconnection notice",
+        "fil": "Pekeng abiso ng putol na kuryente o tubig",
+        "taglish": "Fake utility cutoff"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Final notice: your electricity will be disconnected today due to unpaid bill. Call this number now.",
+        "Huling abiso: puputulin ang inyong kuryente ngayon dahil sa hindi nabayarang bill. Tumawag sa numerong ito ngayon.",
+        "Final notice, puputulin na kuryente mo today dahil unpaid ang bill. Tawag ka agad sa number na 'to."
+      ]
+    },
+    {
+      "id": "investment_crypto",
+      "name": {
+        "en": "Guaranteed-return investment",
+        "fil": "Pekeng investment na may garantisadong tubo",
+        "taglish": "Guaranteed-return investment"
+      },
+      "defaultWeight": 35,
+      "phrases": [
+        "Invest 1,000 pesos and get 5,000 in three days. Guaranteed returns. Limited slots only.",
+        "Mag-invest ng 1,000 piso at makakuha ng 5,000 sa loob ng tatlong araw. Garantisadong tubo. Limitado ang slot.",
+        "Invest ka ng 1k, 5k balik in 3 days, guaranteed. Limited slots lang kaya sumali ka na."
+      ]
+    },
+    {
+      "id": "romance_giftparcel",
+      "name": {
+        "en": "Online romance or gift with customs fee",
+        "fil": "Romance scam o regalong may customs fee",
+        "taglish": "Romance/customs-fee scam"
+      },
+      "defaultWeight": 30,
+      "phrases": [
+        "I sent you a gift from abroad but it is stuck at customs. Please pay the release fee so I can send it.",
+        "Nagpadala ako ng regalo mula abroad pero naipit sa customs. Pakibayaran ang release fee para maipadala ko.",
+        "Nag-send ako ng gift from abroad pero stuck sa customs. Bayaran mo muna release fee para ma-deliver."
+      ]
+    }
+  ]
+}
