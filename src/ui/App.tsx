@@ -6,7 +6,6 @@ import {
   getEmbeddingsStatus,
   getLlmStatus,
   LLM_DOWNLOAD_MB,
-  LLM_MODEL_BY_TIER,
   loadEmbeddings,
   loadLlm,
   shouldAutoPreload,
@@ -15,7 +14,7 @@ import {
   subscribeEmbeddings,
   subscribeLlm,
 } from '../ai';
-import type { EmbeddingsStatus, LlmStatus, Tier } from '../ai';
+import type { EmbeddingsStatus, LlmStatus } from '../ai';
 import { addLlmExplanation, analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Level, Signal, Verdict } from '../types';
@@ -39,10 +38,6 @@ import {
   Info,
   Sun,
   Moon,
-  KeyRound,
-  Link,
-  Coins,
-  PhoneCall,
   CircleCheck,
 } from 'lucide-react';
 
@@ -222,7 +217,9 @@ function MainNavigation({
       aria-label="Main navigation"
     >
       {(['learn', 'scan'] as const).map((navScreen) => {
-        const isSelected = screen === navScreen || (navScreen === 'scan' && screen === 'result');
+        const isSelected =
+          screen === navScreen ||
+          (navScreen === 'scan' && (screen === 'result' || screen === 'welcome'));
         return (
           <button
             key={navScreen}
@@ -273,8 +270,8 @@ export function App() {
   const [modelAtScan, setModelAtScan] = useState<EmbeddingsStatus['state']>('idle');
   const [llmStatus, setLlmStatus] = useState<LlmStatus>(getLlmStatus);
   const [llmWriting, setLlmWriting] = useState(false);
-  const llmTier: Tier = detectCapabilities().tier;
-  const llmAvailable = LLM_MODEL_BY_TIER[llmTier] !== null;
+  const llmTier = detectCapabilities().tier;
+  const downloadLlm = () => void loadLlm(llmTier).catch(() => undefined);
   const copy = copyFor('en');
 
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
@@ -292,10 +289,6 @@ export function App() {
 
   useEffect(() => subscribeEmbeddings(setEmbeddingStatus), []);
   useEffect(() => subscribeLlm(setLlmStatus), []);
-
-  function downloadLlm() {
-    void loadLlm(llmTier).catch(() => undefined);
-  }
 
   const clearScreenshot = useCallback(() => {
     ocrRequestId.current += 1;
@@ -561,12 +554,11 @@ export function App() {
         </div>
         <div className="flex items-center gap-2 ml-auto">
           <ThemeToggle theme={theme} onChange={setTheme} copy={copy} />
-          <MobileNavigation screen={screen} onNavigate={setScreen} copy={copy} />
         </div>
       </header>
 
       <main
-        className={`flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-16 flex flex-col relative overflow-hidden ${screen === 'welcome' ? 'home-main' : ''}`}
+        className={`flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-16 pb-24 sm:pb-8 md:pb-16 flex flex-col relative overflow-hidden ${screen === 'welcome' ? 'home-main' : ''}`}
       >
         <AnimatePresence mode="wait">
           {screen === 'welcome' && (
@@ -735,6 +727,27 @@ export function App() {
                         )}
                       </>
                     )}
+                    {/* Explanation model: loads by itself on Wi-Fi; on mobile data it waits here. */}
+                    {llmTier !== 'C' &&
+                      llmStatus.state === 'idle' &&
+                      embeddingStatus.state !== 'loading' && (
+                        <>
+                          <p>{copy.llmPaused(LLM_DOWNLOAD_MB)}</p>
+                          <Button type="button" variant="outline" onPress={downloadLlm}>
+                            {copy.llmDownloadAction}
+                          </Button>
+                        </>
+                      )}
+                    {llmStatus.state === 'loading' && <p>{copy.llmProgress(llmStatus.progress)}</p>}
+                    {llmStatus.state === 'ready' && <p>{copy.llmReady}</p>}
+                    {llmStatus.state === 'error' && (
+                      <>
+                        <p>{copy.llmError}</p>
+                        <Button type="button" variant="outline" onPress={downloadLlm}>
+                          {copy.llmRetry}
+                        </Button>
+                      </>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
@@ -846,59 +859,6 @@ export function App() {
                     </p>
                   )}
                 </div>
-                <section
-                  className="clay-panel rounded-2xl p-6 space-y-3"
-                  aria-labelledby="llm-title"
-                >
-                  <h2 id="llm-title" className="text-base font-bold text-text tracking-tight">
-                    {copy.llmTitle}
-                  </h2>
-                  {llmAvailable ? (
-                    <>
-                      <p className="text-xs text-secondary leading-relaxed">
-                        {copy.llmDescription}
-                      </p>
-                      {llmStatus.state === 'idle' && (
-                        <div className="space-y-2">
-                          <p className="text-xs text-secondary">
-                            {copy.llmPromptBody(LLM_DOWNLOAD_MB)}
-                          </p>
-                          <Button size="sm" variant="outline" onPress={downloadLlm}>
-                            {copy.llmDownloadAction}
-                          </Button>
-                        </div>
-                      )}
-                      {llmStatus.state === 'loading' && (
-                        <div className="space-y-2" role="status" aria-live="polite">
-                          <p className="text-xs text-secondary">
-                            {copy.llmProgress(llmStatus.progress)}
-                          </p>
-                          <progress
-                            className="w-full h-2"
-                            max={100}
-                            value={llmStatus.progress}
-                            aria-label={copy.llmProgressLabel}
-                          />
-                        </div>
-                      )}
-                      {llmStatus.state === 'ready' && (
-                        <p className="text-xs text-good font-medium" role="status">
-                          {copy.llmReady}
-                        </p>
-                      )}
-                      {llmStatus.state === 'error' && (
-                        <div className="space-y-2" role="alert">
-                          <p className="text-xs text-high font-medium">{copy.llmError}</p>
-                          <Button size="sm" variant="outline" onPress={downloadLlm}>
-                            {copy.llmRetry}
-                          </Button>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <p className="text-xs text-secondary">{copy.llmUnavailable}</p>
-                  )}
-                </section>
                 <section className="px-2">
                   <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4">
                     {copy.howTitle}
@@ -1141,20 +1101,20 @@ export function App() {
               </div>
 
               <div className="grid gap-6">
-                {copy.guides.map((guide, index) => {
-                  const GuideIcon = [KeyRound, Link, Coins, PhoneCall][index];
-                  return (
-                    <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3" key={guide.title}>
-                      <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-primary-tonal text-primary flex items-center justify-center shrink-0">
-                          <GuideIcon size={20} strokeWidth={2.25} />
-                        </div>
-                        {guide.title}
-                      </h2>
-                      <p className="text-text/80 leading-relaxed pl-11">{guide.body}</p>
-                    </div>
-                  );
-                })}
+                {copy.guides.map((guide, index) => (
+                  <div className="clay-panel rounded-2xl p-6 md:p-8 space-y-3" key={guide.title}>
+                    <h2 className="text-xl font-bold tracking-tight flex items-center gap-3">
+                      <span
+                        className="h-8 w-8 rounded-full bg-primary-tonal text-primary flex items-center justify-center shrink-0 text-base"
+                        aria-hidden="true"
+                      >
+                        {index + 1}
+                      </span>
+                      {guide.title}
+                    </h2>
+                    <p className="text-text/80 leading-relaxed pl-11">{guide.body}</p>
+                  </div>
+                ))}
               </div>
 
               <aside className="clay-panel bg-neutral/50 rounded-2xl p-6 md:p-8 text-center space-y-3">
@@ -1176,8 +1136,9 @@ export function App() {
           )}
         </AnimatePresence>
       </main>
+      <MobileNavigation screen={screen} onNavigate={setScreen} copy={copy} />
       <footer className="site-footer w-full mt-auto">
-        <div className="footer-inner mx-auto flex max-w-6xl flex-col md:flex-row items-center justify-between gap-8 px-4 sm:px-6 md:px-8 py-10 sm:py-12 text-sm text-secondary">
+        <div className="footer-inner mx-auto flex max-w-6xl flex-col md:flex-row items-center justify-between gap-8 px-4 sm:px-6 md:px-8 py-10 sm:py-12 pb-24 sm:pb-12 text-sm text-secondary">
           <div className="footer-brand flex flex-col items-center md:items-start gap-3">
             <button
               type="button"

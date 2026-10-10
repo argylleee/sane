@@ -434,7 +434,7 @@ button.brand-action {
 }
 .home-shell .home-main {
   padding-top: 1.5rem;
-  padding-bottom: calc(8rem + env(safe-area-inset-bottom));
+  padding-bottom: calc(13rem + env(safe-area-inset-bottom));
 }
 .home-shell .home-hero {
   padding-block: 0;
@@ -454,7 +454,7 @@ button.brand-action {
 }
 .home-shell .footer-inner {
   gap: 0.75rem;
-  padding-block: 1rem calc(1.25rem + env(safe-area-inset-bottom));
+  padding-block: 1rem calc(6.25rem + env(safe-area-inset-bottom));
 }
 .home-shell .footer-brand {
   flex-direction: row;
@@ -478,6 +478,14 @@ button.brand-action {
 }
 .home-shell .footer-team {
   font-size: 0.875rem;
+}
+@media (min-width: 640px) {
+  .home-shell .home-main {
+    padding-bottom: calc(8rem + env(safe-area-inset-bottom));
+  }
+  .home-shell .footer-inner {
+    padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  }
 }
 @media (min-width: 1024px) {
   .home-shell .home-main {

@@ -15,7 +15,7 @@ export function ModelReadyNotification({
 
   useEffect(() => {
     if (previousState.current === 'loading' && state === 'ready') {
-      toast.success(copy.modelReadyStatus, { description: copy.modelReadyNote, timeout: 6000 });
+      toast.success(copy.modelReadyStatus, { description: copy.modelReadyNote, timeout: 3000 });
     }
     previousState.current = state;
   }, [state, copy.modelReadyStatus, copy.modelReadyNote]);
