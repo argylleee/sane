@@ -4,6 +4,7 @@ import { extractText } from '../ai/ocr';
 import { matchWithEvidence, type MatchWithEvidence } from '../ai/match';
 import { explain, localizeSignals } from '../explain/templates';
 import { runRules } from '../rules';
+import { findAsks } from '../rules/ask';
 import { hasUnverifiedUrl } from '../rules/urls';
 import { score } from '../score/score';
 import { normalize } from './normalize';
@@ -62,6 +63,7 @@ export async function analyze(input: AnalyzeInput, opts: AnalyzeOptions): Promis
     } = score(signals, matches, evidence?.level, {
       margin: evidence?.margin,
       unverifiedLink: hasUnverifiedUrl(text),
+      asks: findAsks(text),
     });
     const verdict: Verdict = {
       level,

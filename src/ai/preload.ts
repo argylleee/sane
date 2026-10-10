@@ -19,15 +19,14 @@ export function shouldAutoPreloadLlm(): boolean {
 }
 
 /**
- * Loads the explanation model on WebGPU devices: always when it is already cached (no download),
- * otherwise only when shouldAutoPreloadLlm() allows the download. Never throws: without the model
+ * The explanation model is optional: it is downloaded only when the user asks for it. On later
+ * visits it loads by itself if it is already cached (no download). Never throws: without the model
  * the fixed explanation is used.
  */
 export async function startLlmPreload(): Promise<void> {
   if (getLlmStatus().state !== 'idle') return;
   const { tier } = await refineCapabilities();
-  if (tier === 'C') return;
-  if (!shouldAutoPreloadLlm() && !(await isLlmCached(tier))) return;
+  if (tier === 'C' || !(await isLlmCached(tier))) return;
   await loadLlm(tier).catch(() => undefined);
 }
 

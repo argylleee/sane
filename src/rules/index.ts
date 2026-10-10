@@ -27,7 +27,7 @@ const SAFE_FINANCE_REQUEST =
 const LINK_ACTION =
   /\b(?:pindutin|i-click|click|tap|buksan|open|visit|bisitahin|go to|punta sa|at|sa)\b.{0,20}\blink\b/giu;
 const COERCION =
-  /\b(?:i-text|isasabi|sabihin|expose|report)\b.{0,60}\b(?:family|friends|pamilya|kamag-anak)\b/giu;
+  /\b(?:i-text|isasabi|sabihin|expose|report|i-send|send|ipakita|ikakalat|ikalat|i-post|post|leak)\b.{0,60}\b(?:family|friends|pamilya|kamag-anak|kaibigan|contacts)\b/giu;
 
 const DELIVERY_CONTEXT =
   /\b(?:parcel|package|delivery|rider|courier|warehouse|shipment|order|padala|package)\b/iu;
