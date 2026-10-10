@@ -97,6 +97,8 @@ type Copy = {
   modelFailedAtScan: string;
   modelSkippedAtScan: string;
   llmPaused: (size: number) => string;
+  llmChecking: string;
+  llmUnavailable: string;
   llmDownloadAction: string;
   llmProgress: (percent: number) => string;
   llmReady: string;
@@ -115,8 +117,6 @@ type Copy = {
   learnTitle: string;
   learnDescription: string;
   guides: readonly GuideCopy[];
-  learnDisclaimerTitle: string;
-  learnDisclaimer: string;
   learnAction: string;
   assessment: Record<Level, AssessmentCopy>;
 };
@@ -220,6 +220,9 @@ export const COPY: Record<Lang, Copy> = {
     modelSkippedAtScan: 'The AI check is paused to save data, so this used rules only.',
     llmPaused: (size) =>
       `Optional: add an AI-written explanation to each result (about ${size} MB, downloaded once, Wi-Fi recommended).`,
+    llmChecking: 'Checking device support for AI explanations…',
+    llmUnavailable:
+      'AI explanations need a supported browser and graphics processor. Message checks still work without them.',
     llmDownloadAction: 'Download AI explanation',
     llmProgress: (percent) => `Preparing the AI explanation: ${percent}%`,
     llmReady: 'AI explanation ready.',
@@ -256,9 +259,6 @@ export const COPY: Record<Lang, Copy> = {
         body: 'No warning signs do not prove a message is safe. Check with an official source.',
       },
     ],
-    learnDisclaimerTitle: 'A check, not a verdict',
-    learnDisclaimer:
-      'The local baseline can make mistakes. Its accuracy is not validated. Independent verification still matters.',
     learnAction: 'Check a message',
     assessment: {
       likely_scam: {
@@ -398,6 +398,9 @@ export const COPY: Record<Lang, Copy> = {
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
     llmPaused: (size) =>
       `Opsyonal: magdagdag ng AI na paliwanag sa bawat resulta (mga ${size} MB, isang beses lang i-download, mas mainam sa Wi-Fi).`,
+    llmChecking: 'Sinusuri kung suportado ng device na ito ang AI na paliwanag…',
+    llmUnavailable:
+      'Kailangan ng sinusuportahang browser at graphics processor para sa AI na paliwanag. Gumagana pa rin ang message check nang wala ito.',
     llmDownloadAction: 'I-download ang AI na paliwanag',
     llmProgress: (percent) => `Inihahanda ang AI na paliwanag: ${percent}%`,
     llmReady: 'Handa na ang AI na paliwanag.',
@@ -435,9 +438,6 @@ export const COPY: Record<Lang, Copy> = {
         body: 'Hindi patunay na ligtas ang mensahe kapag walang babala. Magtanong sa opisyal na source.',
       },
     ],
-    learnDisclaimerTitle: 'Pagsusuri lang, hindi hatol',
-    learnDisclaimer:
-      'Maaaring magkamali ang lokal na baseline. Hindi pa napatunayan ang accuracy nito. Mahalaga pa rin ang sariling beripikasyon.',
     learnAction: 'Suriin ang mensahe',
     assessment: {
       likely_scam: {
@@ -574,6 +574,9 @@ export const COPY: Record<Lang, Copy> = {
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
     llmPaused: (size) =>
       `Optional: mag-add ng AI explanation sa bawat result (mga ${size} MB, one-time download, mas okay sa Wi-Fi).`,
+    llmChecking: 'Tinitingnan kung supported ng device na ito ang AI explanation…',
+    llmUnavailable:
+      'Kailangan ng supported browser at graphics processor para sa AI explanation. Gumagana pa rin ang message check kahit wala ito.',
     llmDownloadAction: 'I-download ang AI explanation',
     llmProgress: (percent) => `Inihahanda ang AI explanation: ${percent}%`,
     llmReady: 'Ready na ang AI explanation.',
@@ -611,9 +614,6 @@ export const COPY: Record<Lang, Copy> = {
         body: 'Hindi ibig sabihin na safe ang message kapag walang warning signs. Mag-check sa official source.',
       },
     ],
-    learnDisclaimerTitle: 'Check lang, hindi verdict',
-    learnDisclaimer:
-      'Puwedeng magkamali ang local baseline. Hindi pa validated ang accuracy. Importante pa rin ang sariling verification.',
     learnAction: 'Mag-check ng message',
     assessment: {
       likely_scam: {

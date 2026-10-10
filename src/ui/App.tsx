@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import {
-  detectCapabilities,
   extractText,
   getEmbeddingsStatus,
   getLlmStatus,
   LLM_DOWNLOAD_MB,
   loadEmbeddings,
   loadLlm,
+  refineCapabilities,
   shouldAutoPreload,
   startEmbeddingsPreload,
   startLlmPreload,
   subscribeEmbeddings,
   subscribeLlm,
 } from '../ai';
-import type { EmbeddingsStatus, LlmStatus } from '../ai';
+import type { EmbeddingsStatus, LlmStatus, Tier } from '../ai';
 import { addLlmExplanation, analyze } from '../pipeline/analyze';
 import { normalize } from '../pipeline/normalize';
 import type { Level, Signal, Verdict } from '../types';
@@ -39,6 +39,7 @@ import {
   Sun,
   Moon,
   CircleCheck,
+  Download,
 } from 'lucide-react';
 
 const MAX_MESSAGE_LENGTH = 2_000;
@@ -270,8 +271,11 @@ export function App() {
   const [modelAtScan, setModelAtScan] = useState<EmbeddingsStatus['state']>('idle');
   const [llmStatus, setLlmStatus] = useState<LlmStatus>(getLlmStatus);
   const [llmWriting, setLlmWriting] = useState(false);
-  const llmTier = detectCapabilities().tier;
-  const downloadLlm = () => void loadLlm(llmTier).catch(() => undefined);
+  const [llmTier, setLlmTier] = useState<Tier | null>(null);
+  const downloadLlm = () => {
+    if (llmTier === null || llmTier === 'C') return;
+    void loadLlm(llmTier).catch(() => undefined);
+  };
   const copy = copyFor('en');
 
   const overLimit = message.length > MAX_MESSAGE_LENGTH;
@@ -280,6 +284,20 @@ export function App() {
     window.matchMedia('(display-mode: standalone)').matches ||
     (navigator as Navigator & { standalone?: boolean }).standalone === true;
   const showIosInstallHint = isAppleMobile && !isStandalone;
+
+  useEffect(() => {
+    let active = true;
+    void refineCapabilities()
+      .then(({ tier }) => {
+        if (active) setLlmTier(tier);
+      })
+      .catch(() => {
+        if (active) setLlmTier('C');
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     // The explanation model follows the embedding model so the two downloads do not compete.
@@ -728,22 +746,41 @@ export function App() {
                       </>
                     )}
                     {/* Optional explanation model: downloaded only on request, then loads from cache. */}
-                    {llmTier !== 'C' &&
+                    {llmTier === null && <p role="status">{copy.llmChecking}</p>}
+                    {llmTier === 'C' && <p>{copy.llmUnavailable}</p>}
+                    {llmTier !== null &&
+                      llmTier !== 'C' &&
                       llmStatus.state === 'idle' &&
                       embeddingStatus.state !== 'loading' && (
                         <>
                           <p>{copy.llmPaused(LLM_DOWNLOAD_MB)}</p>
-                          <Button type="button" variant="outline" onPress={downloadLlm}>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="md"
+                            fullWidth
+                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary-tonal px-4 py-3 text-sm font-semibold text-primary transition-colors hover:brightness-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                            onPress={downloadLlm}
+                          >
+                            <Download size={16} aria-hidden="true" />
                             {copy.llmDownloadAction}
                           </Button>
                         </>
                       )}
                     {llmStatus.state === 'loading' && <p>{copy.llmProgress(llmStatus.progress)}</p>}
                     {llmStatus.state === 'ready' && <p>{copy.llmReady}</p>}
-                    {llmStatus.state === 'error' && (
+                    {llmStatus.state === 'error' && llmTier !== null && llmTier !== 'C' && (
                       <>
                         <p>{copy.llmError}</p>
-                        <Button type="button" variant="outline" onPress={downloadLlm}>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="md"
+                          fullWidth
+                          className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary-tonal px-4 py-3 text-sm font-semibold text-primary transition-colors hover:brightness-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                          onPress={downloadLlm}
+                        >
+                          <Download size={16} aria-hidden="true" />
                           {copy.llmRetry}
                         </Button>
                       </>
@@ -1105,11 +1142,6 @@ export function App() {
                   </div>
                 ))}
               </div>
-
-              <aside className="clay-panel bg-neutral/50 rounded-2xl p-6 md:p-8 text-center space-y-3">
-                <h2 className="font-bold text-text">{copy.learnDisclaimerTitle}</h2>
-                <p className="text-sm text-secondary">{copy.learnDisclaimer}</p>
-              </aside>
 
               <div className="flex justify-center pt-8">
                 <Button
