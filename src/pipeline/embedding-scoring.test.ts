@@ -11,6 +11,8 @@ vi.mock('../ai/match', async (importOriginal) => ({
 }));
 
 const match = vi.mocked(matchWithEvidence);
+// Harmless, but asks the reader to call, so the no-request rule does not decide it.
+const CONTACT = 'Call me at 09171234567 tomorrow.';
 const opts = { lang: 'en' as const, useLLM: false };
 const evidence = (
   similarity = 0.94,
@@ -56,7 +58,7 @@ describe('embedding evidence in analyze()', () => {
   ] as const)('abstains on similarity %s, margin %s, evidence %s', async (sim, margin, level) => {
     const result = evidence(sim, margin, level);
     match.mockResolvedValue(result);
-    const verdict = await analyze({ text: 'See you tomorrow.' }, opts);
+    const verdict = await analyze({ text: CONTACT }, opts);
     expect(verdict.level).toBe('not_sure');
     expect(verdict.score).toBe(0);
     expect(verdict.matches).toEqual(result.matches);
@@ -74,7 +76,7 @@ describe('embedding evidence in analyze()', () => {
 
   it('keeps model execution true even when inference returns no archetype matches', async () => {
     match.mockResolvedValue({ matches: [], benign: 0.9, margin: null, level: 'none' });
-    const verdict = await analyze({ text: 'See you tomorrow.' }, opts);
+    const verdict = await analyze({ text: CONTACT }, opts);
     expect(verdict.level).toBe('not_sure');
     expect(verdict.usedModels.embeddings).toBe(true);
     expect(verdict.matches).toEqual([]);
@@ -117,11 +119,9 @@ describe('embedding evidence in analyze()', () => {
 
   it('says probably fine only with clear ordinary-message evidence and no risk signal', async () => {
     match.mockResolvedValue(evidence(0.86, -0.03, 'none'));
-    expect((await analyze({ text: 'See you tomorrow at lunch.' }, opts)).level).toBe(
-      'probably_fine',
-    );
+    expect((await analyze({ text: CONTACT }, opts)).level).toBe('probably_fine');
     match.mockResolvedValue(evidence(0.86, -0.015, 'none'));
-    expect((await analyze({ text: 'See you tomorrow at lunch.' }, opts)).level).toBe('not_sure');
+    expect((await analyze({ text: CONTACT }, opts)).level).toBe('not_sure');
   });
 
   it('never says probably fine for an unknown link or a credential request', async () => {
@@ -138,7 +138,7 @@ describe('embedding evidence in analyze()', () => {
   });
 
   it('allows one weak cue only with much stronger ordinary-message evidence', async () => {
-    const text = 'Paalala: sale ends today only, see you at the mall.';
+    const text = 'Paalala: sale ends today only, call me at 09171234567.';
     match.mockResolvedValue(evidence(0.86, -0.03, 'none'));
     expect((await analyze({ text }, opts)).level).toBe('not_sure');
     match.mockResolvedValue(evidence(0.86, -0.05, 'none'));
@@ -177,7 +177,8 @@ describe('30-message development-set regression gate', () => {
       expect(counts.legit).toBe(15);
       expect(counts.caught).toBe(15);
       expect(counts.falseAlarms).toBe(0);
-      expect(counts.abstained).toBe(14);
+      // Was 14 before the no-request rule: ordinary messages that ask for nothing are now fine.
+      expect(counts.abstained).toBeLessThanOrEqual(3);
     },
   );
 });

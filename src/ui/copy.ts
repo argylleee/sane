@@ -222,7 +222,7 @@ export const COPY: Record<Lang, Copy> = {
       'The AI check could not run, so this used rules only. You can try preparing it again.',
     modelSkippedAtScan: 'The AI check is paused to save data, so this used rules only.',
     llmPaused: (size) =>
-      `The AI explanation is paused to save mobile data (about ${size} MB, downloaded once).`,
+      `Optional: add an AI-written explanation to each result (about ${size} MB, downloaded once, Wi-Fi recommended).`,
     llmDownloadAction: 'Download AI explanation',
     llmProgress: (percent) => `Preparing the AI explanation: ${percent}%`,
     llmReady: 'AI explanation ready.',
@@ -400,7 +400,7 @@ export const COPY: Record<Lang, Copy> = {
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
     llmPaused: (size) =>
-      `Naka-pause ang AI na paliwanag para makatipid ng mobile data (mga ${size} MB, isang beses lang).`,
+      `Opsyonal: magdagdag ng AI na paliwanag sa bawat resulta (mga ${size} MB, isang beses lang i-download, mas mainam sa Wi-Fi).`,
     llmDownloadAction: 'I-download ang AI na paliwanag',
     llmProgress: (percent) => `Inihahanda ang AI na paliwanag: ${percent}%`,
     llmReady: 'Handa na ang AI na paliwanag.',
@@ -576,7 +576,7 @@ export const COPY: Record<Lang, Copy> = {
     modelSkippedAtScan:
       'Naka-pause ang AI check para makatipid ng data, kaya rules lang ang ginamit dito.',
     llmPaused: (size) =>
-      `Naka-pause ang AI explanation para makatipid sa mobile data (mga ${size} MB, one-time lang).`,
+      `Optional: mag-add ng AI explanation sa bawat result (mga ${size} MB, one-time download, mas okay sa Wi-Fi).`,
     llmDownloadAction: 'I-download ang AI explanation',
     llmProgress: (percent) => `Inihahanda ang AI explanation: ${percent}%`,
     llmReady: 'Ready na ang AI explanation.',

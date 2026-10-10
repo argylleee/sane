@@ -723,7 +723,7 @@ export function App() {
                         )}
                       </>
                     )}
-                    {/* Explanation model: loads by itself on Wi-Fi; on mobile data it waits here. */}
+                    {/* Optional explanation model: downloaded only on request, then loads from cache. */}
                     {llmTier !== 'C' &&
                       llmStatus.state === 'idle' &&
                       embeddingStatus.state !== 'loading' && (

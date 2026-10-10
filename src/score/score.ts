@@ -1,6 +1,7 @@
 // OWNER: backend. Uses the TASK-202 floor and ordinary-message comparison thresholds.
 import type { Level, Match, Signal } from '../types';
 import { SIMILARITY_FLOOR, type EvidenceLevel } from '../ai/match';
+import type { AskKind } from '../rules/ask';
 
 // Asking for a secret or using a fake brand link is the core of most scams on its own.
 const STRONG_ASK = new Set([
@@ -31,11 +32,41 @@ const LIKELY = 60;
 export const BENIGN_MARGIN = -0.02;
 export const BENIGN_MARGIN_WITH_WEAK_CUE = -0.04;
 
+/**
+ * With a scam-like meaning and a request for money, a code, personal details or a link, the embedding
+ * model may raise "Suspicious" below the similarity floor. 0.02 is the margin the 1,200-message test
+ * (TASK-202) found far safer than 0.01; it is never applied when nothing sensitive is asked.
+ */
+export const ASK_MARGIN = 0.02;
+export const ASK_SIMILARITY = 0.85;
+/** Above this scam lean, a message that seems to ask for nothing stays "Not sure". */
+export const NO_ASK_MAX_MARGIN = 0.015;
+// Cues that can appear in a harmless message that asks for nothing. Money and link cues are asks.
+const NO_ASK_CUES = new Set([
+  'urgency',
+  'account_threat',
+  'bank_impersonation',
+  'prize_or_job_bait',
+  'government_bait',
+]);
+
+// Asks for money, a code or personal details turn any red flag into a classic scam shape.
+const SENSITIVE: AskKind[] = ['money', 'credential', 'personal'];
+// Signals that only restate one of those asks; they need a separate hook to escalate.
+const ASK_SIGNALS = new Set([
+  'money_request',
+  'otp_pin_request',
+  'card_data_request',
+  'personal_data_request',
+]);
+
 export type ScoreContext = {
   /** Best scam similarity minus best ordinary-example similarity, when embeddings ran. */
   margin?: number | null;
   /** A link in the message that is not on a known official domain. */
   unverifiedLink?: boolean;
+  /** What the message asks the reader to do (see rules/ask.ts). Undefined: not analysed. */
+  asks?: AskKind[];
 };
 
 export function score(
@@ -57,6 +88,17 @@ export function score(
     (ids.has('money_request') && [...ids].some((id) => MONEY_HOOK.has(id))) ||
     (ids.has('gambling_bait') && ids.size >= 2); // casino spam plus a prize or pressure cue
   if (combined) ruleScore = Math.max(ruleScore, LIKELY);
+
+  // A red flag (pressure, bait, threat, odd link) plus a request for money, a code or personal
+  // details is a scam; plus a link, login or claim request it needs a closer look.
+  // A single weak cue (also common in real promos and notices) only reaches "Suspicious".
+  const asks = context.asks;
+  const hooks = risky.filter(({ id }) => !ASK_SIGNALS.has(id));
+  const strongHook = hooks.some(({ id }) => !WEAK.has(id)) || hooks.length >= 2;
+  const sensitiveAsk = asks?.some((kind) => SENSITIVE.includes(kind)) ?? false;
+  if (sensitiveAsk && strongHook) ruleScore = Math.max(ruleScore, LIKELY);
+  else if (asks && risky.length > 0 && asks.some((kind) => kind !== 'contact'))
+    ruleScore = Math.max(ruleScore, 30);
 
   // Keep the established no-share guardrail. Similarity is not a credential request.
   if (ruleScore === 0 && signals.some(({ id }) => id === 'safe_credential_notice'))
@@ -82,8 +124,33 @@ export function score(
   )
     return { level: 'suspicious', score: total, archetypeId };
 
-  // "Probably fine" needs positive evidence from the model, never just an absence of rules.
   const margin = context.margin;
+  const top3 = matches[0];
+  // Something risky is asked and the meaning leans towards a known scam pattern.
+  if (
+    (sensitiveAsk || asks?.includes('link')) &&
+    risky.length === 0 &&
+    typeof margin === 'number' &&
+    margin > ASK_MARGIN &&
+    top3 !== undefined &&
+    top3.similarity >= ASK_SIMILARITY &&
+    top3.similarity <= 1
+  )
+    return { level: 'suspicious', score: 30, archetypeId: top3.archetypeId };
+
+  // Nothing is asked of the reader: no link, number, money, code, personal details or login. Such a
+  // message cannot cause harm by itself, so it is probably fine even without the model.
+  // Never when the model leans towards a scam pattern: an ask may be phrased in a way code misses.
+  if (
+    asks &&
+    asks.length === 0 &&
+    !supporting &&
+    !(typeof margin === 'number' && margin > NO_ASK_MAX_MARGIN) &&
+    (risky.length === 0 || (risky.length === 1 && NO_ASK_CUES.has(risky[0].id)))
+  )
+    return { level: 'probably_fine', score: total };
+
+  // Otherwise "Probably fine" needs positive evidence from the model.
   const benign =
     !supporting &&
     !context.unverifiedLink &&

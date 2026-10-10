@@ -1,0 +1,226 @@
+[
+  {
+    "id": "d01",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "greeting",
+    "text": "Good morning! Hope you have a great day ahead."
+  },
+  {
+    "id": "d02",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "family dinner",
+    "text": "Ma, uuwi ako mamayang gabi. Ano ulam natin?"
+  },
+  {
+    "id": "d03",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "friends plan",
+    "text": "Tara sa Saturday, nood tayo ng movie sa SM. G ka?"
+  },
+  {
+    "id": "d04",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "work update",
+    "text": "The client meeting is moved to 2pm tomorrow. Please bring the printed slides."
+  },
+  {
+    "id": "d05",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "school notice",
+    "text": "Paalala: Walang klase sa Lunes dahil sa holiday. Balik klase sa Martes."
+  },
+  {
+    "id": "d06",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "thanks",
+    "text": "Thank you sa pa-birthday kahapon, sobrang saya ko!"
+  },
+  {
+    "id": "d07",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "condolence",
+    "text": "So sorry for your loss. Let me know if there is anything I can do."
+  },
+  {
+    "id": "d08",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "church",
+    "text": "May misa bukas ng alas-sais ng umaga sa kapilya. Magdala ng payong."
+  },
+  {
+    "id": "d09",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "groceries",
+    "text": "Pabili naman ng gatas at tinapay pag-uwi mo, salamat!"
+  },
+  {
+    "id": "d10",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "weather",
+    "text": "Heavy rain expected tonight, drive safe on your way home."
+  },
+  {
+    "id": "d11",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "gcash legit receipt",
+    "text": "You have received PHP 500.00 from JUAN D. Your new balance is PHP 1,250.00. Ref No. 1023 4567 8901."
+  },
+  {
+    "id": "d12",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "shop promo no link",
+    "text": "Our store is open until 9pm this weekend. See you there!"
+  },
+  {
+    "id": "d13",
+    "lang": "fil",
+    "expected": "probably_fine",
+    "note": "neighbor",
+    "text": "Kapitbahay, nakita ko yung aso mo sa labas ng gate. Ipinasok ko na."
+  },
+  {
+    "id": "d14",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "teacher reminder",
+    "text": "Class, deadline ng project sa Friday. Wag kalimutan i-submit sa Google Classroom."
+  },
+  {
+    "id": "d15",
+    "lang": "en",
+    "expected": "probably_fine",
+    "note": "appointment",
+    "text": "Reminder: your dental check-up is on Thursday at 3:00 PM."
+  },
+  {
+    "id": "d16",
+    "lang": "taglish",
+    "expected": "probably_fine",
+    "note": "rider",
+    "text": "Ma'am andito na po ako sa labas, kayo po ba yung may order na milk tea?"
+  },
+  {
+    "id": "d17",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "casino",
+    "text": "Congrats! You got 300 free credits. Log in now and start playing to win up to P100,000!"
+  },
+  {
+    "id": "d18",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "task scam",
+    "text": "Hi! Hiring kami ng part-time, like at follow lang ng videos, kita ka ng 500-2000 daily. Message mo ako sa Telegram."
+  },
+  {
+    "id": "d19",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "fake gcash refund",
+    "text": "Nagkamali po ako ng send ng 3,000 sa GCash mo. Pakibalik naman po sa number na ito, kailangan ko lang talaga."
+  },
+  {
+    "id": "d20",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "fake bank",
+    "text": "BDO: Your account has been temporarily restricted. Update your details here to restore access: bdo-online-ph.com"
+  },
+  {
+    "id": "d21",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "loan approval",
+    "text": "Approved na ang loan mo na 50,000! Mag-send lang ng 1,500 processing fee para ma-release ngayong araw."
+  },
+  {
+    "id": "d22",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "relative new number",
+    "text": "Tita, ako to si Mark, bago kong number. Pwede bang pahiram muna ng 2k, ibabalik ko bukas."
+  },
+  {
+    "id": "d23",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "toll unpaid",
+    "text": "Your Easytrip account has an unpaid toll balance. Settle today to avoid penalties: easytrip-pay.top"
+  },
+  {
+    "id": "d24",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "fake job interview",
+    "text": "Congrats, pasado ka sa initial screening! Para sa onboarding, i-send ang copy ng valid ID at selfie mo dito."
+  },
+  {
+    "id": "d25",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "crypto",
+    "text": "Join our VIP crypto group. Members earn 30% profit every week, guaranteed. Limited slots only."
+  },
+  {
+    "id": "d26",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "lazada prize",
+    "text": "Binabati kita! Napili ka bilang winner ng Lazada anniversary raffle. I-claim ang iyong iPhone sa link na ito."
+  },
+  {
+    "id": "d27",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "sim block",
+    "text": "Your SIM will be deactivated today dahil hindi registered. I-click ang link para i-register agad."
+  },
+  {
+    "id": "d28",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "parcel customs",
+    "text": "Your package from abroad is held at customs. Pay the clearance fee of P850 to receive it."
+  },
+  {
+    "id": "d29",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "fake meralco",
+    "text": "Meralco: Puputulin ang inyong kuryente ngayong hapon dahil sa hindi bayad na bill. Magbayad agad sa numerong ito para hindi maputulan."
+  },
+  {
+    "id": "d30",
+    "lang": "taglish",
+    "expected": "likely_scam",
+    "note": "sextortion",
+    "text": "May video ako ng ginagawa mo. Kung ayaw mong i-send ko sa friends mo, mag-send ka ng 5k sa GCash ko."
+  },
+  {
+    "id": "d31",
+    "lang": "en",
+    "expected": "likely_scam",
+    "note": "account recovery",
+    "text": "Hi, I accidentally sent my Facebook login code to your number. Can you send it back to me please?"
+  },
+  {
+    "id": "d32",
+    "lang": "fil",
+    "expected": "likely_scam",
+    "note": "ayuda link",
+    "text": "Makakatanggap ka ng 8,000 na ayuda mula sa DSWD. Mag-register sa link na ito bago ito magsara."
+  }
+]
