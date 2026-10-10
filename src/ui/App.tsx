@@ -1003,7 +1003,7 @@ export function App() {
                   {/* Original Message */}
                   <div className="clay-panel rounded-2xl p-6 space-y-4">
                     <h3 className="font-bold text-text">{copy.originalTitle}</h3>
-                    <div className="bg-surface border border-border rounded-xl p-4 text-sm text-text/90 leading-relaxed font-mono whitespace-pre-wrap max-h-64 overflow-y-auto shadow-inner">
+                    <div className="message-scroll bg-surface border border-border rounded-xl p-4 text-sm text-text/90 leading-relaxed font-mono whitespace-pre-wrap max-h-64 overflow-y-auto shadow-inner">
                       {resultMessage ? (
                         <HighlightedMessage text={resultMessage} signals={verdict.signals} />
                       ) : (
