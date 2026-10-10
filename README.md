@@ -4,7 +4,8 @@ Sane checks a suspicious text, chat message or screenshot for scam warning signs
 what to do next. Every check runs **inside your browser**: the message never leaves the device,
 there is no backend, and after the first visit it works offline.
 
-Built for the AppBuildersPH 2026 **Local AI** hackathon, with a Philippine focus: GCash, Maya and
+Built by team **What if we call** for the AppBuildersPH 2026 **Local AI** hackathon, with a
+Philippine focus: GCash, Maya and
 bank lockouts, parcel fees, fake prizes, task scams, "new number" relatives, government aid and
 more, in **English, Filipino and Taglish**.
 
