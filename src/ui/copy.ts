@@ -98,7 +98,8 @@ type Copy = {
   modelSkippedAtScan: string;
   llmPaused: (size: number) => string;
   llmDownloadAction: string;
-  llmProgress: (percent: number) => string;
+  llmDownloadTitle: string;
+  llmProgress: (downloadedMb: number, totalMb: number) => string;
   llmReady: string;
   llmError: string;
   llmRetry: string;
@@ -221,7 +222,9 @@ export const COPY: Record<Lang, Copy> = {
     llmPaused: (size) =>
       `Optional: add an AI-written explanation to each result (about ${size} MB, downloaded once, Wi-Fi recommended).`,
     llmDownloadAction: 'Download AI explanation',
-    llmProgress: (percent) => `Preparing the AI explanation: ${percent}%`,
+    llmDownloadTitle: 'Preparing the AI explanation',
+    llmProgress: (mb, total) =>
+      `${mb} of about ${total} MB downloaded. You can keep checking messages while it loads.`,
     llmReady: 'AI explanation ready.',
     llmError: 'The AI explanation could not load. Results still include fixed advice.',
     llmRetry: 'Try the AI explanation again',
@@ -399,7 +402,9 @@ export const COPY: Record<Lang, Copy> = {
     llmPaused: (size) =>
       `Opsyonal: magdagdag ng AI na paliwanag sa bawat resulta (mga ${size} MB, isang beses lang i-download, mas mainam sa Wi-Fi).`,
     llmDownloadAction: 'I-download ang AI na paliwanag',
-    llmProgress: (percent) => `Inihahanda ang AI na paliwanag: ${percent}%`,
+    llmDownloadTitle: 'Inihahanda ang AI na paliwanag',
+    llmProgress: (mb, total) =>
+      `${mb} sa humigit-kumulang ${total} MB ang na-download na. Puwede ka pa ring magsuri habang naglo-load ito.`,
     llmReady: 'Handa na ang AI na paliwanag.',
     llmError: 'Hindi ma-load ang AI na paliwanag. May payo pa rin sa bawat resulta.',
     llmRetry: 'Subukan ulit ang AI na paliwanag',
@@ -575,7 +580,9 @@ export const COPY: Record<Lang, Copy> = {
     llmPaused: (size) =>
       `Optional: mag-add ng AI explanation sa bawat result (mga ${size} MB, one-time download, mas okay sa Wi-Fi).`,
     llmDownloadAction: 'I-download ang AI explanation',
-    llmProgress: (percent) => `Inihahanda ang AI explanation: ${percent}%`,
+    llmDownloadTitle: 'Inihahanda ang AI explanation',
+    llmProgress: (mb, total) =>
+      `${mb} of about ${total} MB na ang na-download. Puwede ka pa ring mag-check habang nagloload.`,
     llmReady: 'Ready na ang AI explanation.',
     llmError: 'Hindi ma-load ang AI explanation. May advice pa rin sa bawat result.',
     llmRetry: 'I-try ulit ang AI explanation',

@@ -738,7 +738,15 @@ export function App() {
                           </Button>
                         </>
                       )}
-                    {llmStatus.state === 'loading' && <p>{copy.llmProgress(llmStatus.progress)}</p>}
+                    {llmStatus.state === 'loading' && (
+                      <ModelDownloadProgress
+                        id="llm-download"
+                        progress={llmStatus.progress}
+                        title={copy.llmDownloadTitle}
+                        note={copy.llmProgress(llmStatus.downloadedMb ?? 0, LLM_DOWNLOAD_MB)}
+                        copy={copy}
+                      />
+                    )}
                     {llmStatus.state === 'ready' && <p>{copy.llmReady}</p>}
                     {llmStatus.state === 'error' && (
                       <>
@@ -746,6 +754,12 @@ export function App() {
                         <Button type="button" variant="outline" onPress={downloadLlm}>
                           {copy.llmRetry}
                         </Button>
+                        {llmStatus.message && (
+                          <details>
+                            <summary>{copy.modelDetails}</summary>
+                            <p>{llmStatus.message}</p>
+                          </details>
+                        )}
                       </>
                     )}
                   </div>
