@@ -1007,17 +1007,6 @@ export function App() {
                       )}
                     </div>
                     <p className="text-xs text-secondary">{copy.originalNote}</p>
-
-                    {resultMessage && normalize(resultMessage) !== resultMessage && (
-                      <details className="text-sm group">
-                        <summary className="cursor-pointer font-medium text-primary hover:text-text transition-colors pb-2">
-                          {copy.viewOriginal}
-                        </summary>
-                        <div className="bg-neutral rounded-lg p-3 text-xs font-mono text-secondary whitespace-pre-wrap">
-                          <InertMessage text={resultMessage} />
-                        </div>
-                      </details>
-                    )}
                   </div>
 
                   {/* Tech stack transparency */}

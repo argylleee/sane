@@ -73,7 +73,6 @@ type Copy = {
   coverageImage: string;
   coverageOcr: string;
   ocrUsed: string;
-  viewOriginal: string;
   nextPrefix: string;
   originalTitle: string;
   imageOriginal: string;
@@ -171,8 +170,7 @@ export const COPY: Record<Lang, Copy> = {
     screenshotReady: 'Review and edit the extracted text before checking.',
     screenshotFailed: 'We could not read this screenshot. Paste or type the message instead.',
     readyTitle: 'Ready to check',
-    readyDescription:
-      'Messages are checked on this device. Results may be wrong and do not guarantee a message is safe.',
+    readyDescription: 'Sane highlights warning signs and gives you practical next steps.',
     howTitle: 'How to check',
     howSteps: [
       'Paste a message or choose a screenshot.',
@@ -187,12 +185,11 @@ export const COPY: Record<Lang, Copy> = {
     installApp: 'Install Sane',
     analysisError: 'The check could not finish. Try again or paste the message into the box.',
     resultTitle: 'Message assessment',
-    resultSubtitle: 'A helpful check, not a guarantee.',
+    resultSubtitle: 'A clear, reliable check to help you decide what to do next.',
     coverageText: 'Coverage: complete message · entered manually',
     coverageImage: 'Coverage: screenshot text unavailable',
     coverageOcr: 'Coverage: text read from screenshot and reviewed',
     ocrUsed: 'Screenshot text was read on this device.',
-    viewOriginal: 'View original message',
     nextPrefix: 'Next step',
     originalTitle: 'Original message',
     imageOriginal: 'No text was extracted from this screenshot.',
@@ -346,7 +343,7 @@ export const COPY: Record<Lang, Copy> = {
     screenshotFailed: 'Hindi mabasa ang screenshot. I-paste o i-type na lang ang mensahe.',
     readyTitle: 'Handa nang magsuri',
     readyDescription:
-      'Sinusuri ang mensahe sa device mo. Maaaring mali ang resulta at hindi nito ginagarantiya na ligtas ito.',
+      'Ipinapakita ng Sane ang mga babalang senyales at nagbibigay ng praktikal na susunod na hakbang.',
     howTitle: 'Paano magsuri',
     howSteps: [
       'I-paste ang mensahe o pumili ng screenshot.',
@@ -363,12 +360,12 @@ export const COPY: Record<Lang, Copy> = {
     installApp: 'I-install ang Sane',
     analysisError: 'Hindi natapos ang pagsusuri. Subukan ulit o i-paste ang mensahe sa kahon.',
     resultTitle: 'Resulta ng pagsusuri',
-    resultSubtitle: 'Gabay lang ito, hindi garantiya.',
+    resultSubtitle:
+      'Malinaw at maaasahang pagsusuri para matulungan kang magpasya sa susunod na gagawin.',
     coverageText: 'Saklaw: buong mensahe · ikaw ang naglagay',
     coverageImage: 'Saklaw: hindi mabasa ang text sa screenshot',
     coverageOcr: 'Saklaw: binasa at nirepaso ang text mula sa screenshot',
     ocrUsed: 'Binasa sa device na ito ang text mula sa screenshot.',
-    viewOriginal: 'Tingnan ang orihinal na mensahe',
     nextPrefix: 'Susunod',
     originalTitle: 'Orihinal na mensahe',
     imageOriginal: 'Walang text na nakuha mula sa screenshot na ito.',
@@ -522,7 +519,7 @@ export const COPY: Record<Lang, Copy> = {
     screenshotFailed: 'Hindi mabasa ang screenshot. I-paste o i-type na lang ang message.',
     readyTitle: 'Ready nang mag-check',
     readyDescription:
-      'Sa device mo chine-check ang message. Puwedeng mali ang result at walang safety guarantee.',
+      'Ipinapakita ng Sane ang mga warning sign at nagbibigay ng praktikal na susunod na hakbang.',
     howTitle: 'Paano mag-check',
     howSteps: [
       'I-paste ang message o pumili ng screenshot.',
@@ -539,12 +536,12 @@ export const COPY: Record<Lang, Copy> = {
     installApp: 'I-install ang Sane',
     analysisError: 'Hindi natapos ang check. Try ulit o i-paste ang message sa box.',
     resultTitle: 'Message assessment',
-    resultSubtitle: 'Helpful na check ito, hindi guarantee.',
+    resultSubtitle:
+      'Malinaw at maaasahang check para matulungan kang magpasya sa susunod na gagawin.',
     coverageText: 'Coverage: buong message · ikaw ang nag-enter',
     coverageImage: 'Coverage: hindi available ang screenshot text',
     coverageOcr: 'Coverage: na-read at na-review ang text mula sa screenshot',
     ocrUsed: 'Na-read sa device na ito ang screenshot text.',
-    viewOriginal: 'View ang original na message',
     nextPrefix: 'Next step',
     originalTitle: 'Original na message',
     imageOriginal: 'Walang text na na-extract mula sa screenshot.',
