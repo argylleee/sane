@@ -40,9 +40,9 @@ const FINANCE_IMPERSONATION =
 const FINANCE_ACTION =
   /\b(?:read back|tell us|send|share|verify|confirm|update|unlock|reactivate|click|pindutin|link|otp|pin|password|code)\b/iu;
 const JOB_CONTEXT =
-  /\b(?:job|hiring|recruit|work from home|part-time|part time|reviewer|trabaho|empleo|kita|income|salary|sweldo|tasks?|cash out)\b/iu;
+  /\b(?:job|hiring|recruit|work from home|part-time|part time|reviewer|trabaho|empleo|kita|income|salary|sweldo|tasks?|cash out|screening|onboarding)\b/iu;
 const JOB_RISK =
-  /\b(?:registration fee|training fee|deposit|pay|send money|guaranteed|personal information|telegram|bayad|mag-deposit|magpadala|top[ -]?up|working balance)\b/iu;
+  /\b(?:registration fee|training fee|deposit|pay|send money|guaranteed|personal information|telegram|bayad|mag-deposit|magpadala|top[ -]?up|working balance|valid id|selfie)\b/iu;
 const INVESTMENT_CONTEXT =
   /\b(?:invest|investment|crypto|trading|profit|returns|tubo|puhunan|mag-invest|pag-iinvest)\b/iu;
 const INVESTMENT_RISK =

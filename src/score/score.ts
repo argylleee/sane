@@ -40,8 +40,12 @@ export const BENIGN_MARGIN_WITH_WEAK_CUE = -0.04;
  */
 export const ASK_MARGIN = 0.02;
 export const ASK_SIMILARITY = 0.85;
-/** Above this scam lean, a message that seems to ask for nothing stays "Not sure". */
-export const NO_ASK_MAX_MARGIN = 0.015;
+/**
+ * Above this scam lean, a message that seems to ask for nothing stays "Not sure". Measured on the
+ * held-out, practice, dev2 and probe sets (Node CPU): ordinary no-ask messages reached 0.029 (a
+ * received-money receipt) and the only scam with no detected ask or red flag sat at 0.046.
+ */
+export const NO_ASK_MAX_MARGIN = 0.035;
 // Cues that can appear in a harmless message that asks for nothing. Money and link cues are asks.
 const NO_ASK_CUES = new Set([
   'urgency',
@@ -114,9 +118,14 @@ export function score(
   const hooks = risky.filter(({ id }) => !ASK_SIGNALS.has(id));
   const strongHook = hooks.some(({ id }) => !WEAK.has(id)) || hooks.length >= 2;
   const sensitiveAsk = asks?.some((kind) => SENSITIVE.includes(kind)) ?? false;
+  // Two independent red flags in a message that is already flagged (it asks for a click, login or
+  // reply, or the flags alone reach "Suspicious") is a classic scam shape. This only raises the
+  // level of flagged messages; it never flags a message on its own.
+  const twoFlags =
+    hooks.length >= 2 && (ruleScore >= 30 || (asks?.some((kind) => kind !== 'contact') ?? false));
   // No bank, wallet or agency asks for a password or PIN by message.
   if (asks?.includes('secret')) ruleScore = Math.max(ruleScore, LIKELY);
-  else if (sensitiveAsk && strongHook) ruleScore = Math.max(ruleScore, LIKELY);
+  else if ((sensitiveAsk && strongHook) || twoFlags) ruleScore = Math.max(ruleScore, LIKELY);
   else if (asks && risky.length > 0 && asks.some((kind) => kind !== 'contact'))
     ruleScore = Math.max(ruleScore, 30);
 

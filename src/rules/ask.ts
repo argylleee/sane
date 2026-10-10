@@ -9,8 +9,9 @@ export type AskKind =
   'link' | 'contact' | 'money' | 'credential' | 'secret' | 'personal' | 'account_action';
 
 // Payment settled face to face ("pay your share when we meet") cannot be stolen by a message.
+// Not a bare "personal": "transfer to the personal wallet of the dispatcher" is a scam.
 const IN_PERSON =
-  /\b(?:in person|personally|face[- ]to[- ]face|when we meet|pagkita natin|pagkikita natin|sa personal|nang personal|personal na pumunta|visit (?:the|our|your) (?:[\p{L}-]+ ){0,2}(?:office|branch|registrar|counter|store))\b/iu;
+  /\b(?:in person|face[- ]to[- ]face|when we meet|pagkita natin|pagkikita natin|nang personal|personal na pumunta|visit (?:the|our|your) (?:[\p{L}-]+ ){0,2}(?:office|branch|registrar|counter|store))\b/iu;
 
 const MONEY_WORD = String.raw`(?:money|pera|cash|pesos?|piso|php|₱|p\s?\d|\d[\d,.]*\s?k\b|\d{1,3},\d{3}|gcash|maya|fee|bayad|payment|load|amount|halaga|deposit|balance)`;
 

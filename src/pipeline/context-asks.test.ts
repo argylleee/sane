@@ -40,6 +40,7 @@ describe('context-aware requests', () => {
     "If you don't pay the remaining balance today, your account will be blocked.",
     'Tito, nasira phone ko, replacement number ko ito. Pa-cover naman ng hospital bill ni Lola.',
     'A release fee must be paid first before we ship your prize.',
+    'Kailangan ng customs fee bago i-release; ipadala sa personal wallet ng rider.',
   ])('flags: %s', async (text) => {
     expect(flagged).toContain(await level(text));
   });

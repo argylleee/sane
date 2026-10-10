@@ -111,3 +111,8 @@ The other development sets did not regress (`eval/testset.json` 15/15 caught, 0 
 `eval/dev2.json` 16/16, 0 false alarms; no scam scored "probably fine"), and 15 freshly written
 context cases are in `src/pipeline/context-asks.test.ts`. A new, independently written holdout is
 needed before quoting any accuracy figure.
+
+Follow-up the same day (dev2 gaps): `eval/dev2.json` with real embeddings went from 2/32 not sure
+and 24/32 exact levels to 0/32 not sure and 32/32 exact levels, still 16/16 caught and 0 false alarms.
+The no-request margin cap moved from 0.015 to 0.035 (measured basis in `src/score/score.ts`), and two
+red flags in an already-flagged message now read as "High concern".
