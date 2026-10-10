@@ -754,17 +754,19 @@ export function App() {
                       embeddingStatus.state !== 'loading' && (
                         <>
                           <p>{copy.llmPaused(LLM_DOWNLOAD_MB)}</p>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="md"
-                            fullWidth
-                            className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary-tonal px-4 py-3 text-sm font-semibold text-primary transition-colors hover:brightness-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                            onPress={downloadLlm}
-                          >
-                            <Download size={16} aria-hidden="true" />
-                            {copy.llmDownloadAction}
-                          </Button>
+                          <div className="px-4">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="md"
+                              fullWidth
+                              className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface transition-all duration-150 rounded-xl font-bold text-sm text-text cursor-pointer"
+                              onPress={downloadLlm}
+                            >
+                              <Download size={18} aria-hidden="true" />
+                              {copy.llmDownloadAction}
+                            </Button>
+                          </div>
                         </>
                       )}
                     {llmStatus.state === 'loading' && (
@@ -780,17 +782,19 @@ export function App() {
                     {llmStatus.state === 'error' && llmTier !== null && llmTier !== 'C' && (
                       <>
                         <p>{copy.llmError}</p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="md"
-                          fullWidth
-                          className="flex w-full items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary-tonal px-4 py-3 text-sm font-semibold text-primary transition-colors hover:brightness-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-                          onPress={downloadLlm}
-                        >
-                          <Download size={16} aria-hidden="true" />
-                          {copy.llmRetry}
-                        </Button>
+                        <div className="px-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="md"
+                            fullWidth
+                            className="w-full flex items-center justify-center gap-2 py-3.5 bg-surface transition-all duration-150 rounded-xl font-bold text-sm text-text cursor-pointer"
+                            onPress={downloadLlm}
+                          >
+                            <Download size={18} aria-hidden="true" />
+                            {copy.llmRetry}
+                          </Button>
+                        </div>
                         {llmStatus.message && (
                           <details>
                             <summary>{copy.modelDetails}</summary>
